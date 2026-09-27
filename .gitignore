@@ -18,10 +18,8 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Visual Studio Code
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -39,10 +37,66 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Android Studio & Gradle
 /android/app/debug
 /android/app/profile
 /android/app/release
+.gradle/
+local.properties
+**/android/**/gradle-wrapper.jar
+
+# ==============================================================================
+# SECRETS, API KEYS & CREDENTIALS PROTECTION
+# ==============================================================================
+# Environment Configuration Files
+**/.env
+**/.env.*
+**/.env.local
+**/.env.development
+**/.env.production
+**/.env.backup
+**/.env.testing
+!**/.env.example
+
+# Firebase & Cloud API Keys
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
+**/firebase-service-account*.json
+**/service-account*.json
+**/*credentials*.json
+**/*secret*.json
+
+# Keystores, Certificates & Private Keys
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
+*.crt
+*.p8
+*.mobileprovision
+**/key.properties
+
+# Laravel Backend Specific Ignores
+backend_laravel/vendor/
+backend_laravel/node_modules/
+backend_laravel/public/storage
+backend_laravel/public/hot
+backend_laravel/storage/*.key
+backend_laravel/storage/oauth-*.key
+backend_laravel/storage/app/*
+!backend_laravel/storage/app/.gitignore
+!backend_laravel/storage/app/public/
+backend_laravel/storage/framework/cache/*
+!backend_laravel/storage/framework/cache/.gitignore
+backend_laravel/storage/framework/sessions/*
+!backend_laravel/storage/framework/sessions/.gitignore
+backend_laravel/storage/framework/views/*
+!backend_laravel/storage/framework/views/.gitignore
+backend_laravel/storage/logs/*
+!backend_laravel/storage/logs/.gitignore
+backend_laravel/.phpunit.result.cache
 
 # Widget Preview related
 .widget_preview/
