@@ -4,9 +4,8 @@
 /public/hot
 /public/storage
 .env
-.env.backup
 .env.*
-!.env.example
+.env.example
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

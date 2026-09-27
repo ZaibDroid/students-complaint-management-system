@@ -46,17 +46,16 @@ local.properties
 **/android/**/gradle-wrapper.jar
 
 # ==============================================================================
-# SECRETS, API KEYS & CREDENTIALS PROTECTION
+# SECRETS, ENVIRONMENT FILES & CREDENTIALS
 # ==============================================================================
-# Environment Configuration Files
+*.env
+*.env.*
+.env
+.env.*
 **/.env
 **/.env.*
-**/.env.local
-**/.env.development
-**/.env.production
-**/.env.backup
-**/.env.testing
-!**/.env.example
+**/.env.example
+.env.example
 
 # Firebase & Cloud API Keys
 **/google-services.json
@@ -78,7 +77,7 @@ local.properties
 *.mobileprovision
 **/key.properties
 
-# Laravel Backend Specific Ignores
+# Laravel Backend Specific
 backend_laravel/vendor/
 backend_laravel/node_modules/
 backend_laravel/public/storage
@@ -86,16 +85,10 @@ backend_laravel/public/hot
 backend_laravel/storage/*.key
 backend_laravel/storage/oauth-*.key
 backend_laravel/storage/app/*
-!backend_laravel/storage/app/.gitignore
-!backend_laravel/storage/app/public/
 backend_laravel/storage/framework/cache/*
-!backend_laravel/storage/framework/cache/.gitignore
 backend_laravel/storage/framework/sessions/*
-!backend_laravel/storage/framework/sessions/.gitignore
 backend_laravel/storage/framework/views/*
-!backend_laravel/storage/framework/views/.gitignore
 backend_laravel/storage/logs/*
-!backend_laravel/storage/logs/.gitignore
 backend_laravel/.phpunit.result.cache
 
 # Widget Preview related
