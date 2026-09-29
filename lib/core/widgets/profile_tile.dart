@@ -23,6 +23,8 @@ class ProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveIconColor = iconColor ?? AppColors.primary;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -36,13 +38,13 @@ class ProfileTile extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: (iconColor ?? AppColors.primary).withOpacity(0.1),
+            color: effectiveIconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
             size: 20,
-            color: iconColor ?? AppColors.primary,
+            color: effectiveIconColor,
           ),
         ),
         title: Text(

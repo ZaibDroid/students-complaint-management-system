@@ -35,12 +35,12 @@ class NoticeCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isPinned ? AppColors.accent.withOpacity(0.5) : AppColors.border,
+          color: isPinned ? AppColors.accent.withValues(alpha: 0.5) : AppColors.border,
           width: isPinned ? 1.5 : 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

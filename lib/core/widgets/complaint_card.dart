@@ -45,7 +45,7 @@ class ComplaintCard extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -88,7 +88,7 @@ class ComplaintCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                           decoration: BoxDecoration(
-                            color: priority.color.withOpacity(0.1),
+                            color: priority.color.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(

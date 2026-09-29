@@ -107,7 +107,7 @@ class ImagePickerCard extends StatelessWidget {
                       color: AppColors.primarySurface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: AppColors.primary.withOpacity(0.3),
+                        color: AppColors.primary.withValues(alpha: 0.3),
                         style: BorderStyle.solid,
                       ),
                     ),

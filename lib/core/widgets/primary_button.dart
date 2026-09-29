@@ -27,15 +27,19 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveBg = backgroundColor ?? AppColors.primary;
+    final effectiveFg = textColor ?? Colors.white;
+
     return SizedBox(
       width: width ?? double.infinity,
       height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppColors.primary,
-          foregroundColor: textColor ?? Colors.white,
-          disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
+          backgroundColor: effectiveBg,
+          foregroundColor: effectiveFg,
+          disabledBackgroundColor: effectiveBg.withValues(alpha: 0.6),
+          disabledForegroundColor: Colors.white70,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
@@ -55,7 +59,7 @@ class PrimaryButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 18, color: textColor ?? Colors.white),
+                    Icon(icon, size: 18, color: effectiveFg),
                     const SizedBox(width: 8),
                   ],
                   Text(
@@ -63,7 +67,7 @@ class PrimaryButton extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: textColor ?? Colors.white,
+                      color: effectiveFg,
                     ),
                   ),
                 ],

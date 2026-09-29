@@ -30,7 +30,7 @@ class RemarkCard extends StatelessWidget {
         color: isOfficial ? const Color(0xFFF9FAFC) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isOfficial ? AppColors.primary.withOpacity(0.2) : AppColors.border,
+          color: isOfficial ? AppColors.primary.withValues(alpha: 0.2) : AppColors.border,
           width: 1,
         ),
       ),
