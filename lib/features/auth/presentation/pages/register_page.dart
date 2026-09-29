@@ -4,12 +4,17 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/password_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../shared/enums/user_role.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/auth_card.dart';
+import '../widgets/auth_error_banner.dart';
+import '../widgets/auth_header.dart';
+import '../widgets/auth_link_button.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -60,7 +65,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: AppPaddings.all24,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 460),
               child: Form(
@@ -68,77 +73,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // University Header
-                    Center(
-                      child: Column(
-                        children: [
-                          const Text(
-                            AppStrings.appName,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            AppStrings.universityName,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Card Container
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.border, width: 1),
-                      ),
+                    const AuthHeader(subtitle: AppStrings.universityName),
+                    AppSpacing.v24,
+                    AuthCard(
+                      title: AppStrings.registerTitle,
+                      subtitle: AppStrings.registerSubtitle,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            AppStrings.registerTitle,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            AppStrings.registerSubtitle,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          if (authState.errorMessage != null) ...[
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.statusRejectedLight,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                authState.errorMessage!,
-                                style: const TextStyle(color: AppColors.statusRejected, fontSize: 13),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-
-                          // Full Name
+                          AuthErrorBanner(errorMessage: authState.errorMessage),
                           AppTextField(
                             label: 'Full Name',
                             hint: 'e.g. Muhammad Ali',
@@ -146,9 +89,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             prefixIcon: const Icon(Icons.person_outline, size: 20, color: AppColors.textSecondary),
                             validator: (v) => Validators.validateRequired(v, fieldName: 'Full name'),
                           ),
-                          const SizedBox(height: 16),
-
-                          // University Email
+                          AppSpacing.v16,
                           AppTextField(
                             label: 'University Email',
                             hint: 'student@uetmardan.edu.pk',
@@ -157,9 +98,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             prefixIcon: const Icon(Icons.email_outlined, size: 20, color: AppColors.textSecondary),
                             validator: Validators.validateUetEmail,
                           ),
-                          const SizedBox(height: 16),
-
-                          // Role Selection
+                          AppSpacing.v16,
                           const Text(
                             'Account Role',
                             style: TextStyle(
@@ -168,11 +107,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          AppSpacing.v6,
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: AppBorderRadii.r12,
                               border: Border.all(color: AppColors.border, width: 1),
                             ),
                             child: DropdownButtonHideUnderline(
@@ -202,18 +141,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-
-                          // Password
+                          AppSpacing.v16,
                           PasswordField(
                             label: 'Password',
                             hint: 'At least 8 characters',
                             controller: _passwordController,
                             validator: Validators.validatePassword,
                           ),
-                          const SizedBox(height: 16),
-
-                          // Confirm Password
+                          AppSpacing.v16,
                           PasswordField(
                             label: 'Confirm Password',
                             hint: 'Re-enter password',
@@ -221,9 +156,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             validator: (v) => Validators.validateConfirmPassword(v, _passwordController.text),
                             onFieldSubmitted: (_) => _handleRegister(),
                           ),
-                          const SizedBox(height: 24),
-
-                          // Register Button
+                          AppSpacing.v24,
                           PrimaryButton(
                             text: 'Create Account',
                             isLoading: authState.isLoading,
@@ -233,34 +166,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // Already have an account?
-                    Center(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Already registered? ',
-                              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
-                            ),
-                            GestureDetector(
-                              onTap: () => context.go(RouteNames.login),
-                              child: const Text(
-                                'Sign In',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    AppSpacing.v20,
+                    AuthLinkButton(
+                      promptText: 'Already registered?',
+                      actionText: 'Sign In',
+                      onTap: () => context.go(RouteNames.login),
                     ),
                   ],
                 ),

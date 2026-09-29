@@ -4,10 +4,13 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../shared/enums/user_role.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/auth_error_banner.dart';
 
 class VerifyEmailPage extends ConsumerStatefulWidget {
   const VerifyEmailPage({super.key});
@@ -46,9 +49,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
     setState(() => _isResending = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('A new verification code has been dispatched.')),
-    );
+    context.showSuccessSnackBar('A new verification code has been dispatched.');
   }
 
   @override
@@ -65,28 +66,29 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: AppPaddings.all24,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: Container(
-                padding: const EdgeInsets.all(24),
+                padding: AppPaddings.all24,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: AppBorderRadii.r20,
                   border: Border.all(color: AppColors.border, width: 1),
+                  boxShadow: AppShadows.card,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: AppPaddings.all16,
                       decoration: const BoxDecoration(
                         color: AppColors.primarySurface,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.mark_email_read_outlined, size: 40, color: AppColors.primary),
                     ),
-                    const SizedBox(height: 16),
+                    AppSpacing.v16,
                     const Text(
                       AppStrings.emailVerificationTitle,
                       style: TextStyle(
@@ -95,7 +97,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    AppSpacing.v8,
                     Text(
                       'We have sent a verification code to\n$targetEmail',
                       textAlign: TextAlign.center,
@@ -105,24 +107,8 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                         height: 1.4,
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    if (authState.errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.statusRejectedLight,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          authState.errorMessage!,
-                          style: const TextStyle(color: AppColors.statusRejected, fontSize: 13),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
+                    AppSpacing.v24,
+                    AuthErrorBanner(errorMessage: authState.errorMessage),
                     AppTextField(
                       label: '6-Digit Verification Code',
                       hint: '123456',
@@ -130,15 +116,13 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                       keyboardType: TextInputType.number,
                       prefixIcon: const Icon(Icons.pin_outlined, size: 20, color: AppColors.textSecondary),
                     ),
-                    const SizedBox(height: 24),
-
+                    AppSpacing.v24,
                     PrimaryButton(
                       text: 'Verify & Continue',
                       isLoading: authState.isLoading,
                       onPressed: _handleVerify,
                     ),
-                    const SizedBox(height: 16),
-
+                    AppSpacing.v16,
                     TextButton(
                       onPressed: _isResending ? null : _handleResend,
                       child: Text(

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/auth_card.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -27,7 +30,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   Future<void> _handleSubmit() async {
     final emailError = Validators.validateUetEmail(_emailController.text);
     if (emailError != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(emailError)));
+      context.showErrorSnackBar(emailError);
       return;
     }
 
@@ -43,7 +46,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       onSuccess: (_) {},
       onError: (fail) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(fail.message)));
+          context.showErrorSnackBar(fail.message);
         }
       },
     );
@@ -53,54 +56,56 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Reset Password'), backgroundColor: Colors.transparent),
+      appBar: AppBar(
+        title: const Text('Reset Password'),
+        backgroundColor: Colors.transparent,
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: AppPaddings.all24,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
-                ),
+              child: AuthCard(
+                title: 'Forgot Password?',
+                subtitle: 'Enter your @uetmardan.edu.pk email to receive password reset instructions.',
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Forgot Password?',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'Enter your @uetmardan.edu.pk email to receive password reset instructions.',
-                      style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-                    ),
-                    const SizedBox(height: 24),
                     if (_sent) ...[
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: AppPaddings.all12,
                         decoration: BoxDecoration(
                           color: AppColors.statusResolvedLight,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: AppBorderRadii.r10,
                         ),
-                        child: const Text(
-                          'Password reset instructions have been sent to your university email.',
-                          style: TextStyle(fontSize: 13, color: AppColors.statusResolved, fontWeight: FontWeight.w600),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.check_circle_outline, color: AppColors.statusResolved, size: 20),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Password reset instructions have been sent to your university email.',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.statusResolved,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      AppSpacing.v20,
                     ],
                     AppTextField(
                       label: 'University Email',
                       hint: 'yourname@uetmardan.edu.pk',
                       controller: _emailController,
                       prefixIcon: const Icon(Icons.email_outlined, size: 20, color: AppColors.textSecondary),
+                      validator: Validators.validateUetEmail,
                     ),
-                    const SizedBox(height: 24),
+                    AppSpacing.v24,
                     PrimaryButton(
                       text: 'Send Reset Link',
                       isLoading: _isLoading,

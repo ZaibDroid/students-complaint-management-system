@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/auth_card.dart';
 
 class CompleteProfilePage extends ConsumerStatefulWidget {
   const CompleteProfilePage({super.key});
@@ -23,8 +25,8 @@ class _CompleteProfilePageState extends ConsumerState<CompleteProfilePage> {
   String _selectedBatch = '2022-2026';
   String _selectedSection = 'Section A';
 
-  final List<String> _batches = ['2020-2024', '2021-2025', '2022-2026', '2023-2027', '2024-2028'];
-  final List<String> _sections = ['Section A', 'Section B', 'Section C', 'Evening'];
+  static const List<String> _batches = ['2020-2024', '2021-2025', '2022-2026', '2023-2027', '2024-2028'];
+  static const List<String> _sections = ['Section A', 'Section B', 'Section C', 'Evening'];
 
   @override
   void dispose() {
@@ -61,36 +63,17 @@ class _CompleteProfilePageState extends ConsumerState<CompleteProfilePage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: AppPaddings.all24,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 460),
               child: Form(
                 key: _formKey,
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.border, width: 1),
-                  ),
+                child: AuthCard(
+                  title: AppStrings.completeProfileTitle,
+                  subtitle: AppStrings.completeProfileSubtitle,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        AppStrings.completeProfileTitle,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        AppStrings.completeProfileSubtitle,
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-                      ),
-                      const SizedBox(height: 24),
-
                       // Registration Number
                       AppTextField(
                         label: 'Registration Number',
@@ -99,18 +82,18 @@ class _CompleteProfilePageState extends ConsumerState<CompleteProfilePage> {
                         prefixIcon: const Icon(Icons.badge_outlined, size: 20, color: AppColors.textSecondary),
                         validator: Validators.validateRegNo,
                       ),
-                      const SizedBox(height: 16),
+                      AppSpacing.v16,
 
                       // Batch Selection
                       const Text(
                         'Academic Batch',
                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                       ),
-                      const SizedBox(height: 6),
+                      AppSpacing.v6,
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppBorderRadii.r12,
                           border: Border.all(color: AppColors.border, width: 1),
                         ),
                         child: DropdownButtonHideUnderline(
@@ -124,18 +107,18 @@ class _CompleteProfilePageState extends ConsumerState<CompleteProfilePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      AppSpacing.v16,
 
                       // Section Selection
                       const Text(
                         'Class Section',
                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                       ),
-                      const SizedBox(height: 6),
+                      AppSpacing.v6,
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppBorderRadii.r12,
                           border: Border.all(color: AppColors.border, width: 1),
                         ),
                         child: DropdownButtonHideUnderline(
@@ -149,7 +132,7 @@ class _CompleteProfilePageState extends ConsumerState<CompleteProfilePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      AppSpacing.v16,
 
                       // Contact Phone
                       AppTextField(
@@ -159,7 +142,7 @@ class _CompleteProfilePageState extends ConsumerState<CompleteProfilePage> {
                         keyboardType: TextInputType.phone,
                         prefixIcon: const Icon(Icons.phone_outlined, size: 20, color: AppColors.textSecondary),
                       ),
-                      const SizedBox(height: 24),
+                      AppSpacing.v24,
 
                       PrimaryButton(
                         text: 'Save & Go to Dashboard',
