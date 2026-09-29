@@ -40,14 +40,22 @@ class DashboardController extends BaseApiController
             }
         }
 
-        $allComplaints = $query->get();
+        // Fast aggregated counts
+        $counts = (clone $query)->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status LIKE 'forwarded_to_%' THEN 1 ELSE 0 END) as forwarded,
+            SUM(CASE WHEN status IN ('under_review', 'returned') THEN 1 ELSE 0 END) as in_progress,
+            SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
+            SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
+        ")->first();
 
-        $total = $allComplaints->count();
-        $pending = $allComplaints->where('status', 'submitted')->count();
-        $forwarded = $allComplaints->filter(fn($c) => str_starts_with($c->status, 'forwarded_to_'))->count();
-        $inProgress = $allComplaints->whereIn('status', ['under_review', 'returned'])->count();
-        $resolved = $allComplaints->where('status', 'resolved')->count();
-        $rejected = $allComplaints->where('status', 'rejected')->count();
+        $total = (int) ($counts->total ?? 0);
+        $pending = (int) ($counts->pending ?? 0);
+        $forwarded = (int) ($counts->forwarded ?? 0);
+        $inProgress = (int) ($counts->in_progress ?? 0);
+        $resolved = (int) ($counts->resolved ?? 0);
+        $rejected = (int) ($counts->rejected ?? 0);
 
         $recentComplaints = (clone $query)->with(['student', 'timeline', 'remarks'])
             ->latest()
