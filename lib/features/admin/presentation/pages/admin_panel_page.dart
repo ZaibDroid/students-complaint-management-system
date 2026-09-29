@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/widgets/app_drawer.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/dashboard_card.dart';
@@ -22,7 +23,7 @@ class AdminPanelPage extends ConsumerWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: AppPaddings.page,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -30,7 +31,7 @@ class AdminPanelPage extends ConsumerWidget {
                 'Department Health & Metrics',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
               ),
-              const SizedBox(height: 12),
+              AppSpacing.v12,
               GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
@@ -52,7 +53,7 @@ class AdminPanelPage extends ConsumerWidget {
                     iconColor: AppColors.statusForwarded,
                     onTap: () => context.push(RouteNames.complaintsList),
                   ),
-                  DashboardCard(
+                  const DashboardCard(
                     title: 'Avg. Resolution Time',
                     value: '2.4 Days',
                     icon: Icons.speed,
@@ -67,13 +68,13 @@ class AdminPanelPage extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              AppSpacing.v24,
 
               const Text(
                 'Administrative Governance',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
               ),
-              const SizedBox(height: 12),
+              AppSpacing.v12,
               ProfileTile(
                 icon: Icons.manage_accounts_outlined,
                 title: 'User Roles & Authority Assignment',
