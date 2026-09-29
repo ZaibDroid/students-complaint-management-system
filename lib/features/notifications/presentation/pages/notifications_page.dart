@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/widgets/app_drawer.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
@@ -28,7 +29,10 @@ class NotificationsPage extends ConsumerWidget {
           if (state.notifications.isNotEmpty)
             TextButton(
               onPressed: () => ref.read(notificationProvider.notifier).markAllAsRead(),
-              child: const Text('Mark all read', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              child: const Text(
+                'Mark all read',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
             ),
         ],
       ),
@@ -57,7 +61,7 @@ class NotificationsPage extends ConsumerWidget {
               }
 
               return ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: AppPaddings.all16,
                 itemCount: state.notifications.length,
                 itemBuilder: (context, index) {
                   final notif = state.notifications[index];

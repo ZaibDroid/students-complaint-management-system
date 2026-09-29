@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../shared/enums/notice_target.dart';
 import '../providers/notice_provider.dart';
+import '../widgets/notice_audience_selector.dart';
 
 class CreateNoticePage extends ConsumerStatefulWidget {
   const CreateNoticePage({super.key});
@@ -48,12 +51,7 @@ class _CreateNoticePageState extends ConsumerState<CreateNoticePage> {
       setState(() => _isSubmitting = false);
 
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Notice published successfully! Push notifications dispatched to target audience.'),
-            backgroundColor: AppColors.statusResolved,
-          ),
-        );
+        context.showSuccessSnackBar('Notice published successfully! Push notifications dispatched to target audience.');
         context.pop();
       }
     }
@@ -69,7 +67,7 @@ class _CreateNoticePageState extends ConsumerState<CreateNoticePage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppPaddings.all20,
           child: Form(
             key: _formKey,
             child: Column(
@@ -82,38 +80,14 @@ class _CreateNoticePageState extends ConsumerState<CreateNoticePage> {
                   controller: _titleController,
                   validator: (v) => Validators.validateRequired(v, fieldName: 'Notice title'),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Target Audience
-                const Text(
-                  'Target Audience',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                NoticeAudienceSelector(
+                  selectedTarget: _selectedTarget,
+                  onTargetChanged: (target) => setState(() => _selectedTarget = target),
                 ),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border, width: 1),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<NoticeTarget>(
-                      isExpanded: true,
-                      value: _selectedTarget,
-                      items: NoticeTarget.values.map((target) {
-                        return DropdownMenuItem(
-                          value: target,
-                          child: Text(target.displayName, style: const TextStyle(fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (target) {
-                        if (target != null) setState(() => _selectedTarget = target);
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Conditional Target Identifier
                 if (_selectedTarget != NoticeTarget.all) ...[
@@ -125,7 +99,7 @@ class _CreateNoticePageState extends ConsumerState<CreateNoticePage> {
                     controller: _targetValueController,
                     validator: (v) => Validators.validateRequired(v, fieldName: 'Target identifier'),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.v16,
                 ],
 
                 // Notice Content
@@ -136,7 +110,7 @@ class _CreateNoticePageState extends ConsumerState<CreateNoticePage> {
                   maxLines: 7,
                   validator: (v) => Validators.validateRequired(v, fieldName: 'Notice content'),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Pin to Top Switch
                 SwitchListTile(
@@ -153,7 +127,7 @@ class _CreateNoticePageState extends ConsumerState<CreateNoticePage> {
                   activeThumbColor: AppColors.primary,
                   onChanged: (val) => setState(() => _isPinned = val),
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.v24,
 
                 // Publish Button
                 PrimaryButton(

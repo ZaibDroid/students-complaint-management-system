@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/widgets/app_drawer.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
@@ -10,9 +11,9 @@ import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../../core/widgets/notice_card.dart';
 import '../../../../core/widgets/search_bar_widget.dart';
-import '../../../../shared/enums/notice_target.dart';
 import 'package:student_complaint_managment_system/features/auth/presentation/providers/auth_provider.dart';
 import '../providers/notice_provider.dart';
+import '../widgets/notice_target_filter_row.dart';
 
 class NoticeBoardPage extends ConsumerStatefulWidget {
   const NoticeBoardPage({super.key});
@@ -72,47 +73,12 @@ class _NoticeBoardPageState extends ConsumerState<NoticeBoardPage> {
               ),
             ),
 
-            // Target Audience Filter Chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: Row(
-                children: [
-                  ChoiceChip(
-                    label: const Text('All Notices'),
-                    selected: state.filterTarget == null,
-                    selectedColor: AppColors.primary,
-                    labelStyle: TextStyle(
-                      color: state.filterTarget == null ? Colors.white : AppColors.textPrimary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    onSelected: (_) => ref.read(noticeProvider.notifier).filterByTarget(null),
-                  ),
-                  const SizedBox(width: 8),
-                  ...NoticeTarget.values.map((target) {
-                    final isSelected = state.filterTarget == target;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        label: Text(target.displayName),
-                        selected: isSelected,
-                        selectedColor: AppColors.primary,
-                        labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        onSelected: (selected) {
-                          ref.read(noticeProvider.notifier).filterByTarget(selected ? target : null);
-                        },
-                      ),
-                    );
-                  }),
-                ],
-              ),
+            // Target Audience Filter Chips Row
+            NoticeTargetFilterRow(
+              selectedTarget: state.filterTarget,
+              onTargetChanged: (target) => ref.read(noticeProvider.notifier).filterByTarget(target),
             ),
-            const SizedBox(height: 6),
+            AppSpacing.v6,
 
             // Notices List
             Expanded(
@@ -142,7 +108,7 @@ class _NoticeBoardPageState extends ConsumerState<NoticeBoardPage> {
                     }
 
                     return ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: AppPaddings.page,
                       itemCount: filteredNotices.length,
                       itemBuilder: (context, index) {
                         final notice = filteredNotices[index];

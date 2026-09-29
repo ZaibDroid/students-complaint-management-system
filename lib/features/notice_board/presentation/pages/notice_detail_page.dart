@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/date_formatter.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../shared/enums/notice_target.dart';
 import '../../domain/entities/notice_entity.dart';
@@ -47,13 +48,14 @@ class NoticeDetailPage extends ConsumerWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppPaddings.all20,
           child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: AppPaddings.all20,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: AppBorderRadii.r20,
               border: Border.all(color: AppColors.border, width: 1),
+              boxShadow: AppShadows.card,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +68,7 @@ class NoticeDetailPage extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: AppColors.primarySurface,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppBorderRadii.r8,
                       ),
                       child: Text(
                         notice.targetValue != null && notice.targetValue!.isNotEmpty
@@ -83,8 +85,8 @@ class NoticeDetailPage extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppColors.accentLight.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(6),
+                          color: AppColors.accentLight.withValues(alpha: 0.2),
+                          borderRadius: AppBorderRadii.r6,
                         ),
                         child: const Row(
                           children: [
@@ -99,7 +101,7 @@ class NoticeDetailPage extends ConsumerWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Title
                 Text(
@@ -111,29 +113,29 @@ class NoticeDetailPage extends ConsumerWidget {
                     letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 10),
+                AppSpacing.v10,
 
                 // Author & Date
                 Row(
                   children: [
                     const Icon(Icons.person_outline, size: 16, color: AppColors.textSecondary),
-                    const SizedBox(width: 4),
+                    AppSpacing.h4,
                     Text(
                       '${notice.authorName} (${notice.authorRole})',
                       style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
                     ),
                     const Spacer(),
                     const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.textMuted),
-                    const SizedBox(width: 4),
+                    AppSpacing.h4,
                     Text(
                       DateFormatter.formatDateTime(notice.createdAt),
                       style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
                 const Divider(color: AppColors.divider),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Notice Content Body
                 Text(
