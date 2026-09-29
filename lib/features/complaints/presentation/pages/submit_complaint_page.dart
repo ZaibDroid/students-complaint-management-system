@@ -117,11 +117,11 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                     borderRadius: AppBorderRadii.r12,
                     border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                      Icon(Icons.info_outline, color: AppColors.primary, size: 20),
                       AppSpacing.h10,
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Your complaint will be routed directly to your assigned Batch Adviser for initial review.',
                           style: TextStyle(fontSize: 12.5, color: AppColors.primary, height: 1.3),

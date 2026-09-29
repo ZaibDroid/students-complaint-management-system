@@ -75,7 +75,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     if (_sent) ...[
                       Container(
                         padding: AppPaddings.all12,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: AppColors.statusResolvedLight,
                           borderRadius: AppBorderRadii.r10,
                         ),

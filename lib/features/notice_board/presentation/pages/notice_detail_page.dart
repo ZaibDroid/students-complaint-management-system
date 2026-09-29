@@ -66,7 +66,7 @@ class NoticeDetailPage extends ConsumerWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.primarySurface,
                         borderRadius: AppBorderRadii.r8,
                       ),

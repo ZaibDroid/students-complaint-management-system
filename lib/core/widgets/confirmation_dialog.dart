@@ -51,6 +51,8 @@ class ConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveConfirmColor = confirmColor ?? AppColors.primary;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
@@ -65,12 +67,12 @@ class ConfirmationDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: (confirmColor ?? AppColors.primary).withOpacity(0.1),
+                  color: effectiveConfirmColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
-                  color: confirmColor ?? AppColors.primary,
+                  color: effectiveConfirmColor,
                   size: 24,
                 ),
               ),
@@ -113,7 +115,7 @@ class ConfirmationDialog extends StatelessWidget {
                 Expanded(
                   child: PrimaryButton(
                     text: confirmText,
-                    backgroundColor: confirmColor ?? AppColors.primary,
+                    backgroundColor: effectiveConfirmColor,
                     height: 44,
                     onPressed: onConfirm,
                   ),

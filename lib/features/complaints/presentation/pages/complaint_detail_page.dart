@@ -152,7 +152,6 @@ class _ComplaintDetailPageState extends ConsumerState<ComplaintDetailPage> {
               // Complainant Details Card
               ComplainantInfoCard(
                 studentName: complaint.studentName,
-                studentAvatarUrl: complaint.studentAvatarUrl,
                 batch: complaint.batch,
                 section: complaint.section,
                 studentEmail: complaint.studentEmail,

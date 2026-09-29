@@ -48,7 +48,7 @@ class _RoleAssignmentDialogState extends State<RoleAssignmentDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: AppBorderRadii.r16),
+      shape: const RoundedRectangleBorder(borderRadius: AppBorderRadii.r16),
       title: Text('Assign Role: ${widget.userName}'),
       content: SingleChildScrollView(
         child: Column(
@@ -100,7 +100,7 @@ class _RoleAssignmentDialogState extends State<RoleAssignmentDialog> {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: AppBorderRadii.r8),
+            shape: const RoundedRectangleBorder(borderRadius: AppBorderRadii.r8),
           ),
           onPressed: () {
             Navigator.pop(context);

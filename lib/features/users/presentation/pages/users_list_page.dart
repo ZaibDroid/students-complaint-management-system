@@ -32,7 +32,7 @@ class _UsersListPageState extends ConsumerState<UsersListPage> {
     super.dispose();
   }
 
-  void _showRoleChangeDialog(BuildContext context, String userId, String userName, UserRole currentRole) {
+  void _showRoleChangeDialog(String userId, String userName, UserRole currentRole) {
     RoleAssignmentDialog.show(
       context,
       userName: userName,
@@ -115,7 +115,7 @@ class _UsersListPageState extends ConsumerState<UsersListPage> {
                         final u = state.users[index];
                         return UserTileCard(
                           user: u,
-                          onRoleTap: () => _showRoleChangeDialog(context, u.id, u.fullName, u.role),
+                          onRoleTap: () => _showRoleChangeDialog(u.id, u.fullName, u.role),
                         );
                       },
                     );

@@ -36,7 +36,7 @@ class BatchCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.primarySurface,
                   borderRadius: AppBorderRadii.r8,
                 ),
@@ -52,7 +52,7 @@ class BatchCard extends StatelessWidget {
               if (isUserBatch)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.statusResolvedLight,
                     borderRadius: AppBorderRadii.r6,
                   ),
