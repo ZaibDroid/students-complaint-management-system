@@ -15,6 +15,7 @@ import '../../../../core/widgets/search_bar_widget.dart';
 import '../../../../shared/enums/user_role.dart';
 import 'package:student_complaint_managment_system/features/auth/presentation/providers/auth_provider.dart';
 import '../providers/complaints_provider.dart';
+import '../widgets/active_filters_bar.dart';
 
 class ComplaintsListPage extends ConsumerStatefulWidget {
   const ComplaintsListPage({super.key});
@@ -101,29 +102,13 @@ class _ComplaintsListPageState extends ConsumerState<ComplaintsListPage> {
               ),
             ),
 
-            // Active Filters indicator
-            if (state.selectedStatus != null || state.selectedPriority != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: Row(
-                  children: [
-                    const Text('Filtered by: ', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                    if (state.selectedStatus != null)
-                      Chip(
-                        label: Text(state.selectedStatus!.displayName, style: const TextStyle(fontSize: 11)),
-                        backgroundColor: state.selectedStatus!.backgroundColor,
-                        onDeleted: () => ref.read(complaintsListProvider.notifier).applyFilters(status: null),
-                      ),
-                    const SizedBox(width: 6),
-                    if (state.selectedPriority != null)
-                      Chip(
-                        label: Text(state.selectedPriority!.displayName, style: const TextStyle(fontSize: 11)),
-                        backgroundColor: state.selectedPriority!.color.withOpacity(0.15),
-                        onDeleted: () => ref.read(complaintsListProvider.notifier).applyFilters(priority: null),
-                      ),
-                  ],
-                ),
-              ),
+            // Active Filters Bar
+            ActiveFiltersBar(
+              selectedStatus: state.selectedStatus,
+              selectedPriority: state.selectedPriority,
+              onClearStatus: () => ref.read(complaintsListProvider.notifier).applyFilters(status: null),
+              onClearPriority: () => ref.read(complaintsListProvider.notifier).applyFilters(priority: null),
+            ),
 
             // Content Area
             Expanded(

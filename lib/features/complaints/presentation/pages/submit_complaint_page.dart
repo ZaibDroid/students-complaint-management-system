@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/context_extensions.dart';
 import '../../../../core/utils/image_compressor.dart';
+import '../../../../core/utils/ui_helpers.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/image_picker_card.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../shared/enums/priority_level.dart';
 import '../providers/complaints_provider.dart';
+import '../widgets/priority_selector.dart';
 
 class SubmitComplaintPage extends ConsumerStatefulWidget {
   const SubmitComplaintPage({super.key});
@@ -28,7 +31,7 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
   final List<File> _attachedImages = [];
   bool _isSubmitting = false;
 
-  final List<String> _categories = [
+  static const List<String> _categories = [
     'Academic Issues',
     'Faculty / Teaching',
     'Lab & Equipment',
@@ -80,21 +83,11 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
       result.when(
         onSuccess: (complaint) {
           ref.read(complaintsListProvider.notifier).fetchComplaints(page: 1);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Complaint ${complaint.trackingNumber} submitted successfully!'),
-              backgroundColor: AppColors.statusResolved,
-            ),
-          );
+          context.showSuccessSnackBar('Complaint ${complaint.trackingNumber} submitted successfully!');
           context.pop();
         },
         onError: (failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(failure.message),
-              backgroundColor: AppColors.statusRejected,
-            ),
-          );
+          context.showErrorSnackBar(failure.message);
         },
       );
     }
@@ -110,7 +103,7 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppPaddings.all20,
           child: Form(
             key: _formKey,
             child: Column(
@@ -118,17 +111,17 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
               children: [
                 // Info Box
                 Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: AppPaddings.all14,
                   decoration: BoxDecoration(
                     color: AppColors.primarySurface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.primary.withOpacity(0.15)),
+                    borderRadius: AppBorderRadii.r12,
+                    border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: AppColors.primary, size: 20),
-                      SizedBox(width: 10),
-                      Expanded(
+                      const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                      AppSpacing.h10,
+                      const Expanded(
                         child: Text(
                           'Your complaint will be routed directly to your assigned Batch Adviser for initial review.',
                           style: TextStyle(fontSize: 12.5, color: AppColors.primary, height: 1.3),
@@ -137,7 +130,7 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                AppSpacing.v20,
 
                 // Complaint Title
                 AppTextField(
@@ -146,19 +139,19 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                   controller: _titleController,
                   validator: (v) => Validators.validateRequired(v, fieldName: 'Complaint subject'),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Category Selection
                 const Text(
                   'Complaint Category',
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                 ),
-                const SizedBox(height: 6),
+                AppSpacing.v6,
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppBorderRadii.r12,
                     border: Border.all(color: AppColors.border, width: 1),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -172,50 +165,19 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Priority Level Selector
                 const Text(
                   'Urgency / Priority',
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: PriorityLevel.values.map((priority) {
-                    final isSelected = _selectedPriority == priority;
-                    return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: InkWell(
-                          onTap: () => setState(() => _selectedPriority = priority),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            decoration: BoxDecoration(
-                              color: isSelected ? priority.color.withOpacity(0.15) : Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: isSelected ? priority.color : AppColors.border,
-                                width: isSelected ? 1.5 : 1,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                priority.displayName,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSelected ? priority.color : AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                AppSpacing.v8,
+                PrioritySelector(
+                  selectedPriority: _selectedPriority,
+                  onPrioritySelected: (p) => setState(() => _selectedPriority = p),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Detailed Description
                 AppTextField(
@@ -225,7 +187,7 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                   maxLines: 6,
                   validator: (v) => Validators.validateRequired(v, fieldName: 'Complaint description'),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.v16,
 
                 // Image Upload & Compression
                 ImagePickerCard(
@@ -234,7 +196,7 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                   onRemoveImage: _removeImage,
                   maxImages: 4,
                 ),
-                const SizedBox(height: 28),
+                AppSpacing.v28,
 
                 // Submit Button
                 PrimaryButton(
