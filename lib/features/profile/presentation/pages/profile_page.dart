@@ -4,14 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:student_complaint_managment_system/core/constants/app_colors.dart';
 import 'package:student_complaint_managment_system/core/constants/app_strings.dart';
 import 'package:student_complaint_managment_system/core/routes/route_names.dart';
+import 'package:student_complaint_managment_system/core/utils/ui_helpers.dart';
 import 'package:student_complaint_managment_system/core/widgets/app_drawer.dart';
 import 'package:student_complaint_managment_system/core/widgets/confirmation_dialog.dart';
 import 'package:student_complaint_managment_system/core/widgets/custom_app_bar.dart';
 import 'package:student_complaint_managment_system/core/widgets/profile_tile.dart';
-import 'package:student_complaint_managment_system/core/widgets/user_avatar.dart';
 import 'package:student_complaint_managment_system/features/auth/presentation/providers/auth_provider.dart';
 import 'package:student_complaint_managment_system/features/profile/presentation/providers/profile_provider.dart';
 import 'package:student_complaint_managment_system/shared/enums/user_role.dart';
+import '../widgets/profile_user_header.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -36,63 +37,17 @@ class ProfilePage extends ConsumerWidget {
       appBar: const CustomAppBar(title: 'My Profile', subtitle: 'Academic and account information'),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: AppPaddings.page,
           child: Column(
             children: [
               // User Card Header
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.border, width: 1),
-                ),
-                child: Column(
-                  children: [
-                    UserAvatar(
-                      name: fullName,
-                      imageUrl: avatarUrl,
-                      size: 64,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      fullName,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      email,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primarySurface,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
-                      ),
-                      child: Text(
-                        role.displayName.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              ProfileUserHeader(
+                fullName: fullName,
+                email: email,
+                role: role,
+                avatarUrl: avatarUrl,
               ),
-              const SizedBox(height: 20),
+              AppSpacing.v20,
 
               // Academic Details Section
               const Align(
@@ -102,7 +57,7 @@ class ProfilePage extends ConsumerWidget {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
               ),
-              const SizedBox(height: 10),
+              AppSpacing.v10,
               ProfileTile(
                 icon: Icons.badge_outlined,
                 title: 'Registration Number',
@@ -127,7 +82,7 @@ class ProfilePage extends ConsumerWidget {
                 subtitle: AppStrings.departmentName,
                 trailing: SizedBox.shrink(),
               ),
-              const SizedBox(height: 20),
+              AppSpacing.v20,
 
               // Account & Security Options
               const Align(
@@ -137,7 +92,7 @@ class ProfilePage extends ConsumerWidget {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
               ),
-              const SizedBox(height: 10),
+              AppSpacing.v10,
               ProfileTile(
                 icon: Icons.edit_outlined,
                 title: 'Edit Profile Information',
@@ -173,7 +128,7 @@ class ProfilePage extends ConsumerWidget {
                   }
                 },
               ),
-              const SizedBox(height: 30),
+              AppSpacing.v32,
             ],
           ),
         ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_complaint_managment_system/core/constants/app_colors.dart';
+import 'package:student_complaint_managment_system/core/utils/context_extensions.dart';
+import 'package:student_complaint_managment_system/core/utils/ui_helpers.dart';
 import 'package:student_complaint_managment_system/core/utils/validators.dart';
 import 'package:student_complaint_managment_system/core/widgets/password_field.dart';
 import 'package:student_complaint_managment_system/core/widgets/primary_button.dart';
@@ -36,12 +38,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
           );
 
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password changed successfully!'),
-            backgroundColor: AppColors.statusResolved,
-          ),
-        );
+        context.showSuccessSnackBar('Password changed successfully!');
         context.pop();
       }
     }
@@ -56,15 +53,16 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
       appBar: AppBar(title: const Text('Change Password'), backgroundColor: Colors.white),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppPaddings.all20,
           child: Form(
             key: _formKey,
             child: Container(
-              padding: const EdgeInsets.all(20),
+              padding: AppPaddings.all20,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: AppBorderRadii.r16,
                 border: Border.all(color: AppColors.border),
+                boxShadow: AppShadows.card,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,19 +72,19 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                     controller: _currentPasswordController,
                     validator: Validators.validatePassword,
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.v16,
                   PasswordField(
                     label: 'New Password',
                     controller: _newPasswordController,
                     validator: Validators.validatePassword,
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.v16,
                   PasswordField(
                     label: 'Confirm New Password',
                     controller: _confirmPasswordController,
                     validator: (v) => Validators.validateConfirmPassword(v, _newPasswordController.text),
                   ),
-                  const SizedBox(height: 24),
+                  AppSpacing.v24,
                   PrimaryButton(
                     text: 'Update Password',
                     isLoading: state.isSaving,

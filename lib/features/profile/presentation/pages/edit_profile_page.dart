@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_complaint_managment_system/core/constants/app_colors.dart';
+import 'package:student_complaint_managment_system/core/utils/context_extensions.dart';
+import 'package:student_complaint_managment_system/core/utils/ui_helpers.dart';
 import 'package:student_complaint_managment_system/core/utils/validators.dart';
 import 'package:student_complaint_managment_system/core/widgets/app_text_field.dart';
 import 'package:student_complaint_managment_system/core/widgets/primary_button.dart';
@@ -43,12 +45,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           );
 
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile updated successfully!'),
-            backgroundColor: AppColors.statusResolved,
-          ),
-        );
+        context.showSuccessSnackBar('Profile updated successfully!');
         context.pop();
       }
     }
@@ -63,15 +60,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       appBar: AppBar(title: const Text('Edit Profile'), backgroundColor: Colors.white),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: AppPaddings.all20,
           child: Form(
             key: _formKey,
             child: Container(
-              padding: const EdgeInsets.all(20),
+              padding: AppPaddings.all20,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: AppBorderRadii.r16,
                 border: Border.all(color: AppColors.border),
+                boxShadow: AppShadows.card,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,14 +79,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     controller: _nameController,
                     validator: (v) => Validators.validateRequired(v, fieldName: 'Full name'),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.v16,
                   AppTextField(
                     label: 'Phone Number',
                     hint: '0300-1234567',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                   ),
-                  const SizedBox(height: 24),
+                  AppSpacing.v24,
                   PrimaryButton(
                     text: 'Save Changes',
                     isLoading: state.isSaving,
