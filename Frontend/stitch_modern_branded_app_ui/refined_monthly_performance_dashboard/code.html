@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Monthly Performance Report - DCMS Analytics</title>
+<!-- Google Fonts: Hanken Grotesk & Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface": "#fbf8fc",
+                "primary-fixed": "#dae2ff",
+                "tertiary": "#1e0e00",
+                "on-primary-container": "#7f8db6",
+                "error-container": "#ffdad6",
+                "tertiary-fixed-dim": "#eebd8e",
+                "on-secondary-fixed": "#1a1c1c",
+                "on-primary-fixed-variant": "#38466a",
+                "status-pending": "#F59E0B",
+                "on-error": "#ffffff",
+                "outline-variant": "#c5c6cf",
+                "on-secondary": "#ffffff",
+                "on-secondary-fixed-variant": "#454747",
+                "surface-dim": "#dbd9dd",
+                "secondary-fixed-dim": "#c6c6c7",
+                "status-rejected": "#EF4444",
+                "on-primary-fixed": "#0b1a3c",
+                "on-tertiary-fixed": "#2c1600",
+                "tertiary-fixed": "#ffdcbc",
+                "on-background": "#1b1b1e",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "tertiary-container": "#3b2000",
+                "status-forwarded": "#6366F1",
+                "status-resolved": "#10B981",
+                "secondary": "#5d5f5f",
+                "inverse-primary": "#b8c5f1",
+                "surface-variant": "#e4e2e5",
+                "primary-container": "#172548",
+                "on-surface": "#1b1b1e",
+                "on-primary": "#ffffff",
+                "surface-tint": "#505d84",
+                "inverse-surface": "#303033",
+                "on-tertiary": "#ffffff",
+                "surface-container": "#efedf1",
+                "surface-container-highest": "#e4e2e5",
+                "surface-bright": "#fbf8fc",
+                "secondary-fixed": "#e2e2e2",
+                "on-tertiary-fixed-variant": "#61401a",
+                "surface-container-high": "#eae7eb",
+                "background": "#fbf8fc",
+                "on-secondary-container": "#616363",
+                "surface-container-low": "#f5f3f6",
+                "on-tertiary-container": "#b0855a",
+                "inverse-on-surface": "#f2f0f3",
+                "on-surface-variant": "#45464e",
+                "primary": "#010f32",
+                "outline": "#75777f",
+                "surface-gray": "#F8FAFC",
+                "secondary-container": "#dfe0e0",
+                "border-subtle": "#E2E8F0",
+                "primary-fixed-dim": "#b8c5f1",
+                "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "base-unit": "4px",
+                "gutter-card": "16px",
+                "stack-loose": "24px",
+                "stack-tight": "8px",
+                "margin-page": "20px"
+            },
+            "fontFamily": {
+                "headline-md": ["Hanken Grotesk"],
+                "body-lg": ["Inter"],
+                "headline-lg": ["Hanken Grotesk"],
+                "button-text": ["Inter"],
+                "label-caps": ["JetBrains Mono"],
+                "body-md": ["Inter"],
+                "headline-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+      }
+      .timeline-node {
+        position: relative;
+      }
+      .timeline-node::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 24px;
+        bottom: -24px;
+        width: 1px;
+        background: repeating-linear-gradient(to bottom, #E2E8F0, #E2E8F0 4px, transparent 4px, transparent 8px);
+      }
+      .timeline-node:last-child::before {
+        display: none;
+      }
+      .chart-bar-hover:hover {
+        opacity: 0.8;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24 lg:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-page h-16 bg-primary dark:bg-primary-container shadow-md">
+<div class="flex items-center gap-4">
+<button class="text-on-primary dark:text-on-primary-container hover:bg-primary-container/50 transition-colors p-2 rounded-full Active: opacity-80 scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-on-primary">Monthly Performance Report</h1><span class="text-[10px] text-on-primary/60 font-label-caps ml-2">Last Updated: June 28, 2024</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="hidden md:flex items-center gap-2 bg-on-primary text-primary px-4 py-2 rounded-lg font-button-text hover:bg-primary-fixed transition-all">
+<span class="material-symbols-outlined">download</span>
+                Download PDF
+            </button>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden border-2 border-on-primary/20">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an academic administrator in their 40s, Dean, wearing a charcoal grey suit and white shirt, with a clean office background in soft focus. The lighting is bright and professional, aligning with a corporate minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVTJZgNMMTlEnW329WYS2f1DWxdIbiBsYyHnDgcrgNn25fUzFyCCUBHcQUjKPX4oCbrvaUOK0VFrqCNsEkGJhmA_dUsERkGaVwp-nbXocsYIaYE_kUJbnn6J42BnCHgzXgQeeBmDMkpYqvYzXAzKqqJE3IbOft6OYSjPhHkJjtgtpxzBTT_XNIDF3FCoMHCChKWaAbMFXalpFPGBMDAIm447wlfLAHq5TkaImHMMlyH6C5rWU2_A80RKmuFyP2W9C43EZorapW5pWf"/>
+</div>
+</div>
+</header>
+<main class="mt-20 px-margin-page py-stack-loose max-w-7xl mx-auto space-y-stack-loose">
+<!-- Section 1: Executive Summary -->
+<section>
+<div class="flex items-center justify-between mb-stack-tight">
+<h2 class="font-headline-md text-headline-md text-primary">Executive Summary</h2>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">JUNE 2024</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<!-- KPI Card 1 -->
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-l-4 border-l-status-resolved">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Avg. Resolution Time</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">4.2 Days</span>
+<span class="text-status-resolved text-sm font-semibold flex items-center mb-1">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+                            12%
+                        </span>
+</div>
+<p class="text-sm text-outline mt-2">v/s 4.8 days last month</p>
+</div>
+<!-- KPI Card 2 -->
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-l-4 border-l-status-forwarded">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Total Resolved</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">482</span>
+<span class="text-status-resolved text-sm font-semibold flex items-center mb-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            8%
+                        </span>
+</div>
+<p class="text-sm text-outline mt-2">94% resolution rate</p>
+</div>
+<!-- KPI Card 3 -->
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-l-4 border-l-status-pending">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Dept. Satisfaction</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">4.8/5.0</span>
+<div class="flex text-yellow-500 mb-1">
+<span class="material-symbols-outlined fill text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined fill text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined fill text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined fill text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined fill text-[18px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-1"><div class="h-px flex-grow bg-outline-variant"></div><span class="text-[10px] font-label-caps text-outline">TARGET: 4.5</span></div><p class="text-sm text-outline mt-2">Based on 320 surveys</p>
+</div>
+</div>
+</section>
+<!-- Section 2: Departmental Trends & Section 4: Workload Balance (Bento Grid Style) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter-card">
+<!-- Trends Line Chart Card -->
+<section class="lg:col-span-2 bg-white p-6 rounded-xl border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-primary">Departmental Trends</h2>
+<div class="flex gap-2">
+<div class="flex items-center gap-1">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs text-on-surface-variant font-label-caps">VOLUME</span>
+</div>
+<div class="flex items-center gap-1 ml-2"><span class="w-3 h-3 rounded-full bg-status-forwarded"></span><span class="text-xs text-on-surface-variant font-label-caps">SPEED</span></div></div>
+</div>
+<!-- Mock Chart Visualization -->
+<div class="relative h-64 w-full flex items-end justify-between px-4 pb-8 border-b border-border-subtle"><div class="absolute inset-x-0 top-0 h-px bg-surface-container"></div><div class="absolute inset-x-0 top-1/4 h-px bg-surface-container"></div><div class="absolute inset-x-0 top-2/4 h-px bg-surface-container"></div><div class="absolute inset-x-0 top-3/4 h-px bg-surface-container"></div><div class="flex flex-col items-center group relative z-10"><span class="text-[10px] font-bold text-primary mb-1">120</span><div class="w-3 h-3 rounded-full bg-primary border-2 border-white absolute bottom-[40%]"></div><div class="w-2 h-2 rounded-full bg-status-forwarded absolute bottom-[60%]"></div><div class="h-24 w-1 bg-primary/10 rounded-t"></div><span class="mt-4 text-xs font-label-caps text-outline">JAN</span></div><div class="flex flex-col items-center group relative z-10"><span class="text-[10px] font-bold text-primary mb-1">145</span><div class="w-3 h-3 rounded-full bg-primary border-2 border-white absolute bottom-[55%]"></div><div class="w-2 h-2 rounded-full bg-status-forwarded absolute bottom-[50%]"></div><div class="h-32 w-1 bg-primary/10 rounded-t"></div><span class="mt-4 text-xs font-label-caps text-outline">FEB</span></div><div class="flex flex-col items-center group relative z-10"><span class="text-[10px] font-bold text-primary mb-1">130</span><div class="w-3 h-3 rounded-full bg-primary border-2 border-white absolute bottom-[45%]"></div><div class="w-2 h-2 rounded-full bg-status-forwarded absolute bottom-[55%]"></div><div class="h-28 w-1 bg-primary/10 rounded-t"></div><span class="mt-4 text-xs font-label-caps text-outline">MAR</span></div><div class="flex flex-col items-center group relative z-10"><span class="text-[10px] font-bold text-primary mb-1">180</span><div class="w-3 h-3 rounded-full bg-primary border-2 border-white absolute bottom-[70%]"></div><div class="w-2 h-2 rounded-full bg-status-forwarded absolute bottom-[40%]"></div><div class="h-40 w-1 bg-primary/10 rounded-t"></div><span class="mt-4 text-xs font-label-caps text-outline">APR</span></div><div class="flex flex-col items-center group relative z-10"><span class="text-[10px] font-bold text-primary mb-1">165</span><div class="w-3 h-3 rounded-full bg-primary border-2 border-white absolute bottom-[60%]"></div><div class="w-2 h-2 rounded-full bg-status-forwarded absolute bottom-[45%]"></div><div class="h-36 w-1 bg-primary/10 rounded-t"></div><span class="mt-4 text-xs font-label-caps text-outline">MAY</span></div><div class="flex flex-col items-center group relative z-10"><span class="text-[10px] font-bold text-primary mb-1">210</span><div class="w-4 h-4 rounded-full bg-primary shadow-lg border-2 border-white absolute bottom-[85%] scale-125"></div><div class="w-2 h-2 rounded-full bg-status-forwarded absolute bottom-[35%]"></div><div class="h-48 w-1 bg-primary rounded-t shadow-sm"></div><span class="mt-4 text-xs font-label-caps text-primary font-bold">JUN</span></div></div>
+</section>
+<!-- Workload Balance Card -->
+<section class="bg-white p-6 rounded-xl border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Workload Balance</h2>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between mb-2">
+<span class="font-body-md text-on-surface font-semibold">Batch Advisers</span>
+<span class="text-sm text-outline">42% (Current)</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[42%] rounded-full"></div>
+</div><div class="flex justify-between mt-1"><span class="text-[10px] text-outline font-label-caps">COMPLETED: 85%</span><span class="text-[10px] text-outline font-label-caps">PENDING: 15%</span></div>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<span class="font-body-md text-on-surface font-semibold">Coordinators</span>
+<span class="text-sm text-outline"><span class="material-symbols-outlined text-status-pending text-xs align-middle mr-1">warning</span>35%</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed-dim w-[35%] rounded-full"></div>
+</div><div class="flex justify-between mt-1"><span class="text-[10px] text-outline font-label-caps">COMPLETED: 85%</span><span class="text-[10px] text-outline font-label-caps"><span class="material-symbols-outlined text-status-pending text-xs align-middle mr-1">warning</span>PENDING: 15%</span></div>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<span class="font-body-md text-on-surface font-semibold">Office Staff</span>
+<span class="text-sm text-outline">23%</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant w-[23%] rounded-full"></div>
+</div><div class="flex justify-between mt-1"><span class="text-[10px] text-outline font-label-caps">COMPLETED: 85%</span><span class="text-[10px] text-outline font-label-caps">PENDING: 15%</span></div>
+</div>
+<div class="mt-8 pt-6 border-t border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary-fixed rounded-lg">
+<span class="material-symbols-outlined text-primary">info</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                                Workload is currently within optimal limits. Coordinator capacity is nearing threshold.
+                            </p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter-card">
+<!-- Section 3: Staff Performance Rankings -->
+<section class="bg-white p-6 rounded-xl border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Staff Performance Rankings</h2>
+<div class="space-y-4">
+<!-- Leader Rank -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg border border-primary-fixed">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="A portrait of a smiling female faculty member with glasses and a professional navy blue dress, Dr. Sarah Jenkins. Clean, professional administrative setting with soft natural light. Minimalist institutional style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbZseMyXc8H_2TGTclsEykrrygKB5vn5-VqRczD_WqoG1TryBROz92_XSAzO80l3BYN8iIRJ0NRvYucwbiqEMaeIJ0ykTZ47CasXBNt9LTL5TInO54TNq_KCYKmvTZP574gVwx00WTlK0YpP1qTG4mq5Wttr3-81LPF90mrU8EYXKXtBqoc9i8rW7duKVM7BHEK-pNtyax9k1AhWCDKGFjBh6YfY6S0GNCBPFhpB2TVFNiXTPsVJHHiz0PUWHGs-HEVQc0jxCG60H9"/>
+</div>
+<div class="absolute -top-1 -right-1 bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">1</div>
+</div>
+<div>
+<h3 class="font-body-lg text-primary font-bold">Dr. Sarah Jenkins</h3>
+<p class="text-xs text-outline font-label-caps">SENIOR COORDINATOR</p><span class="inline-block bg-surface-container text-primary text-[9px] px-1.5 py-0.5 rounded mt-1 font-label-caps">GRADING EXPERT</span>
+</div>
+</div>
+<div class="text-right">
+<span class="bg-primary text-white text-[10px] font-label-caps px-2 py-1 rounded mb-1 inline-block uppercase tracking-wider">Performance Leader</span>
+<div class="font-bold text-primary"><span class="material-symbols-outlined text-status-resolved text-sm align-middle mr-1">trending_up</span>98.4% Rate</div>
+</div>
+</div>
+<!-- Rank 2 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-lowest transition-colors rounded-lg border border-transparent border-b-border-subtle">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-quality studio portrait of a male faculty member in his 30s, Mr. David Chen, wearing a professional white shirt and blue tie. Modern professional administrative background. Calm and competent expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvL4_KLWV4l4GHWjkqUR4ubNcbvRI2_yF7dgFOKD7C9_0DRpguWKI20TeMJv8-asQuhMyghtpULhzrXVp8365185pxB2ONF_Fa4N4dobA9G3UKeJRl5l6vp6xdC1xlmnvUbPDpiHXZJ2xtf4sJEWvhyt5J4izvzVdtNjcfCR67PBk2XmCLfYtHogFvmyh1JzZFwUaKXwZLeNE2_MXtHXN-5EuaGmJF8ik5S4KKoEfB1Sk6FdsESf882rR2Xl9D9Uf9S-VU2HP8cn4N"/>
+</div>
+<div class="absolute -top-1 -right-1 bg-outline text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">2</div>
+</div>
+<div>
+<h3 class="font-body-lg text-primary font-semibold">Mr. David Chen</h3>
+<p class="text-xs text-outline font-label-caps">BATCH ADVISER</p>
+</div>
+</div>
+<div class="text-right">
+<div class="font-bold text-primary">95.2% Rate</div>
+<div class="text-[10px] text-outline font-label-caps">22 RESOLVED</div>
+</div>
+</div>
+<!-- Rank 3 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-lowest transition-colors rounded-lg border border-transparent border-b-border-subtle">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young female office administrator, Ms. Elena Vance, with a friendly expression. Professional corporate attire, soft minimalist office background. Clean lighting and high-end aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsKPCDkI6LKK2JNxUuX5d_5RnW61souDcFDh3AHSxSzbfefP_BaU_kKrmFanH3ORY3A3Eih_J93AX8s5nVGZvjsCpi-ZMLQwfl4NGpSV6ytWtcy4suZ_Tb44CefpBQC3yu7WfAC4r-aP3mnShWUTFL5vu7Wu2eGzde7M9HN4NOruUNjD6XKXr9lmMofh5BPBsl1pxYSA7yQcoCOUd6b31SSeZnfyR_AEiAe4vc_ecLmacBLQFSgoJpCATYsjpS2ckmsSj_A27BdrnY"/>
+</div>
+<div class="absolute -top-1 -right-1 bg-outline text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">3</div>
+</div>
+<div>
+<h3 class="font-body-lg text-primary font-semibold">Ms. Elena Vance</h3>
+<p class="text-xs text-outline font-label-caps">OFFICE STAFF</p>
+</div>
+</div>
+<div class="text-right">
+<div class="font-bold text-primary">92.8% Rate</div>
+<div class="text-[10px] text-outline font-label-caps">18 RESOLVED</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Strategic Recommendations -->
+<section class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Strategic Recommendations</h2>
+<div class="flex-grow bg-primary text-white p-8 rounded-xl relative overflow-hidden">
+<!-- Subtle background graphic pattern -->
+<div class="absolute top-0 right-0 w-32 h-32 opacity-10">
+<svg class="w-full h-full fill-current" viewbox="0 0 100 100">
+<circle cx="100" cy="0" r="100"></circle>
+</svg>
+</div>
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-primary-fixed mb-4">Focus Areas for July</h3>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<div class="bg-white/20 p-2 rounded-lg mt-1">
+<span class="material-symbols-outlined text-sm">priority_high</span>
+</div>
+<div>
+<h4 class="font-bold text-lg"><span class="bg-status-rejected text-white text-[9px] px-1.5 py-0.5 rounded mr-2 align-middle uppercase">High Priority</span>Address Batch AR-2023</h4>
+<p class="text-sm text-primary-fixed opacity-90 leading-relaxed">Recent data indicates a 15% delay in resolution for Batch AR-2023. Targeted intervention required.<span class="block mt-1 font-bold text-white">Est. +12% efficiency gain</span></p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="bg-white/20 p-2 rounded-lg mt-1">
+<span class="material-symbols-outlined text-sm">schedule</span>
+</div>
+<div>
+<h4 class="font-bold text-lg"><span class="bg-status-rejected text-white text-[9px] px-1.5 py-0.5 rounded mr-2 align-middle uppercase">High Priority</span>Shift Coordinator Workload</h4>
+<p class="text-sm text-primary-fixed opacity-90 leading-relaxed">Rebalance minor administrative tasks from Coordinators to junior Office Staff to improve throughput.<span class="block mt-1 font-bold text-white">Est. +12% efficiency gain</span></p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="bg-white/20 p-2 rounded-lg mt-1">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-bold text-lg"><span class="bg-status-rejected text-white text-[9px] px-1.5 py-0.5 rounded mr-2 align-middle uppercase">High Priority</span>Automated Feedback Loops</h4>
+<p class="text-sm text-primary-fixed opacity-90 leading-relaxed">Implement instant feedback surveys upon complaint resolution to maintain high satisfaction metrics.<span class="block mt-1 font-bold text-white">Est. +12% efficiency gain</span></p>
+</div>
+</li>
+</ul>
+<div class="mt-8 flex justify-end">
+<button class="bg-white text-primary px-6 py-2 rounded-full font-button-text hover:bg-primary-fixed transition-all flex items-center gap-2">
+                                Review Implementation Plan
+                                <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface md:hidden border-t border-border-subtle shadow-[0_-4px_12px_rgba(0,0,0,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px]">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-[10px]">Staff</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1" href="#">
+<span class="material-symbols-outlined text-primary">trending_up</span>
+<span class="font-label-caps text-[10px] text-primary font-bold">Trends</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-fixed dark:bg-primary-container text-on-primary-fixed dark:text-on-primary-container rounded-full px-4 py-1 scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-[10px]">Reports</span>
+</a>
+</nav>
+<!-- Contextual Action (FAB) for downloading on mobile -->
+<button class="fixed bottom-24 right-margin-page bg-primary text-white w-14 h-14 rounded-full shadow-lg md:hidden flex items-center justify-center Active: scale-95 transition-transform z-40">
+<span class="material-symbols-outlined">download</span>
+</button>
+<script>
+        // Simple Micro-interaction for cards
+        document.querySelectorAll('.bg-white').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.2s ease-out';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+    </script>
+</body></html>

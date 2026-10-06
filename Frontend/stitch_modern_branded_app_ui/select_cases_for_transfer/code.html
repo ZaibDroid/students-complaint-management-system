@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Case Redistribution - Step 1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-gray": "#F8FAFC",
+                    "surface": "#fbf8fc",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-secondary-fixed-variant": "#454747",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f5f3f6",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-container": "#b0855a",
+                    "on-primary-fixed": "#0b1a3c",
+                    "surface-bright": "#fbf8fc",
+                    "on-surface-variant": "#45464e",
+                    "border-subtle": "#E2E8F0",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#1b1b1e",
+                    "tertiary-container": "#3b2000",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "surface-container": "#efedf1",
+                    "surface-dim": "#dbd9dd",
+                    "background": "#fbf8fc",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-surface": "#1b1b1e",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary-fixed": "#dae2ff",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c5c6cf",
+                    "inverse-primary": "#b8c5f1",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#303033",
+                    "outline": "#75777f",
+                    "secondary": "#5d5f5f",
+                    "on-primary-fixed-variant": "#38466a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-tertiary-fixed": "#2c1600",
+                    "secondary-container": "#dfe0e0",
+                    "primary-container": "#172548",
+                    "primary": "#010f32",
+                    "tertiary": "#1e0e00",
+                    "status-rejected": "#EF4444",
+                    "on-primary-container": "#7f8db6",
+                    "status-forwarded": "#6366F1",
+                    "status-resolved": "#10B981",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#eae7eb",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#505d84",
+                    "surface-variant": "#e4e2e5",
+                    "on-secondary-container": "#616363",
+                    "status-pending": "#F59E0B",
+                    "inverse-on-surface": "#f2f0f3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "20px",
+                    "stack-loose": "24px",
+                    "base-unit": "4px",
+                    "stack-tight": "8px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "button-text": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fbf8fc;
+            -webkit-font-smoothing: antialiased;
+        }
+        .complaint-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .complaint-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .complaint-card:active {
+            transform: scale(0.99);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-surface dark:bg-surface-container-low text-primary dark:text-inverse-primary border-b border-border-subtle dark:border-outline-variant z-50 flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-4">
+<button class="cursor-pointer active:scale-95 transition-transform hover:bg-surface-container dark:hover:bg-surface-container-high p-2 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md">Case Redistribution</h1>
+</div>
+<button class="cursor-pointer active:scale-95 transition-transform hover:bg-surface-container dark:hover:bg-surface-container-high p-2 rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-margin-page max-w-4xl mx-auto">
+<!-- Context Banner -->
+<section class="mb-stack-loose animate-in fade-in slide-in-from-top-4 duration-500">
+<div class="bg-primary-container text-on-primary-container p-6 rounded-xl shadow-sm border border-outline-variant/30">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<p class="font-label-caps text-label-caps opacity-80 mb-1">SOURCE ALLOCATION</p>
+<h2 class="font-headline-md text-headline-md text-white">Prof. Julian Reed</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="font-label-caps text-label-caps opacity-80">CURRENT LOAD</p>
+<p class="font-headline-md text-headline-md text-white">85%</p>
+</div>
+<div class="w-24 h-3 bg-white/20 rounded-full overflow-hidden">
+<div class="bg-status-rejected h-full w-[85%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Selection Controls -->
+<section class="mb-stack-loose flex items-center justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md">Select Cases for Transfer</h3>
+<p class="text-on-surface-variant font-body-md">Choose the active complaints you wish to reassign.</p>
+</div>
+<button class="font-button-text text-button-text text-primary flex items-center gap-2 px-4 py-2 hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">select_all</span>
+                Select All
+            </button>
+</section>
+<!-- Complaint List -->
+<section class="space-y-4">
+<!-- Complaint Item 1 -->
+<div class="complaint-card bg-white rounded-xl p-4 flex items-center gap-4 border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-pending"></div>
+<div class="flex items-center">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ID: #COMP-4829</p>
+<h4 class="font-body-lg text-body-lg font-semibold">Late Submission Appeal</h4>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STUDENT</p>
+<p class="font-body-md text-body-md">Sarah Jenkins</p>
+</div>
+<div class="flex items-center gap-2 justify-self-start md:justify-self-end">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+<p class="font-body-md text-body-md text-on-surface-variant">14 Days Open</p>
+</div>
+</div>
+</div>
+<!-- Complaint Item 2 -->
+<div class="complaint-card bg-white rounded-xl p-4 flex items-center gap-4 border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-pending"></div>
+<div class="flex items-center">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ID: #COMP-4835</p>
+<h4 class="font-body-lg text-body-lg font-semibold">Grading Clarification</h4>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STUDENT</p>
+<p class="font-body-md text-body-md">Michael Chen</p>
+</div>
+<div class="flex items-center gap-2 justify-self-start md:justify-self-end">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+<p class="font-body-md text-body-md text-on-surface-variant">8 Days Open</p>
+</div>
+</div>
+</div>
+<!-- Complaint Item 3 -->
+<div class="complaint-card bg-white rounded-xl p-4 flex items-center gap-4 border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-pending"></div>
+<div class="flex items-center">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ID: #COMP-4851</p>
+<h4 class="font-body-lg text-body-lg font-semibold">Attendance Discrepancy</h4>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STUDENT</p>
+<p class="font-body-md text-body-md">Elena Rodriguez</p>
+</div>
+<div class="flex items-center gap-2 justify-self-start md:justify-self-end">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+<p class="font-body-md text-body-md text-on-surface-variant">5 Days Open</p>
+</div>
+</div>
+</div>
+<!-- Complaint Item 4 -->
+<div class="complaint-card bg-white rounded-xl p-4 flex items-center gap-4 border border-border-subtle shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden opacity-80">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-forwarded"></div>
+<div class="flex items-center">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ID: #COMP-4866</p>
+<h4 class="font-body-lg text-body-lg font-semibold">Project Deadline Extension</h4>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STUDENT</p>
+<p class="font-body-md text-body-md">Liam Wilson</p>
+</div>
+<div class="flex items-center gap-2 justify-self-start md:justify-self-end">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+<p class="font-body-md text-body-md text-on-surface-variant">3 Days Open</p>
+</div>
+</div>
+</div>
+<!-- More items implied for the scrolling view -->
+<div class="text-center py-6">
+<button class="font-button-text text-on-surface-variant hover:text-primary transition-colors inline-flex items-center gap-1">
+                    Load more cases
+                    <span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Summary Footer -->
+<footer class="fixed bottom-0 w-full bg-surface-container-lowest border-t border-border-subtle p-6 z-50">
+<div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SELECTED</span>
+<span class="font-headline-md text-headline-md text-primary" id="case-count">12 cases selected</span>
+</div>
+<div class="h-10 w-px bg-border-subtle hidden md:block"></div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">IMPACT</span>
+<span class="font-body-md text-body-md text-status-resolved">-15% Source Load</span>
+</div>
+</div>
+<button class="w-full md:w-auto bg-primary text-white font-button-text text-button-text px-8 py-3 rounded-lg shadow-sm hover:bg-primary-container active:scale-95 transition-all flex items-center justify-center gap-2">
+                Continue to Recipient
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</footer>
+<!-- BottomNavBar (Hidden on desktop as per Shell Mandate for Transactional screens but shown here for UI completeness check if it were a top level, though suppressed for this task) -->
+<!-- Suppressed: This is a Transactional/Step-based flow -->
+<script>
+        // Micro-interaction for checkboxes
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const countDisplay = document.getElementById('case-count');
+        let selectedCount = 12; // Starting state as requested
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    selectedCount++;
+                } else {
+                    selectedCount--;
+                }
+                countDisplay.innerText = `${selectedCount} cases selected`;
+                
+                // Visual feedback on card
+                const card = e.target.closest('.complaint-card');
+                if (e.target.checked) {
+                    card.classList.remove('opacity-80');
+                } else {
+                    card.classList.add('opacity-80');
+                }
+            });
+        });
+
+        // Hover animation logic for cards
+        const cards = document.querySelectorAll('.complaint-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = '#172548';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = '#E2E8F0';
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Staff Profile | DCMS Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface-variant": "#45464e",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "secondary-fixed": "#e2e2e2",
+                    "outline": "#75777f",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#0b1a3c",
+                    "primary-container": "#172548",
+                    "on-surface": "#1b1b1e",
+                    "tertiary-fixed": "#ffdcbc",
+                    "outline-variant": "#c5c6cf",
+                    "surface-container-high": "#eae7eb",
+                    "surface-container": "#efedf1",
+                    "status-forwarded": "#6366F1",
+                    "inverse-primary": "#b8c5f1",
+                    "border-subtle": "#E2E8F0",
+                    "background": "#fbf8fc",
+                    "on-background": "#1b1b1e",
+                    "status-pending": "#F59E0B",
+                    "inverse-on-surface": "#f2f0f3",
+                    "on-secondary-container": "#616363",
+                    "on-primary": "#ffffff",
+                    "surface-gray": "#F8FAFC",
+                    "on-secondary-fixed-variant": "#454747",
+                    "tertiary-container": "#3b2000",
+                    "primary-fixed": "#dae2ff",
+                    "status-resolved": "#10B981",
+                    "on-primary-container": "#7f8db6",
+                    "secondary": "#5d5f5f",
+                    "inverse-surface": "#303033",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-tint": "#505d84",
+                    "secondary-container": "#dfe0e0",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#38466a",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#1e0e00",
+                    "on-tertiary-container": "#b0855a",
+                    "on-tertiary-fixed": "#2c1600",
+                    "surface-variant": "#e4e2e5",
+                    "surface-dim": "#dbd9dd",
+                    "status-rejected": "#EF4444",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fbf8fc",
+                    "surface": "#fbf8fc",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "primary": "#010f32"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-card": "16px",
+                    "base-unit": "4px",
+                    "stack-loose": "24px",
+                    "margin-page": "20px",
+                    "stack-tight": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b border-border-subtle shadow-sm flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a university administrator, mid-40s, wearing formal business attire. The person has a friendly but authoritative expression. The background is a slightly blurred office setting with bookshelves and soft window lighting, evoking institutional trust and competence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDytDtOVPRmiX9Hbd3axQI9iNhBHuEYTI-9W7Rckr63qq6vl874vooCHxI_lj9rqhaFmD_VzEd1StCoetrtCD3lPQsAqIH9xv-XoWdQJ_pLuUvGEcnekjfmsyO8jdP53Q3in8ALI3R5F3JK9zPs-JQc_QhgrnAnITon-CdJnxf5869jhxbRuKAsql0xWq8O8ghZz275Hvxc8jHUG_aI5gT-qvbxOJfsJp3y3nrYxwRUv5DOsgkZEiyd0qi3ryracpbK6fq5psGCFf1f"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary">Staff Dashboard</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container active:scale-95 transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<main class="pt-24 px-margin-page max-w-5xl mx-auto">
+<!-- Profile Hero Section -->
+<section class="mb-stack-loose">
+<div class="glass-card rounded-xl p-6 shadow-sm flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+<!-- Abstract visual element -->
+<div class="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-primary/5 blur-3xl"></div>
+<div class="relative w-32 h-32 md:w-40 md:h-40">
+<img class="w-full h-full object-cover rounded-2xl shadow-md border-4 border-white" data-alt="A professional close-up of a middle-aged academic staff member with a kind smile. They are wearing a navy blue blazer over a crisp white shirt. The lighting is studio-quality, emphasizing clarity and professionalism. The background is a clean, neutral grey to maintain focus on the subject." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB-fGf2lWFKCBq2QB60oOUvKRbb2n0RGI_3l84hmAogXZF_PqoC2PU3zU5TFr5iTneEldbCWSRBnCbWENrRq7nFAbJu-5XZHHdLYIMiN6YPspD8sqRp_GysTUW8XpM-PGYjnTq2EVlIOdCYk2TaFDuXTB0ebQ_nDib2OOBntwG_xJfPHJk3aaM7X18kEdrIm1YcT40vh-cPAbE0B2OiET_bj_q3YzKV6ZOjJYsEtHdsv43IMNPp8Gs18Rcy8U9MJH6WIjB2qJMhzmw"/>
+<div class="absolute -bottom-2 -right-2 bg-status-resolved text-white p-1.5 rounded-full border-4 border-white shadow-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<span class="font-label-caps text-label-caps text-primary bg-primary/10 px-3 py-1 rounded-full mb-3 inline-block">SENIOR ADMINISTRATOR</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-1">Dr. Sarah Jenkins</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">sarah.jenkins@uom.edu.pk</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-4">
+<div class="flex flex-col items-center md:items-start">
+<span class="font-label-caps text-[10px] text-outline uppercase tracking-widest">Department</span>
+<span class="font-body-lg text-body-lg text-primary font-semibold">Student Affairs</span>
+</div>
+<div class="w-px h-10 bg-border-subtle hidden md:block"></div>
+<div class="flex flex-col items-center md:items-start">
+<span class="font-label-caps text-[10px] text-outline uppercase tracking-widest">Office ID</span>
+<span class="font-body-lg text-body-lg text-primary font-semibold">ADM-402-B</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Grid (Bento Style) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-stack-loose">
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-3">assignment_turned_in</span>
+<div>
+<div class="font-headline-md text-headline-md text-primary">124</div>
+<div class="font-label-caps text-label-caps text-outline">RESOLVED</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<span class="material-symbols-outlined text-status-pending mb-3">pending_actions</span>
+<div>
+<div class="font-headline-md text-headline-md text-primary">08</div>
+<div class="font-label-caps text-label-caps text-outline">PENDING</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<span class="material-symbols-outlined text-status-forwarded mb-3">share_reviews</span>
+<div>
+<div class="font-headline-md text-headline-md text-primary">42</div>
+<div class="font-label-caps text-label-caps text-outline">FORWARDED</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-border-subtle shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-3">avg_pace</span>
+<div>
+<div class="font-headline-md text-headline-md text-primary">1.2d</div>
+<div class="font-label-caps text-label-caps text-outline">AVG SPEED</div>
+</div>
+</div>
+</section>
+<!-- Settings Sections -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-loose">
+<!-- Account Settings -->
+<div class="lg:col-span-2 space-y-stack-tight">
+<h3 class="font-headline-md text-headline-md text-primary px-2 mb-2">Account Settings</h3>
+<div class="bg-white rounded-xl border border-border-subtle overflow-hidden">
+<!-- Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-gray transition-colors border-b border-border-subtle">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="text-left">
+<div class="font-body-lg text-body-lg font-semibold text-primary">Personal Information</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Update your details and contact information</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<!-- Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-gray transition-colors border-b border-border-subtle">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<div class="text-left">
+<div class="font-body-lg text-body-lg font-semibold text-primary">Password &amp; Security</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Two-factor authentication and recovery</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<!-- Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-gray transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div class="text-left">
+<div class="font-body-lg text-body-lg font-semibold text-primary">Notification Preferences</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Manage push and email alerts</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</div>
+<div class="h-4"></div>
+<h3 class="font-headline-md text-headline-md text-primary px-2 mb-2">Workflow Preferences</h3>
+<div class="bg-white rounded-xl border border-border-subtle overflow-hidden">
+<div class="flex items-center justify-between p-4 border-b border-border-subtle">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div class="text-left">
+<div class="font-body-lg text-body-lg font-semibold text-primary">Availability Status</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Currently accepting new complaints</div>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-secondary-container rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-gray transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">history_edu</span>
+</div>
+<div class="text-left">
+<div class="font-body-lg text-body-lg font-semibold text-primary">Signature &amp; Seals</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Digital signatures for formal resolutions</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Side Cards -->
+<div class="space-y-stack-loose">
+<!-- Support Card -->
+<div class="bg-primary-container text-on-primary-container p-6 rounded-xl relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md mb-2">Need Technical Help?</h4>
+<p class="font-body-md text-body-md opacity-80 mb-6">If you're having trouble with the dashboard, our IT support is here 24/7.</p>
+<button class="w-full bg-on-primary-container text-primary font-bold py-3 rounded-lg hover:brightness-110 active:scale-95 transition-all">
+                            Contact IT Support
+                        </button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-6 -right-6 text-[120px] opacity-10 rotate-12">support_agent</span>
+</div>
+<!-- Danger Zone -->
+<div class="p-2">
+<button class="w-full flex items-center justify-center gap-2 text-error font-semibold p-4 rounded-xl border border-error/20 hover:bg-error/5 transition-colors">
+<span class="material-symbols-outlined">logout</span>
+                        Sign Out
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-16 bg-surface border-t border-border-subtle shadow-[0_-4px_12px_0_rgba(0,0,0,0.04)] flex justify-around items-center px-2 pb-safe z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-[10px] mt-1">Assigned</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-[10px] mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-[10px] mt-1">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-caps text-[10px] mt-0.5">Account</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for list items
+        document.querySelectorAll('button.w-full').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.classList.add('scale-[0.98]');
+            });
+            btn.addEventListener('touchend', function() {
+                this.classList.remove('scale-[0.98]');
+            });
+        });
+
+        // Simple visibility toggle for mobile top bar scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('shadow-md');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.add('shadow-sm');
+            }
+        });
+    </script>
+</body></html>

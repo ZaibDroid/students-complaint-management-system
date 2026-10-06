@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Dashboard - Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8fc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .chart-bar-transition {
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .grid-line {
+            stroke: #e2e8f0;
+            stroke-dasharray: 4 4;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "surface-gray": "#F8FAFC",
+                        "on-secondary-container": "#616363",
+                        "primary": "#010f32",
+                        "on-tertiary-container": "#b0855a",
+                        "status-forwarded": "#6366F1",
+                        "secondary-fixed": "#e2e2e2",
+                        "status-resolved": "#10B981",
+                        "on-primary-fixed": "#0b1a3c",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#1e0e00",
+                        "background": "#fbf8fc",
+                        "inverse-surface": "#303033",
+                        "inverse-on-surface": "#f2f0f3",
+                        "border-subtle": "#E2E8F0",
+                        "on-secondary": "#ffffff",
+                        "status-pending": "#F59E0B",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "surface-container-high": "#eae7eb",
+                        "surface-tint": "#505d84",
+                        "secondary": "#5d5f5f",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "surface-bright": "#fbf8fc",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "surface-container-highest": "#e4e2e5",
+                        "outline": "#75777f",
+                        "on-surface-variant": "#45464e",
+                        "inverse-primary": "#b8c5f1",
+                        "surface": "#fbf8fc",
+                        "outline-variant": "#c5c6cf",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-background": "#1b1b1e",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#dbd9dd",
+                        "secondary-container": "#dfe0e0",
+                        "primary-fixed": "#dae2ff",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "surface-variant": "#e4e2e5",
+                        "on-primary": "#ffffff",
+                        "status-rejected": "#EF4444",
+                        "on-surface": "#1b1b1e",
+                        "surface-container-low": "#f5f3f6",
+                        "surface-container": "#efedf1",
+                        "on-secondary-fixed-variant": "#454747",
+                        "tertiary-container": "#3b2000",
+                        "primary-container": "#172548",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "on-primary-fixed-variant": "#38466a",
+                        "on-primary-container": "#7f8db6",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-card": "16px",
+                        "stack-tight": "8px",
+                        "margin-page": "20px",
+                        "stack-loose": "24px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface shadow-sm border-b border-border-subtle flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-border-subtle bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="A professional headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_L6n6Z2B7xicGv_5hQjohY6Jjs628r7vUPZt36cU7exGan5cTO2UcdyPjLefPjys_QeOm6_wJeI5iSwBhmQCvGPa6YKc5RwDyr1EuI5ft0ffwkoXT1j7BAWmqtvBhHCcHZGqQ9xIjTEyKBkqi21gMxaoBQUXnMqMvsNwLsJe4KFvdWVRDPgDWQqVAffqf2gqAOHbzOP_zEuBeIw78d5d_QxobfV0AMsGKtztc7FZYbqx7qgaJicDdl-7a2t7_BkPGTBJxNytkNMjd"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary">Staff Dashboard</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</button>
+</header>
+<main class="mt-20 px-margin-page space-y-stack-loose">
+<!-- Summary Metrics -->
+<section class="grid grid-cols-2 gap-stack-tight">
+<div class="col-span-2 bg-primary p-5 rounded-xl shadow-lg relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-label-caps text-label-caps text-on-primary opacity-70 mb-1">Total Complaints</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-white">1,284</h2>
+<div class="flex items-center mt-2 gap-1 text-status-resolved">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+<span class="text-xs font-semibold font-body-md text-status-resolved">12.5% from last month</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[120px] text-white">analytics</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-border-subtle shadow-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Avg. Resolution</p>
+<h2 class="font-headline-md text-headline-md text-primary">3.2 Days</h2>
+<span class="text-[10px] text-status-forwarded font-medium uppercase tracking-wider">High Efficiency</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-border-subtle shadow-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Satisfaction</p>
+<h2 class="font-headline-md text-headline-md text-primary">94.8%</h2>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-3">
+<div class="bg-status-resolved h-1.5 rounded-full" style="width: 94.8%"></div>
+</div>
+</div>
+</section>
+<!-- Category Breakdown - High Fidelity -->
+<section class="space-y-stack-tight">
+<h3 class="font-headline-md text-headline-md text-primary">Category Breakdown</h3>
+<div class="bg-surface-container-lowest p-gutter-card rounded-xl border border-border-subtle shadow-sm">
+<div class="relative h-56 flex items-end justify-between px-2 pt-6">
+<!-- Y-Axis Markers -->
+<div class="absolute left-0 top-0 h-full w-full pointer-events-none flex flex-col justify-between py-6">
+<div class="border-b border-border-subtle w-full opacity-50 relative">
+<span class="absolute -top-4 left-0 text-[9px] font-label-caps text-on-surface-variant">500</span>
+</div>
+<div class="border-b border-border-subtle w-full opacity-50 relative">
+<span class="absolute -top-4 left-0 text-[9px] font-label-caps text-on-surface-variant">250</span>
+</div>
+<div class="border-b border-primary w-full opacity-10"></div>
+</div>
+<!-- Academic -->
+<div class="flex-1 flex flex-col items-center gap-2 group relative z-10">
+<span class="text-[11px] font-bold text-primary mb-1">420</span>
+<div class="w-8 bg-primary rounded-t-sm chart-bar-transition" style="height: 140px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">Academic</span>
+</div>
+<!-- Maintenance -->
+<div class="flex-1 flex flex-col items-center gap-2 group relative z-10">
+<span class="text-[11px] font-bold text-primary mb-1">210</span>
+<div class="w-8 bg-primary-container rounded-t-sm chart-bar-transition" style="height: 70px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">Maint.</span>
+</div>
+<!-- Security -->
+<div class="flex-1 flex flex-col items-center gap-2 group relative z-10">
+<span class="text-[11px] font-bold text-primary mb-1">115</span>
+<div class="w-8 bg-primary-container rounded-t-sm chart-bar-transition" style="height: 38px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">Security</span>
+</div>
+<!-- Financial -->
+<div class="flex-1 flex flex-col items-center gap-2 group relative z-10">
+<span class="text-[11px] font-bold text-primary mb-1">285</span>
+<div class="w-8 bg-primary-container rounded-t-sm chart-bar-transition" style="height: 95px;"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">Finan.</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Monthly Trends - Refined Visual -->
+<section class="space-y-stack-tight">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-primary">Monthly Trends</h3>
+<span class="text-[10px] font-label-caps text-primary bg-primary-fixed px-2 py-1 rounded">VOLUME: 2024</span>
+</div>
+<div class="bg-surface-container-lowest p-gutter-card rounded-xl border border-border-subtle shadow-sm h-64 relative">
+<!-- Axis Markers -->
+<div class="absolute left-6 top-4 bottom-12 border-l border-border-subtle"></div>
+<div class="absolute left-6 bottom-12 right-4 border-b border-border-subtle"></div>
+<svg class="w-full h-full pb-8 pl-6" preserveaspectratio="none" viewbox="0 0 400 150">
+<defs>
+<lineargradient id="areaGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#010f32;stop-opacity:0.15"></stop>
+<stop offset="100%" style="stop-color:#010f32;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid lines -->
+<line class="grid-line" x1="0" x2="400" y1="37.5" y2="37.5"></line>
+<line class="grid-line" x1="0" x2="400" y1="75" y2="75"></line>
+<line class="grid-line" x1="0" x2="400" y1="112.5" y2="112.5"></line>
+<!-- Area -->
+<path d="M0,120 Q50,110 80,90 T160,100 T240,60 T320,70 T400,30 L400,150 L0,150 Z" fill="url(#areaGrad)"></path>
+<!-- Main Line -->
+<path d="M0,120 Q50,110 80,90 T160,100 T240,60 T320,70 T400,30" fill="none" stroke="#010f32" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Data Points & Labels -->
+<g>
+<circle cx="80" cy="90" fill="#010f32" r="4"></circle>
+<text fill="#010f32" font-family="Inter" font-size="9" font-weight="700" text-anchor="middle" x="80" y="80">142</text>
+<circle cx="160" cy="100" fill="#010f32" r="4"></circle>
+<text fill="#010f32" font-family="Inter" font-size="9" font-weight="700" text-anchor="middle" x="160" y="90">128</text>
+<circle cx="240" cy="60" fill="#010f32" r="4"></circle>
+<text fill="#010f32" font-family="Inter" font-size="9" font-weight="700" text-anchor="middle" x="240" y="50">195</text>
+<circle cx="320" cy="70" fill="#010f32" r="4"></circle>
+<text fill="#010f32" font-family="Inter" font-size="9" font-weight="700" text-anchor="middle" x="320" y="60">174</text>
+</g>
+</svg>
+<div class="absolute bottom-4 left-10 right-4 flex justify-between">
+<span class="text-[9px] font-label-caps text-on-surface-variant">JAN</span>
+<span class="text-[9px] font-label-caps text-on-surface-variant">MAR</span>
+<span class="text-[9px] font-label-caps text-on-surface-variant">MAY</span>
+<span class="text-[9px] font-label-caps text-on-surface-variant">JUL</span>
+</div>
+</div>
+</section>
+<!-- Key Insights Section -->
+<section class="space-y-stack-tight">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary text-lg">lightbulb</span>
+<h3 class="font-headline-md text-headline-md text-primary">Key Insights</h3>
+</div>
+<div class="bg-primary/5 border border-primary/10 rounded-xl p-4 space-y-3">
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-status-resolved/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-status-resolved text-sm">check_circle</span>
+</div>
+<p class="text-body-md text-primary">Resolution time <strong>decreased by 12%</strong> this month, reaching an all-time low of 3.2 days.</p>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-sm">trending_up</span>
+</div>
+<p class="text-body-md text-primary">Academic complaints account for <strong>33% of total volume</strong>; target for advisor training.</p>
+</div>
+</div>
+</section>
+<!-- Resolution Performance -->
+<section class="space-y-stack-tight pb-8">
+<h3 class="font-headline-md text-headline-md text-primary">Performance by Role</h3>
+<div class="space-y-2">
+<!-- Row 1 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-border-subtle shadow-sm active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<p class="font-body-md text-primary font-bold">Batch Advisers</p>
+<p class="text-[10px] font-label-caps text-on-surface-variant">AVG. 1.8 DAYS</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<div class="flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-status-resolved text-sm">trending_up</span>
+<span class="font-body-md font-bold text-status-resolved">98%</span>
+</div>
+<p class="text-[9px] font-label-caps text-on-surface-variant">RESOLVED</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-border-subtle shadow-sm active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<div>
+<p class="font-body-md text-primary font-bold">Coordinators</p>
+<p class="text-[10px] font-label-caps text-on-surface-variant">AVG. 4.2 DAYS</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<div class="flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-status-pending text-sm">trending_up</span>
+<span class="font-body-md font-bold text-status-pending">84%</span>
+</div>
+<p class="text-[9px] font-label-caps text-on-surface-variant">RESOLVED</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl border border-border-subtle shadow-sm active:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+</div>
+<div>
+<p class="font-body-md text-primary font-bold">Dept. Heads</p>
+<p class="text-[10px] font-label-caps text-on-surface-variant">AVG. 5.1 DAYS</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<div class="flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-status-rejected text-sm">trending_down</span>
+<span class="font-body-md font-bold text-status-forwarded">76%</span>
+</div>
+<p class="text-[9px] font-label-caps text-on-surface-variant">RESOLVED</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-2 pb-safe bg-surface border-t border-border-subtle shadow-lg z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-[10px] mt-1">Assigned</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-[10px] mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-white rounded-full px-5 py-2 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-[10px]">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-[10px] mt-1">Account</span>
+</a>
+</nav>
+<script>
+    // Simplified Chart Animation
+    document.addEventListener('DOMContentLoaded', () => {
+        const bars = document.querySelectorAll('.chart-bar-transition');
+        bars.forEach(bar => {
+            const finalHeight = bar.style.height;
+            bar.style.height = '0';
+            setTimeout(() => {
+                bar.style.height = finalHeight;
+            }, 300);
+        });
+    });
+</script>
+</body></html>

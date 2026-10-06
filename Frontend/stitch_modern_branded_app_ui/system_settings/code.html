@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>System Settings | DCMS</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "status-rejected": "#EF4444",
+                        "status-pending": "#F59E0B",
+                        "tertiary-container": "#3b2000",
+                        "secondary": "#5d5f5f",
+                        "primary-container": "#172548",
+                        "primary-fixed": "#dae2ff",
+                        "status-resolved": "#10B981",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface-gray": "#F8FAFC",
+                        "secondary-container": "#dfe0e0",
+                        "border-subtle": "#E2E8F0",
+                        "surface-tint": "#505d84",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#38466a",
+                        "on-primary-container": "#7f8db6",
+                        "inverse-surface": "#303033",
+                        "tertiary-fixed": "#ffdcbc",
+                        "surface-container-highest": "#e4e2e5",
+                        "outline-variant": "#c5c6cf",
+                        "on-secondary-container": "#616363",
+                        "on-secondary": "#ffffff",
+                        "background": "#fbf8fc",
+                        "surface-bright": "#fbf8fc",
+                        "outline": "#75777f",
+                        "surface-variant": "#e4e2e5",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b0855a",
+                        "surface-container-low": "#f5f3f6",
+                        "on-background": "#1b1b1e",
+                        "on-surface-variant": "#45464e",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#2c1600",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-surface": "#1b1b1e",
+                        "surface-dim": "#dbd9dd",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-error": "#ffffff",
+                        "primary": "#010f32",
+                        "tertiary": "#1e0e00",
+                        "error": "#ba1a1a",
+                        "surface": "#fbf8fc",
+                        "surface-container": "#efedf1",
+                        "error-container": "#ffdad6",
+                        "status-forwarded": "#6366F1",
+                        "on-primary-fixed": "#0b1a3c",
+                        "surface-container-high": "#eae7eb",
+                        "inverse-primary": "#b8c5f1",
+                        "primary-fixed-dim": "#b8c5f1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "20px",
+                        "stack-tight": "8px",
+                        "gutter-card": "16px",
+                        "stack-loose": "24px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #fbf8fc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .settings-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease;
+        }
+        .settings-card:active {
+            transform: scale(0.985);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface mb-24">
+<!-- TopAppBar Shell -->
+<header class="bg-surface sticky top-0 z-50 flex items-center justify-between px-margin-page w-full h-16 border-b border-border-subtle">
+<div class="flex items-center gap-4">
+<button class="transition-colors duration-200 active:scale-95 p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">System Settings</h1>
+</div>
+<button class="transition-colors duration-200 active:scale-95 p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</button>
+</header>
+<main class="max-w-lg mx-auto px-margin-page py-stack-loose space-y-stack-loose">
+<!-- Section 1: General Configuration -->
+<section>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">General Configuration</h2>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden settings-card">
+<!-- Item: Department Identity -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">corporate_fare</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Department Identity</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Name, logo, and brand colors</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: Academic Calendar -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Academic Calendar</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Semester dates and holidays</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Section 2: Workflow & Logic -->
+<section>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">Workflow & Logic</h2>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden settings-card">
+<!-- Item: Complaint Categories -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">category</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Complaint Categories</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Define academic vs admin issues</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: SLA & Deadlines -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">SLA & Deadlines</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Resolution time limits (48h-7d)</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: Escalation Rules -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Escalation Rules</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Auto-transfer to Dean/Board</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Section 3: User & Security -->
+<section>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">User & Security</h2>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden settings-card">
+<!-- Item: Role Permissions -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Role Permissions</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Deans, Chairmen, and Staff</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: Staff Management -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Staff Management</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Assigning roles to faculty</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: Login Security -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">shield</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Login Security</p>
+<p class="font-body-md text-body-md text-on-surface-variant">2FA and session timeouts</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Section 4: System Utilities -->
+<section>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">System Utilities</h2>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden settings-card">
+<!-- Item: Notification Templates -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Notification Templates</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Email and SMS triggers</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: Backup & Data Export -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">cloud_download</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Backup & Data Export</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Automated daily snapshots</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<div class="h-px bg-border-subtle mx-4"></div>
+<!-- Item: Audit Logs -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">history_edu</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Audit Logs</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Track all administrative actions</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Danger Zone (Extra Design Touch) -->
+<section>
+<h2 class="font-label-caps text-label-caps text-status-rejected mb-stack-tight px-1">Advanced Controls</h2>
+<div class="bg-status-rejected/5 border border-status-rejected/20 rounded-xl overflow-hidden">
+<div class="flex items-center justify-between p-4 hover:bg-status-rejected/10 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-status-rejected/10 text-status-rejected">
+<span class="material-symbols-outlined">settings_backup_restore</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-status-rejected">System Reset</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Clear all data and configurations</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface border-t border-border-subtle shadow-sm">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-secondary px-3 py-1 transition-all duration-300 ease-in-out hover:text-primary" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</a>
+<!-- Complaints -->
+<a class="flex flex-col items-center justify-center text-secondary px-3 py-1 transition-all duration-300 ease-in-out hover:text-primary" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-label-caps text-label-caps mt-1">Complaints</span>
+</a>
+<!-- Settings (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-caps text-label-caps mt-1">Settings</span>
+</a>
+<!-- Audit -->
+<a class="flex flex-col items-center justify-center text-secondary px-3 py-1 transition-all duration-300 ease-in-out hover:text-primary" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-caps text-label-caps mt-1">Audit</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction: Ripple or background highlight on touch
+        document.querySelectorAll('.settings-card > div').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Future expansion: navigation logic
+                console.log('Navigating to setting section...');
+            });
+        });
+    </script>
+</body></html>

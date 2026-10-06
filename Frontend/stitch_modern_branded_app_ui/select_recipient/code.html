@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Case Redistribution - Select Recipient</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-gray": "#F8FAFC",
+                    "surface": "#fbf8fc",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-secondary-fixed-variant": "#454747",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f5f3f6",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-container": "#b0855a",
+                    "on-primary-fixed": "#0b1a3c",
+                    "surface-bright": "#fbf8fc",
+                    "on-surface-variant": "#45464e",
+                    "border-subtle": "#E2E8F0",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#1b1b1e",
+                    "tertiary-container": "#3b2000",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "surface-container": "#efedf1",
+                    "surface-dim": "#dbd9dd",
+                    "background": "#fbf8fc",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-surface": "#1b1b1e",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary-fixed": "#dae2ff",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c5c6cf",
+                    "inverse-primary": "#b8c5f1",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#303033",
+                    "outline": "#75777f",
+                    "secondary": "#5d5f5f",
+                    "on-primary-fixed-variant": "#38466a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-tertiary-fixed": "#2c1600",
+                    "secondary-container": "#dfe0e0",
+                    "primary-container": "#172548",
+                    "primary": "#010f32",
+                    "tertiary": "#1e0e00",
+                    "status-rejected": "#EF4444",
+                    "on-primary-container": "#7f8db6",
+                    "status-forwarded": "#6366F1",
+                    "status-resolved": "#10B981",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#eae7eb",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#505d84",
+                    "surface-variant": "#e4e2e5",
+                    "on-secondary-container": "#616363",
+                    "status-pending": "#F59E0B",
+                    "inverse-on-surface": "#f2f0f3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "20px",
+                    "stack-loose": "24px",
+                    "base-unit": "4px",
+                    "stack-tight": "8px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "button-text": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #fbf8fc;
+            color: #1b1b1e;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .selection-ring {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input[type="radio"]:checked + label .selection-ring {
+            border-color: #010f32;
+            background-color: #010f32;
+            box-shadow: 0 0 0 4px rgba(1, 15, 50, 0.1);
+        }
+        .staff-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .staff-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md min-h-screen pb-24">
+<!-- Top App Bar (Shared Component Anchor) -->
+<header class="fixed top-0 w-full bg-surface dark:bg-surface-container-low flex justify-between items-center px-margin-page h-16 w-full z-50 border-b border-border-subtle dark:border-outline-variant">
+<div class="flex items-center gap-4 cursor-pointer active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+<h1 class="font-headline-md text-headline-md text-primary">Case Redistribution</h1>
+</div>
+<div class="cursor-pointer active:scale-95 transition-transform hover:bg-surface-container transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help_outline">help_outline</span>
+</div>
+</header>
+<main class="pt-24 px-margin-page max-w-3xl mx-auto">
+<!-- Sub-header Branding -->
+<section class="mb-stack-loose">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">STEP 2 OF 4</span>
+<span class="font-label-caps text-label-caps text-status-forwarded font-bold">BATCH ACTION</span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Select Recipient</h2>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]" data-icon="swap_horiz">swap_horiz</span>
+<p class="font-body-lg text-body-lg">Transferring <span class="font-bold text-primary">12 Cases</span> from Graduate Admissions Pool</p>
+</div>
+</section>
+<!-- Recommended Section (Asymmetric Bento Highlight) -->
+<section class="mb-stack-loose">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight">RECOMMENDED MATCH</h3>
+<input checked="" class="hidden" id="staff_elena" name="staff_selection" type="radio"/>
+<label class="block cursor-pointer" for="staff_elena">
+<div class="staff-card relative bg-surface-container-lowest border-2 border-primary rounded-xl p-gutter-card shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center">
+<div class="absolute top-4 right-4">
+<div class="selection-ring w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-white"></div>
+</div>
+</div>
+<div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary-fixed-dim">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a female academic administrator with a warm, confident expression. She has dark hair and is wearing a modern navy blazer. The background is a soft-focus clean office environment with professional lighting and a cool-toned, corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKcMaZ_2bVvjr1MTirYzS8ODmw1053-GYr9UFuu_tneNZnWyVQphRmRM8lj2nROB53wW4jdRExsMOoVLpgbZBeXJQ6kQAMr4ye0gq4w5b2UvUYZk_W7ttR5I4OjHI_RGIglYqjEs0oQkwJlf3A-BVJ3TC5Edw6SxdK5wbGObPbmMu8Ai9pJ2bXulNuEiD9AIC5bGaiALXLdn4nInnI2NltENbA_8nwro9hATeJt4x_OSTxMEkVPNBYQlx0EQ2hW_R7cVGEVGsrTGen"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-md text-headline-md text-primary">Dr. Elena Vance</span>
+<span class="bg-status-resolved/10 text-status-resolved text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Top Rated</span>
+</div>
+<p class="text-on-surface-variant text-body-md mb-3">Senior Faculty Liaison • Arts &amp; Sciences</p>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="flex flex-col">
+<span class="text-label-caps font-label-caps text-outline">CURRENT LOAD</span>
+<div class="flex items-center gap-2">
+<span class="font-bold text-primary">65%</span>
+<div class="h-1.5 w-16 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-status-resolved w-[65%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col border-l border-border-subtle pl-4">
+<span class="text-label-caps font-label-caps text-outline">EFFICIENCY</span>
+<span class="font-bold text-status-resolved">+18% faster</span>
+</div>
+<div class="hidden md:flex flex-col border-l border-border-subtle pl-4">
+<span class="text-label-caps font-label-caps text-outline">CAPACITY</span>
+<span class="font-bold text-primary">8/15 Slots</span>
+</div>
+</div>
+</div>
+</div>
+</label>
+</section>
+<!-- Other Available Staff (List with Tonal Layers) -->
+<section class="space-y-4">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight">AVAILABLE STAFF MEMBERS</h3>
+<!-- Staff Item 1 -->
+<input class="hidden" id="staff_marcus" name="staff_selection" type="radio"/>
+<label class="block cursor-pointer group" for="staff_marcus">
+<div class="staff-card bg-surface-container-low border border-border-subtle rounded-xl p-4 flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a male staff member in a business casual grey shirt. He has a neutral, professional demeanor. The image is high-quality with professional lighting against a clean, light grey studio background, following the minimal corporate design language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Tkxji7gRWzcvbZoAKvmruqGTevbxGYmo7jp-7im7rCdD9Or72SKqdGy5GNgNrmxjffEvmXKFOy5O7oDyU4bSlvPR8SF98cX0YIXT1Scm2saWIXNiwhYxyqy7SfDTj4ZjiFadQgzIXoTrXFWKmhf3LJrt74BnvGvGIyFauF9K6r5Ge_A8DLbUsXw7B7R7d6qhUzpX9fNFD8H4qahiXCCq71Oo9JdiLfQtjl7H6mbz7P9ocZfM2IOSY1c4Br-g1DLeMCfLh_67TMg6"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Marcus Thorne</p>
+<p class="text-label-caps font-label-caps text-outline">82% Load • 4 Open Slots</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden sm:block text-right">
+<span class="block text-[10px] font-label-caps text-outline">AVG. RESOLUTION</span>
+<span class="font-bold text-on-surface">3.2 Days</span>
+</div>
+<div class="selection-ring w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-white"></div>
+</div>
+</div>
+</div>
+</label>
+<!-- Staff Item 2 -->
+<input class="hidden" id="staff_sarah" name="staff_selection" type="radio"/>
+<label class="block cursor-pointer group" for="staff_sarah">
+<div class="staff-card bg-surface-container-low border border-border-subtle rounded-xl p-4 flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Portrait of a female office professional with glasses and a friendly smile. She is wearing a white professional blouse. The photography style is modern corporate, bright and airy, with soft shadows and a very clean aesthetic consistent with the UI palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe9HyzkaX42S467gWr-sccjfVQY2DUkPImf_j27IHOuionQeGCPOX2XH3FdxVlAkGkyD7lrtzZWUpp-DBeCfkau6QS4SuMlnNayjLuKKIjPv50LswPJjFGkrcONL61jzLxhCXI4rqLctZ9k0Few2XXXPTu04EYXOOflKAu7PBCfYXS3KwgSfq0YDRNShkV_U3eBRMwWWwRB_30b2hZbPfzqkML74aBg2RJI1r_WLEvvTdQ84twtJ8WT09hpF9zvsQlp7r0dZdMD29f"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Sarah Jenkins</p>
+<p class="text-label-caps font-label-caps text-outline">45% Load • 12 Open Slots</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden sm:block text-right">
+<span class="block text-[10px] font-label-caps text-outline">AVG. RESOLUTION</span>
+<span class="font-bold text-on-surface">4.5 Days</span>
+</div>
+<div class="selection-ring w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-white"></div>
+</div>
+</div>
+</div>
+</label>
+<!-- Staff Item 3 -->
+<input class="hidden" id="staff_david" name="staff_selection" type="radio"/>
+<label class="block cursor-pointer group" for="staff_david">
+<div class="staff-card bg-surface-container-low border border-border-subtle rounded-xl p-4 flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="A professional male administrator with a short beard and professional attire, looking directly at the camera. Soft ambient lighting creates a professional and trustworthy mood. The background is a minimalist academic setting with blurred architectural details in cool tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7xVxpCZ7gLS-fYDpj5A48uhUO0lnH3gCKLW67Ut7BLsZpzO3cpbqhNwoDunOUgvuTo7Eft8g6da88aWz7JlmC9AxtMnr1eKHxJtuv2Rlopu95PCL31trf_ih6SFRxXGFGglT5BZQcZepZ-ey1EM_ywnRQIclrZ_oDUKZoqwJPVzAopuCbcGJqVSk2BtZwzKYa7mBsHnyJQ2MW73kg8pri_9yAprvrvVyOsQJ-qh1weq74mtpWueE1FK_YOw6MFgLytmRf5Gxp80bB"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">David Chen</p>
+<p class="text-label-caps font-label-caps text-outline">91% Load • 1 Open Slot</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden sm:block text-right">
+<span class="block text-[10px] font-label-caps text-outline text-status-rejected">CRITICAL LOAD</span>
+<span class="font-bold text-status-rejected">2.1 Days</span>
+</div>
+<div class="selection-ring w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-white"></div>
+</div>
+</div>
+</div>
+</label>
+</section>
+<!-- Information Notice -->
+<div class="mt-stack-loose p-4 bg-primary-fixed-dim/20 rounded-lg flex gap-3 items-start border border-primary-fixed-dim">
+<span class="material-symbols-outlined text-primary-container" data-icon="info">info</span>
+<p class="text-body-md text-primary-container">
+                Selection is based on current workload balancing and historical performance for <span class="font-bold">Admissions-related</span> complaints. Transferring these cases will update the student notifications automatically.
+            </p>
+</div>
+</main>
+<!-- Footer Action -->
+<footer class="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-border-subtle p-margin-page flex flex-col md:flex-row items-center justify-between gap-4 z-50">
+<div class="hidden md:block">
+<p class="text-label-caps font-label-caps text-outline">TARGET RECIPIPIENT</p>
+<p class="font-bold text-primary" id="selected-name-display">Dr. Elena Vance</p>
+</div>
+<div class="flex gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-6 py-3 font-button-text text-button-text text-primary border border-border-subtle rounded-xl hover:bg-surface-container transition-colors active:scale-95">
+                Cancel
+            </button>
+<button class="flex-[2] md:flex-none px-8 py-3 font-button-text text-button-text bg-primary text-white rounded-xl shadow-lg hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-2">
+                Confirm Transfer Details
+                <span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</footer>
+<!-- Bottom Navigation Bar (Shell - Filtered context check: Visible as this is a top-level administrative flow) -->
+<nav class="hidden md:flex fixed bottom-0 w-full justify-around items-center py-2 bg-surface dark:bg-surface-container-low border-t border-border-subtle dark:border-outline-variant z-[60] h-16 pointer-events-none opacity-0">
+<!-- Hidden on this specific screen to prioritize footer action, but structural logic remains -->
+</nav>
+<script>
+        // Simple micro-interaction for radio selection
+        document.querySelectorAll('input[name="staff_selection"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const label = document.querySelector(`label[for="${e.target.id}"]`);
+                const nameDisplay = document.getElementById('selected-name-display');
+                
+                // Visual feedback for selection
+                document.querySelectorAll('.staff-card').forEach(card => {
+                    card.classList.remove('border-primary', 'border-2');
+                    card.classList.add('border-border-subtle', 'border');
+                });
+                
+                const card = label.querySelector('.staff-card');
+                card.classList.add('border-primary', 'border-2');
+                card.classList.remove('border-border-subtle', 'border');
+
+                // Update footer name
+                const name = label.querySelector('p.font-bold, span.font-headline-md').textContent;
+                nameDisplay.textContent = name;
+
+                // Subtle haptic-like scale effect
+                card.style.transform = 'scale(1.02)';
+                setTimeout(() => card.style.transform = 'scale(1)', 150);
+            });
+        });
+    </script>
+</body></html>

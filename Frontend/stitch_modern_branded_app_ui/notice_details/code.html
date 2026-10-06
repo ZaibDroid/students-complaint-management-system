@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notice Details - DCMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#dfe0e0",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface-tint": "#505d84",
+                        "inverse-surface": "#303033",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "status-pending": "#F59E0B",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container": "#efedf1",
+                        "surface-bright": "#fbf8fc",
+                        "on-tertiary-container": "#b0855a",
+                        "status-resolved": "#10B981",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-primary-container": "#7f8db6",
+                        "surface": "#fbf8fc",
+                        "status-forwarded": "#6366F1",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#75777f",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#b8c5f1",
+                        "on-surface": "#1b1b1e",
+                        "on-background": "#1b1b1e",
+                        "secondary": "#5d5f5f",
+                        "on-surface-variant": "#45464e",
+                        "tertiary-container": "#3b2000",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "primary-fixed": "#dae2ff",
+                        "primary-container": "#172548",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#dbd9dd",
+                        "surface-container-high": "#eae7eb",
+                        "status-rejected": "#EF4444",
+                        "background": "#fbf8fc",
+                        "on-secondary-container": "#616363",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "inverse-on-surface": "#f2f0f3",
+                        "surface-gray": "#F8FAFC",
+                        "surface-variant": "#e4e2e5",
+                        "on-error-container": "#93000a",
+                        "border-subtle": "#E2E8F0",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "tertiary": "#1e0e00",
+                        "outline-variant": "#c5c6cf",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "primary": "#010f32",
+                        "on-primary-fixed": "#0b1a3c",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#38466a",
+                        "surface-container-low": "#f5f3f6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base-unit": "4px",
+                        "stack-loose": "24px",
+                        "margin-page": "20px",
+                        "gutter-card": "16px",
+                        "stack-tight": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "button-text": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fbf8fc;
+            color: #1b1b1e;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center px-margin-page h-16 bg-surface dark:bg-inverse-surface border-b border-border-subtle dark:border-outline-variant">
+<button class="mr-4 text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 flex items-center justify-center active:opacity-80 active:scale-95 transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary dark:text-primary-fixed-dim flex-1">Notice Details</h1>
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 flex items-center justify-center active:opacity-80 active:scale-95 transition-all">
+<span class="material-symbols-outlined">share</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pb-32 px-margin-page max-w-3xl mx-auto">
+<!-- Header Section -->
+<div class="mb-stack-loose">
+<div class="flex items-center gap-2 mb-4">
+<span class="bg-error/10 text-error px-3 py-1 rounded-full font-label-caps text-label-caps uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">error</span>
+                    Urgent
+                </span>
+<span class="bg-primary/5 text-primary-container px-3 py-1 rounded-full font-label-caps text-label-caps uppercase tracking-wider">
+                    Academic
+                </span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3 leading-tight">
+                Mid-term Exam Schedule Released
+            </h2>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-on-surface-variant text-body-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>Published on Oct 25, 2024</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span>2 hours ago</span>
+</div>
+</div>
+</div>
+<!-- Hero Context Image (Visual Interest) -->
+<div class="mb-stack-loose rounded-xl overflow-hidden card-shadow h-48 md:h-64 relative bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="A clean, professional photograph of a modern university auditorium during a quiet exam session. The room features rows of sleek wooden desks, soft natural lighting filtering through large windows, and a focused atmosphere. The color palette is dominated by neutral whites, soft greys, and deep navy accents, reflecting a high-stakes academic environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDycTYWuT-ReK3ptxYxVliU9XRZauwoqlOdHQLS3hdFKh4C6jCBZklD-AU2_7FhFBpUC48DXzDNSaABoFYHdeqV40sHd7eaMWjRkzsksU7zt8mz70x0QaTvTBW-9pOBpEAZQvyyeYuyh6JjvyDW3TGzIyyROjeS0h3gV2LNTVN8ieTcKYKLVvCweRCv1VwMqRz_3mAOnJWYDLnZWaTnBf33Wlqk_3uEHEYgkVJVT-P9Duan2y03HaWbTD01LCyR4M1bjSCjvxMIYLpT"/>
+</div>
+<!-- Sender Profile -->
+<div class="flex items-center gap-4 mb-stack-loose p-4 bg-white rounded-xl border border-border-subtle card-shadow">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<p class="font-headline-md text-[16px] text-primary">Chairman Office</p>
+<p class="text-on-surface-variant text-body-md">Department of Computer Science</p>
+</div>
+</div>
+<!-- Notice Body -->
+<article class="prose prose-slate max-w-none mb-stack-loose">
+<div class="text-on-surface text-body-lg leading-relaxed space-y-4">
+<p>
+                    All students are hereby informed that the mid-term examinations for the Spring 2024 semester are scheduled to commence from <strong>November 15, 2024</strong>. 
+                </p>
+<p>
+                    The examinations will be conducted in two shifts: Morning (09:00 AM - 11:00 AM) and Afternoon (02:00 PM - 04:00 PM). Detailed room assignments are provided in the attached PDF document below.
+                </p>
+<div class="bg-surface-gray p-5 rounded-lg border-l-4 border-primary my-6">
+<h4 class="font-headline-md text-[16px] text-primary mb-2">Important Instructions:</h4>
+<ul class="space-y-2 list-disc list-inside text-on-surface-variant">
+<li>Strict adherence to the seating plan is mandatory.</li>
+<li>Students must carry their <strong>valid digital admit cards</strong> and University IDs.</li>
+<li>No electronic gadgets (smartwatches, mobile phones) are allowed inside the venue.</li>
+<li>Late arrival (beyond 15 minutes) will lead to disqualification from the session.</li>
+</ul>
+</div>
+<p>
+                    Ensure your profile is updated on the DCMS portal to avoid discrepancies in your attendance and grade reporting.
+                </p>
+</div>
+</article>
+<!-- Attachments -->
+<section class="mb-stack-loose">
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Attachments</h3>
+<div class="group flex items-center justify-between p-4 bg-white border border-border-subtle rounded-xl hover:border-primary/30 transition-all card-shadow">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-error/5 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+</div>
+<div>
+<p class="font-headline-md text-[14px] text-primary break-all">Mid-term_Schedule_Spring_2024.pdf</p>
+<p class="text-on-surface-variant text-[12px]">2.4 MB • PDF Document</p>
+</div>
+</div>
+<button class="bg-primary text-white p-2.5 rounded-lg flex items-center justify-center hover:opacity-90 transition-opacity active:scale-90">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</section>
+<!-- Related Contact -->
+<section class="p-5 bg-surface-container-low rounded-xl border border-dashed border-outline-variant">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container">info</span>
+<div class="text-body-md text-on-surface-variant">
+<p class="font-semibold text-primary mb-1">Have questions?</p>
+<p>For any queries regarding the schedule or venue assignments, please contact the Academic Coordinator's office between 10:00 AM and 04:00 PM or email <a class="text-primary underline font-medium" href="#">exams@university.edu</a>.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface dark:bg-inverse-surface pb-safe border-t border-border-subtle dark:border-outline-variant shadow-sm dark:shadow-none">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-3 py-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors group">
+<span class="material-symbols-outlined mb-1 group-active:scale-90 transition-transform">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-xl px-3 py-1 transition-all group active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-label-caps text-label-caps">Notices</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-3 py-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors group">
+<span class="material-symbols-outlined mb-1 group-active:scale-90 transition-transform">assignment</span>
+<span class="font-label-caps text-label-caps">Complaints</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-3 py-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors group">
+<span class="material-symbols-outlined mb-1 group-active:scale-90 transition-transform">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for back button
+        document.querySelector('header button:first-child').addEventListener('click', () => {
+            window.history.back();
+        });
+
+        // Simple feedback for download button
+        const downloadBtn = document.querySelector('button .material-symbols-outlined[textContent="download"]')?.parentElement;
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                const icon = this.querySelector('.material-symbols-outlined');
+                icon.textContent = 'check';
+                setTimeout(() => {
+                    icon.textContent = 'download';
+                }, 2000);
+            });
+        }
+    </script>
+</body></html>

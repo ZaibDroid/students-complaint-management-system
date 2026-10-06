@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notice Board Creator | Staff Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c5c6cf",
+                    "on-surface": "#1b1b1e",
+                    "status-resolved": "#10B981",
+                    "surface-tint": "#505d84",
+                    "on-primary-fixed": "#0b1a3c",
+                    "tertiary-container": "#3b2000",
+                    "on-surface-variant": "#45464e",
+                    "border-subtle": "#E2E8F0",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "outline": "#75777f",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-surface-variant": "#45464e",
+                    "on-tertiary-container": "#b0855a",
+                    "on-primary-fixed-variant": "#38466a",
+                    "secondary": "#5d5f5f",
+                    "surface-gray": "#F8FAFC",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "on-secondary-container": "#616363",
+                    "inverse-primary": "#b8c5f1",
+                    "tertiary-fixed": "#ffdcbc",
+                    "inverse-on-surface": "#f2f0f3",
+                    "primary-container": "#172548",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-tertiary-fixed": "#2c1600",
+                    "surface-container-low": "#f5f3f6",
+                    "status-pending": "#F59E0B",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#fbf8fc",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-variant": "#e4e2e5",
+                    "secondary-container": "#dfe0e0",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "surface-dim": "#dbd9dd",
+                    "surface-container-high": "#eae7eb",
+                    "on-error": "#ffffff",
+                    "surface-container": "#efedf1",
+                    "on-primary-container": "#7f8db6",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "status-rejected": "#EF4444",
+                    "background": "#fbf8fc",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-bright": "#fbf8fc",
+                    "status-forwarded": "#6366F1",
+                    "inverse-surface": "#303033",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#dae2ff",
+                    "tertiary": "#1e0e00",
+                    "on-background": "#1b1b1e",
+                    "primary": "#010f32"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "20px",
+                    "base-unit": "4px",
+                    "gutter-card": "16px",
+                    "stack-loose": "24px",
+                    "stack-tight": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "button-text": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .chip-active { background-color: #172548; color: white; }
+        .chip-inactive { background-color: #F8FAFC; border: 1px solid #E2E8F0; color: #45464e; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface border-b border-border-subtle dark:border-outline-variant shadow-sm flex justify-between items-center px-margin-page h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 rounded-full hover:bg-surface-container active:scale-95 duration-150 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">New Notice</h1>
+</div>
+<div class="flex items-center gap-stack-loose">
+<button class="hidden md:flex items-center gap-2 text-on-surface-variant hover:bg-surface-container transition-colors px-4 py-2 rounded-lg">
+<span class="material-symbols-outlined">save</span>
+<span class="font-button-text text-button-text">Save Draft</span>
+</button>
+<button class="bg-primary text-on-primary font-button-text text-button-text px-6 py-2 rounded-lg active:scale-95 duration-150 transition-all shadow-md hover:bg-primary/90">
+                Post Notice
+            </button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="mt-16 mb-20 md:mb-0 flex-grow px-margin-page py-stack-loose max-w-5xl mx-auto w-full">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-loose items-start">
+<!-- Left Column: Content Form -->
+<div class="lg:col-span-2 space-y-stack-loose">
+<!-- Main Form Card -->
+<section class="bg-white rounded-xl shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] border border-border-subtle p-6 space-y-6">
+<div class="space-y-stack-tight">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Notice Title</label>
+<input class="w-full bg-surface-gray border-border-subtle rounded-lg p-3 text-body-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="e.g., Semester Examination Schedule - Autumn 2024" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-stack-tight">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Category</label>
+<select class="w-full bg-surface-gray border-border-subtle rounded-lg p-3 text-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer">
+<option>General Announcement</option>
+<option>Academic Information</option>
+<option>Urgent Notice</option>
+<option>Campus Event</option>
+</select>
+</div>
+<div class="space-y-stack-tight">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Expiry Date (Optional)</label>
+<div class="relative">
+<input class="w-full bg-surface-gray border-border-subtle rounded-lg p-3 text-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none" type="date"/>
+</div>
+</div>
+</div>
+<div class="space-y-stack-tight">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Detailed Content</label>
+<textarea class="w-full bg-surface-gray border-border-subtle rounded-lg p-4 text-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none custom-scrollbar" placeholder="Enter the full details of the notice here. You can use rich text formatting below..." rows="8"></textarea>
+<div class="flex gap-4 border-t border-border-subtle pt-3 text-on-surface-variant">
+<button class="material-symbols-outlined hover:text-primary transition-colors">format_bold</button>
+<button class="material-symbols-outlined hover:text-primary transition-colors">format_italic</button>
+<button class="material-symbols-outlined hover:text-primary transition-colors">format_list_bulleted</button>
+<button class="material-symbols-outlined hover:text-primary transition-colors">link</button>
+</div>
+</div>
+</section>
+<!-- Attachment Card -->
+<section class="bg-white rounded-xl shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] border border-border-subtle p-6">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">attachment</span>
+                        Attachments
+                    </h3>
+<div class="border-2 border-dashed border-border-subtle rounded-xl p-8 flex flex-col items-center justify-center bg-surface-gray hover:bg-surface-container transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-outline mb-2 group-hover:scale-110 transition-transform">cloud_upload</span>
+<p class="font-body-lg text-on-surface">Click to upload or drag and drop</p>
+<p class="text-xs text-on-surface-variant mt-1">PDF, JPG, PNG (Max 10MB)</p>
+</div>
+</section>
+</div>
+<!-- Right Column: Targeting & Settings -->
+<aside class="space-y-stack-loose">
+<!-- Audience Targeting -->
+<section class="bg-white rounded-xl shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] border border-border-subtle p-6">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">groups</span>
+                        Target Audience
+                    </h3>
+<div class="space-y-6">
+<!-- Select All -->
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-border-subtle text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-on-surface font-semibold">Broadcast to All Students</span>
+</label>
+<div class="space-y-stack-tight border-t border-border-subtle pt-4">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Academic Year</p>
+<div class="flex flex-wrap gap-2">
+<button class="chip-active px-4 py-1.5 rounded-full text-xs font-semibold transition-all">All Years</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">1st Year</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">2nd Year</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">3rd Year</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">4th Year</button>
+</div>
+</div>
+<div class="space-y-stack-tight">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Specific Batch</p>
+<div class="flex flex-wrap gap-2">
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">2021</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">2022</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">2023</button>
+<button class="chip-inactive px-4 py-1.5 rounded-full text-xs font-semibold transition-all hover:bg-surface-container">2024</button>
+</div>
+</div>
+<div class="space-y-stack-tight">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Sections</p>
+<div class="grid grid-cols-3 gap-2">
+<label class="flex items-center gap-2 p-2 rounded bg-surface-gray border border-border-subtle cursor-pointer hover:bg-surface-container">
+<input class="rounded border-border-subtle text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-bold">A</span>
+</label>
+<label class="flex items-center gap-2 p-2 rounded bg-surface-gray border border-border-subtle cursor-pointer hover:bg-surface-container">
+<input class="rounded border-border-subtle text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-bold">B</span>
+</label>
+<label class="flex items-center gap-2 p-2 rounded bg-surface-gray border border-border-subtle cursor-pointer hover:bg-surface-container">
+<input class="rounded border-border-subtle text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-bold">C</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Preview -->
+<section class="bg-primary-container rounded-xl p-6 text-on-primary-container">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2 text-white">
+<span class="material-symbols-outlined">visibility</span>
+                        Live Preview
+                    </h3>
+<div class="bg-white rounded-lg p-4 shadow-lg">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-label-caps bg-primary text-white px-2 py-0.5 rounded">GENERAL</span>
+<span class="text-[10px] text-outline">Just now</span>
+</div>
+<h4 class="font-headline-md text-sm text-on-surface truncate">Notice Title Preview...</h4>
+<div class="w-full h-2 bg-surface-gray rounded mt-2"></div>
+<div class="w-3/4 h-2 bg-surface-gray rounded mt-1"></div>
+<div class="mt-4 flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-dim"></div>
+<div class="w-16 h-2 bg-surface-gray rounded"></div>
+</div>
+</div>
+<p class="text-xs mt-4 text-on-primary-container opacity-80 italic">This is how students will see the notice in their feed.</p>
+</section>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar Shell (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-surface dark:bg-inverse-surface border-t border-border-subtle shadow-[0_-4px_12px_0_rgba(0,0,0,0.04)] flex justify-around items-center px-2 pb-safe z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-[10px] uppercase">Assigned</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-4 py-1">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-[10px] uppercase">History</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-[10px] uppercase">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-[10px] uppercase">Account</span>
+</div>
+</nav>
+<script>
+        // Simple toggle for multi-select chips
+        document.querySelectorAll('.chip-inactive, .chip-active').forEach(chip => {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('chip-active');
+                this.classList.toggle('chip-inactive');
+            });
+        });
+
+        // Date input default value (Today)
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+        }
+
+        // Interaction feedback for the Post button
+        const postBtn = document.querySelector('button.bg-primary');
+        postBtn.addEventListener('click', () => {
+            postBtn.innerHTML = '<span class="material-symbols-outlined animate-spin mr-2">sync</span> Posting...';
+            setTimeout(() => {
+                postBtn.innerHTML = 'Post Notice';
+                alert('Notice posted successfully to the targeted audience!');
+            }, 1500);
+        });
+    </script>
+</body></html>

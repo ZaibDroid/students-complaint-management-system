@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>DCMS Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#efedf1",
+                    "surface-container-highest": "#e4e2e5",
+                    "surface-bright": "#fbf8fc",
+                    "on-secondary-container": "#616363",
+                    "background": "#fbf8fc",
+                    "surface-container-high": "#eae7eb",
+                    "primary-container": "#172548",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1b1b1e",
+                    "surface-tint": "#505d84",
+                    "surface-variant": "#e4e2e5",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#303033",
+                    "secondary-container": "#dfe0e0",
+                    "border-subtle": "#E2E8F0",
+                    "surface-gray": "#F8FAFC",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#b0855a",
+                    "inverse-on-surface": "#f2f0f3",
+                    "surface-container-low": "#f5f3f6",
+                    "primary": "#010f32",
+                    "outline": "#75777f",
+                    "on-surface-variant": "#45464e",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c5c6cf",
+                    "on-error": "#ffffff",
+                    "status-rejected": "#EF4444",
+                    "on-secondary-fixed-variant": "#454747",
+                    "surface-dim": "#dbd9dd",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-primary-container": "#7f8db6",
+                    "tertiary": "#1e0e00",
+                    "surface": "#fbf8fc",
+                    "primary-fixed": "#dae2ff",
+                    "status-pending": "#F59E0B",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-primary-fixed-variant": "#38466a",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "status-forwarded": "#6366F1",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#3b2000",
+                    "inverse-primary": "#b8c5f1",
+                    "status-resolved": "#10B981",
+                    "secondary": "#5d5f5f",
+                    "on-tertiary-fixed": "#2c1600",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-primary-fixed": "#0b1a3c",
+                    "on-background": "#1b1b1e",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-card": "16px",
+                    "base-unit": "4px",
+                    "stack-loose": "24px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .onboarding-screen {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .onboarding-screen.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .dot-active {
+            width: 24px;
+            background-color: #010f32;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body-md text-on-surface overflow-hidden">
+<!-- Main Content Canvas -->
+<main class="relative h-screen w-full flex flex-col items-center justify-center bg-surface overflow-hidden">
+<!-- Screen 1: Welcome -->
+<div class="onboarding-screen active flex-col items-center px-margin-page text-center w-full max-w-md h-full justify-between py-12" id="screen-1">
+<div class="flex flex-col items-center w-full mt-12">
+<div class="w-full aspect-square max-w-[280px] rounded-3xl overflow-hidden mb-12 shadow-sm border border-border-subtle bg-white relative group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A clean, minimalist 3D illustration of a professional university student holding a digital tablet. The character is standing in a bright, modern academic hallway with soft daylight. The color palette consists of deep navy, soft whites, and polished grey tones. High-fidelity rendering with a professional, institutional aesthetic, focused on clarity and modern education technology." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3UohYIReaKwAPAhrmcYvgaRmB8i4bp9mFwKE8SoW5qmbqnNQYGiqkIzLAPtXe0LWr2zO0c6ahAuFxb4he5GF7AQjz5cO2DWAC6CAHd3AdiZspmEW2ie-yGbTBa1tNdiBCSJg3MdaMhbr9gAPLrulKDtMdWXsjOaOQDVL-fy32l-i-3P5lXAynA0BOSRe1YX2ejunm-54kdbCCIC1ekNz2HLIrOopf-NfpqId-UefiTxCsYP99eZn9XZtYAfjZOZiaRt0TlkFoYpVj"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4">Welcome to DCMS</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[300px]">
+                    Easily submit and track your academic complaints with institutional transparency.
+                </p>
+</div>
+</div>
+<!-- Screen 2: Real-time Updates -->
+<div class="onboarding-screen flex-col items-center px-margin-page text-center w-full max-w-md h-full justify-between py-12" id="screen-2">
+<div class="flex flex-col items-center w-full mt-12">
+<div class="w-full aspect-square max-w-[280px] rounded-3xl overflow-hidden mb-12 shadow-sm border border-border-subtle bg-white relative group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A minimalist UI visualization showing stylized notification bubbles floating in a pristine white space. The central bubble shows a 'Status Updated' checkmark in corporate green. The design uses high-end typography and subtle glassmorphism effects. The atmosphere is efficient, tech-forward, and trustworthy, with a primary navy and white color scheme typical of a modern administrative portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEBaFBnczY6VVF_J45VWV9CEu6Hg9tXZqG68Rdb5Ol20r0uSL0qq88Tau2fWtW1pdsHHhX7H63U8-OJ9C_S6V8q9jYoVTfOzPY35ukJp7M72L-pWk3iXUdZYhEO_Sfgub9O-w38DkUKGq7npqI4OxgPstrDN2r3YikYDWBrKVtE2_5SVp1_eqKYslpzVOGOw-vmqJ_z7Pd4Z1vJQe1K-mocR19kLQtSFj6G0wePId_lOYVUEQcJduJBI3vK_yL9pDtOcVUq8eitcex"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4">Real-time Updates</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[300px]">
+                    Get notified immediately when your complaint moves to the next administrative level.
+                </p>
+</div>
+</div>
+<!-- Screen 3: Department Notices -->
+<div class="onboarding-screen flex-col items-center px-margin-page text-center w-full max-w-md h-full justify-between py-12" id="screen-3">
+<div class="flex flex-col items-center w-full mt-12">
+<div class="w-full aspect-square max-w-[280px] rounded-3xl overflow-hidden mb-12 shadow-sm border border-border-subtle bg-white relative group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A sophisticated graphic representation of an official academic bulletin board. It features clean, digital memo icons with sharp typography. The background is a crisp white texture with soft ambient shadows. Deep navy blue accents highlight the 'Chairman's Announcement' section. The visual style is professional, minimalist, and conveys authoritative communication within a university setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKBlrlMGRwInbbIkzGEx2bersHm8CKpq6cX5r-33Dq__gv2IjZTW4e1DtCE8qmo8xT7mdEKXEi9yz3-SAxDjes9xlTRCjNoXmag76vbbcFsB2KjN7dhurzPEp9Tu7OqUcKw3wKrFQMnkAuLNFLd5jX1byWjaA41fiCBIf_Tf56iSDCFP0sI_V-USKAviaxFe-sMDzFF9BZbN6XtwXbV2c6tZAw-C2z38vSWJtSDMBGWQ6o0ZEVJTkryujJK_rq2MS7V69UhWh26tcQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4">Department Notices</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[300px]">
+                    Stay updated with the latest announcements and directives from the Chairman.
+                </p>
+</div>
+</div>
+<!-- Footer Controls (Sticky to Bottom) -->
+<div class="w-full max-w-md px-margin-page pb-12 flex flex-col items-center gap-8 bg-surface">
+<!-- Page Indicators -->
+<div class="flex gap-2">
+<div class="h-1.5 w-6 rounded-full bg-primary transition-all duration-300 dot-active" id="dot-1"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-outline-variant transition-all duration-300" id="dot-2"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-outline-variant transition-all duration-300" id="dot-3"></div>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full bg-[#182748] text-white py-4 rounded-xl font-button-text text-button-text active:scale-95 transition-transform duration-200 shadow-lg shadow-[#182748]/10 flex items-center justify-center gap-2" id="next-btn">
+<span id="btn-label">Next</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button class="font-button-text text-on-surface-variant hover:text-primary transition-colors" id="skip-btn">
+                Skip for now
+            </button>
+</div>
+</main>
+<script>
+        let currentScreen = 1;
+        const totalScreens = 3;
+
+        const screens = [
+            document.getElementById('screen-1'),
+            document.getElementById('screen-2'),
+            document.getElementById('screen-3')
+        ];
+
+        const dots = [
+            document.getElementById('dot-1'),
+            document.getElementById('dot-2'),
+            document.getElementById('dot-3')
+        ];
+
+        const nextBtn = document.getElementById('next-btn');
+        const btnLabel = document.getElementById('btn-label');
+        const skipBtn = document.getElementById('skip-btn');
+
+        function updateOnboarding() {
+            screens.forEach((screen, index) => {
+                if (index + 1 === currentScreen) {
+                    screen.classList.add('active');
+                } else {
+                    screen.classList.remove('active');
+                }
+            });
+
+            dots.forEach((dot, index) => {
+                if (index + 1 === currentScreen) {
+                    dot.classList.add('dot-active');
+                    dot.classList.add('w-6');
+                    dot.classList.remove('w-1.5');
+                    dot.classList.add('bg-primary');
+                    dot.classList.remove('bg-outline-variant');
+                } else {
+                    dot.classList.remove('dot-active');
+                    dot.classList.remove('w-6');
+                    dot.classList.add('w-1.5');
+                    dot.classList.remove('bg-primary');
+                    dot.classList.add('bg-outline-variant');
+                }
+            });
+
+            if (currentScreen === totalScreens) {
+                btnLabel.innerText = 'Get Started';
+                skipBtn.style.visibility = 'hidden';
+            } else {
+                btnLabel.innerText = 'Next';
+                skipBtn.style.visibility = 'visible';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentScreen < totalScreens) {
+                currentScreen++;
+                updateOnboarding();
+            } else {
+                // Final Action: Redirect or show login
+                document.body.innerHTML = `
+                    <div class="h-screen w-full flex items-center justify-center bg-surface p-10 text-center animate-pulse">
+                        <div class="flex flex-col items-center">
+                            <span class="material-symbols-outlined text-primary text-[48px] mb-4">task_alt</span>
+                            <h2 class="font-headline-md text-headline-md text-primary">Setup Complete</h2>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Entering the DCMS Dashboard...</p>
+                        </div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+        });
+
+        skipBtn.addEventListener('click', () => {
+            currentScreen = totalScreens;
+            updateOnboarding();
+        });
+
+        // Simple touch swipe basic logic
+        let touchstartX = 0;
+        let touchendX = 0;
+        
+        function handleGesture() {
+            if (touchendX < touchstartX - 50) { // Swipe Left
+                if (currentScreen < totalScreens) {
+                    currentScreen++;
+                    updateOnboarding();
+                }
+            }
+            if (touchendX > touchstartX + 50) { // Swipe Right
+                if (currentScreen > 1) {
+                    currentScreen--;
+                    updateOnboarding();
+                }
+            }
+        }
+
+        document.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            handleGesture();
+        });
+    </script>
+</body></html>

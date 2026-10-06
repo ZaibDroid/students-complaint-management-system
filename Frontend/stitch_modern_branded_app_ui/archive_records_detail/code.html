@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Archive Records Detail - Batch 2019-2023 (CS)</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hanken+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Shared Style Guidance & Theme Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "status-rejected": "#EF4444",
+                    "surface-container": "#efedf1",
+                    "on-primary-container": "#7f8db6",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#dbd9dd",
+                    "surface-container-high": "#eae7eb",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "secondary-container": "#dfe0e0",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-variant": "#e4e2e5",
+                    "primary": "#010f32",
+                    "tertiary": "#1e0e00",
+                    "on-background": "#1b1b1e",
+                    "primary-fixed": "#dae2ff",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#303033",
+                    "surface-bright": "#fbf8fc",
+                    "status-forwarded": "#6366F1",
+                    "background": "#fbf8fc",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "secondary": "#5d5f5f",
+                    "surface-gray": "#F8FAFC",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "on-secondary-container": "#616363",
+                    "inverse-primary": "#b8c5f1",
+                    "tertiary-fixed": "#ffdcbc",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-tertiary-container": "#b0855a",
+                    "on-primary-fixed-variant": "#38466a",
+                    "border-subtle": "#E2E8F0",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "outline": "#75777f",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "on-surface-variant": "#45464e",
+                    "tertiary-container": "#3b2000",
+                    "surface-tint": "#505d84",
+                    "on-primary-fixed": "#0b1a3c",
+                    "outline-variant": "#c5c6cf",
+                    "on-surface": "#1b1b1e",
+                    "status-resolved": "#10B981",
+                    "error-container": "#ffdad6",
+                    "surface": "#fbf8fc",
+                    "status-pending": "#F59E0B",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#2c1600",
+                    "surface-container-low": "#f5f3f6",
+                    "on-secondary-fixed-variant": "#454747",
+                    "inverse-on-surface": "#f2f0f3",
+                    "primary-container": "#172548"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-card": "16px",
+                    "margin-page": "20px",
+                    "base-unit": "4px",
+                    "stack-tight": "8px",
+                    "stack-loose": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "button-text": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-24 selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-container-high w-full top-0 sticky z-40 border-b border-border-subtle dark:border-outline-variant transition-all">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Batch ID: 1923_CS</span>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed">Batch 2019-2023 (CS)</h1>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">more_vert</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-margin-page pt-stack-loose space-y-stack-loose">
+<!-- Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card-shadow flex items-start justify-between relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-caps text-label-caps text-secondary mb-1">TOTAL STUDENTS</p>
+<h2 class="font-headline-lg text-headline-lg text-primary">182</h2>
+<div class="mt-2 flex items-center text-status-resolved gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-medium">Batch Capacity: 95%</span>
+</div>
+</div>
+<div class="bg-primary-container/10 p-3 rounded-lg z-10">
+<span class="material-symbols-outlined text-primary">groups</span>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined !text-9xl">groups</span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card-shadow flex items-start justify-between relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-caps text-label-caps text-secondary mb-1">SECTIONS</p>
+<h2 class="font-headline-lg text-headline-lg text-primary">4</h2>
+<div class="mt-2 flex items-center text-secondary gap-1">
+<span class="text-xs font-medium">A, B, C, D (Active Archive)</span>
+</div>
+</div>
+<div class="bg-primary-container/10 p-3 rounded-lg z-10">
+<span class="material-symbols-outlined text-primary">grid_view</span>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined !text-9xl">grid_view</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card-shadow flex items-start justify-between relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-caps text-label-caps text-secondary mb-1">RESOLUTION RATE</p>
+<h2 class="font-headline-lg text-headline-lg text-primary">98%</h2>
+<div class="mt-2 flex items-center text-status-resolved gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-xs font-medium">178 Records Finalized</span>
+</div>
+</div>
+<div class="bg-primary-container/10 p-3 rounded-lg z-10">
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined !text-9xl">verified</span>
+</div>
+</div>
+</section>
+<!-- Search & Filter Bar -->
+<section class="flex flex-col md:flex-row gap-4 items-center bg-surface-container-low p-4 rounded-xl border border-border-subtle">
+<div class="relative flex-1 w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-lowest border border-border-subtle rounded-lg py-2.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md text-body-md" placeholder="Search by name, enrollment ID, or section..." type="text"/>
+</div>
+<div class="flex gap-2 w-full md:w-auto">
+<button class="flex items-center gap-2 px-4 py-2.5 bg-surface-container-lowest border border-border-subtle rounded-lg hover:bg-surface-container transition-colors font-button-text text-button-text">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                    Filter
+                </button>
+<button class="flex items-center gap-2 px-4 py-2.5 bg-primary text-on-primary rounded-lg hover:opacity-90 active:scale-95 transition-all font-button-text text-button-text">
+<span class="material-symbols-outlined text-sm">download</span>
+                    Export CSV
+                </button>
+</div>
+</section>
+<!-- Records List Table/Bento Hybrid -->
+<section class="space-y-stack-tight">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-headline-md text-headline-md text-on-surface">Student Records</h3>
+<span class="font-label-caps text-label-caps text-secondary">Showing 182 results</span>
+</div>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden tonal-card-shadow">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-border-subtle">
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary">STUDENT NAME & ID</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary">SECTION</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary">GRADUATION YEAR</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary">STATUS</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-secondary">ACTIONS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Record 1 -->
+<tr class="hover:bg-surface-gray transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="font-headline-md text-primary text-sm">AK</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-primary">Ahmad Khan</p>
+<p class="font-label-caps text-[10px] text-secondary">19PWCSE0123</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-caps text-[10px]">SECTION A</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-status-resolved">
+<span class="w-1.5 h-1.5 rounded-full bg-status-resolved mr-1.5"></span>
+                                        Graduated
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Record 2 -->
+<tr class="hover:bg-surface-gray transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="font-headline-md text-primary text-sm">SA</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-primary">Sara Ali</p>
+<p class="font-label-caps text-[10px] text-secondary">19PWCSE0124</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-caps text-[10px]">SECTION B</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-status-resolved">
+<span class="w-1.5 h-1.5 rounded-full bg-status-resolved mr-1.5"></span>
+                                        Graduated
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Record 3 -->
+<tr class="hover:bg-surface-gray transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="font-headline-md text-primary text-sm">ZZ</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-primary">Zainab Zahra</p>
+<p class="font-label-caps text-[10px] text-secondary">19PWCSE0155</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-caps text-[10px]">SECTION A</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">N/A</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-status-forwarded">
+<span class="w-1.5 h-1.5 rounded-full bg-status-forwarded mr-1.5"></span>
+                                        Transferred
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Record 4 -->
+<tr class="hover:bg-surface-gray transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="font-headline-md text-primary text-sm">UM</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-primary">Usman Malik</p>
+<p class="font-label-caps text-[10px] text-secondary">19PWCSE0189</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-caps text-[10px]">SECTION D</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-status-resolved">
+<span class="w-1.5 h-1.5 rounded-full bg-status-resolved mr-1.5"></span>
+                                        Graduated
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="bg-surface-container-low px-6 py-4 border-t border-border-subtle flex items-center justify-between">
+<button class="px-4 py-2 text-on-surface-variant hover:text-primary disabled:opacity-50 font-button-text text-button-text flex items-center gap-1" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span> Previous
+                    </button>
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded font-bold text-sm">1</span>
+<span class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-sm cursor-pointer">2</span>
+<span class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-sm cursor-pointer">3</span>
+<span class="px-2 text-secondary">...</span>
+<span class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-sm cursor-pointer">19</span>
+</div>
+<button class="px-4 py-2 text-on-surface-variant hover:text-primary font-button-text text-button-text flex items-center gap-1">
+                        Next <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Informational Aside / Timeline (Secondary Focus) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter-card pb-12">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card-shadow">
+<h4 class="font-headline-md text-headline-md text-primary mb-4">Archive Lifecycle</h4>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-4 h-4 rounded-full bg-status-resolved"></div>
+<div class="w-0.5 h-full bg-border-subtle"></div>
+</div>
+<div class="pb-4">
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Record Finalized</p>
+<p class="font-body-md text-body-md text-secondary">The batch records were officially frozen and moved to the digital archive by Academic Registrar on August 15, 2023.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-4 h-4 rounded-full bg-primary"></div>
+<div class="w-0.5 h-full border-l-2 border-dashed border-border-subtle"></div>
+</div>
+<div class="pb-4">
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Degree Audit Completed</p>
+<p class="font-body-md text-body-md text-secondary">98% of students passed the final degree audit. 4 records are still pending credit reconciliation.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-4 h-4 rounded-full bg-border-subtle"></div>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface-variant">Archive Maintenance</p>
+<p class="font-body-md text-body-md text-secondary/60">Next scheduled integrity check: Feb 2024.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary p-6 rounded-xl text-on-primary flex flex-col justify-between tonal-card-shadow relative overflow-hidden">
+<div class="z-10">
+<h4 class="font-headline-md text-headline-md mb-2">Administrative Note</h4>
+<p class="font-body-md text-body-md opacity-80 leading-relaxed">This batch represents the first cohort to complete the updated 2019 CS Curriculum. All records are cryptographically signed for academic verification purposes. Contact the Registrar for official transcripts.</p>
+</div>
+<div class="mt-6 z-10">
+<button class="bg-on-primary text-primary px-6 py-2 rounded-lg font-button-text text-button-text hover:bg-opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">print</span>
+                        Print Summary Report
+                    </button>
+</div>
+<!-- Abstract Pattern Decoration -->
+<div class="absolute -right-10 -bottom-10 w-48 h-48 bg-on-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute right-4 top-4 opacity-10">
+<span class="material-symbols-outlined !text-9xl">inventory_2</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface dark:bg-surface-container-low flex justify-around items-center px-4 py-2 pb-safe border-t border-border-subtle dark:border-outline-variant shadow-sm z-50">
+<!-- Dashboard -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px] mt-1">Dashboard</span>
+</button>
+<!-- Archive (Active) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-xl px-4 py-1 active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-caps text-[10px] mt-1">Archive</span>
+</button>
+<!-- Settings -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[10px] mt-1">Settings</span>
+</button>
+</nav>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple search highlighting/filtering logic
+        const searchInput = document.querySelector('input[type="text"]');
+        const rows = document.querySelectorAll('tbody tr');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(term)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Hover animations for cards
+        const cards = document.querySelectorAll('.tonal-card-shadow');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.2s ease-out, box-shadow 0.2s ease-out';
+                card.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.04)';
+            });
+        });
+    </script>
+</body></html>

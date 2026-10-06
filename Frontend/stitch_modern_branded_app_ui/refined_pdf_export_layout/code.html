@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Faculty Performance Review - PDF Preview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#dae2ff",
+                        "on-tertiary-fixed": "#2c1600",
+                        "error-container": "#ffdad6",
+                        "on-background": "#1b1b1e",
+                        "surface-container-low": "#f5f3f6",
+                        "surface-bright": "#fbf8fc",
+                        "outline-variant": "#c5c6cf",
+                        "status-rejected": "#EF4444",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#505d84",
+                        "status-forwarded": "#6366F1",
+                        "on-secondary-container": "#616363",
+                        "on-primary-fixed-variant": "#38466a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "inverse-primary": "#b8c5f1",
+                        "surface": "#fbf8fc",
+                        "secondary-fixed": "#e2e2e2",
+                        "status-pending": "#F59E0B",
+                        "status-resolved": "#10B981",
+                        "on-tertiary-container": "#b0855a",
+                        "tertiary-container": "#3b2000",
+                        "on-secondary-fixed-variant": "#454747",
+                        "background": "#fbf8fc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface-container": "#efedf1",
+                        "primary-container": "#172548",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e4e2e5",
+                        "on-surface": "#1b1b1e",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-tertiary": "#ffffff",
+                        "border-subtle": "#E2E8F0",
+                        "surface-container-high": "#eae7eb",
+                        "secondary": "#5d5f5f",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#dfe0e0",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "primary": "#010f32",
+                        "on-primary-container": "#7f8db6",
+                        "tertiary": "#1e0e00",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "surface-gray": "#F8FAFC",
+                        "inverse-on-surface": "#f2f0f3",
+                        "surface-dim": "#dbd9dd",
+                        "on-primary-fixed": "#0b1a3c",
+                        "inverse-surface": "#303033",
+                        "on-surface-variant": "#45464e",
+                        "surface-container-highest": "#e4e2e5",
+                        "outline": "#75777f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "8px",
+                        "stack-loose": "24px",
+                        "margin-page": "20px",
+                        "gutter-card": "16px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F1F5F9;
+            color: #1b1b1e;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pdf-canvas {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            background: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .confidential-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(0,0,0,0.02);
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+        }
+        .status-bar {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        @media print {
+            body { background: white; margin: 0; }
+            .pdf-canvas { box-shadow: none; margin: 0; max-width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md">
+<!-- Top Navigation Bar (Shared Component Context) -->
+<header class="bg-surface dark:bg-surface-dim border-b border-border-subtle dark:border-outline-variant w-full top-0 sticky z-40 flex items-center justify-between px-margin-page h-16 w-full no-print">
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed-dim hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors p-2 rounded-full active:opacity-70">arrow_back</button>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">Report Generator</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-on-primary font-button-text text-button-text px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 transition-all" onclick="window.print()">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                Export PDF
+            </button>
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed-dim hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors p-2 rounded-full active:opacity-70">more_vert</button>
+</div>
+</header>
+<main class="px-margin-page pb-24">
+<!-- PDF Document Canvas -->
+<article class="pdf-canvas rounded-xl p-8 md:p-12">
+<div class="confidential-watermark select-none">CONFIDENTIAL DOCUMENT</div>
+<!-- Professional Header -->
+<section class="relative z-10 border-b-2 border-primary-container pb-8 mb-stack-loose flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div class="flex items-center gap-4">
+<img alt="DCMS Logo" class="w-16 h-16 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLtVuRjLOqpsRZnRsbBuw4fo35lMqqAiYUDhFxc3bY3-AzJTNEsAl68yBLT_THGvnuAciBHnOGq-yzh4mIjWmsTdqwNZgQ6QJs34xNPCAe-HwbXzXTDZk8mnhNEVQebMz-kgHvRb85uHbEKqyvK8LAifjFMVGNiGJ7l_MTdruU8Yzsyv4J0pT31hTE68IjU-6-u4PcL-JqniZHvaoDTo5WKDzKkRwwLI4dIo50tb3u1oFKXtXsGMv9q1f1JI"/>
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary leading-tight">Faculty Performance Review</h2>
+<p class="text-on-surface-variant font-label-caps text-label-caps mt-1">Department Complaint Management System (DCMS)</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-border-subtle min-w-[200px]">
+<div class="grid grid-cols-2 gap-x-4 gap-y-1">
+<span class="text-on-surface-variant text-[10px] uppercase font-bold">Batch:</span>
+<span class="text-primary font-bold text-[11px]">AY 2023-24 Q4</span>
+<span class="text-on-surface-variant text-[10px] uppercase font-bold">Period:</span>
+<span class="text-primary font-bold text-[11px]">Oct - Dec 2023</span>
+<span class="text-on-surface-variant text-[10px] uppercase font-bold">Generated:</span>
+<span class="text-primary font-bold text-[11px]">Jan 12, 2024</span>
+</div>
+</div>
+</section>
+<!-- Executive Summary -->
+<section class="relative z-10 mb-stack-loose">
+<h3 class="font-headline-md text-headline-md text-primary mb-gutter-card flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                    Executive Summary
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-border-subtle shadow-sm flex flex-col gap-1">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Resolution Rate</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-3xl font-bold text-primary">94.2%</span>
+<span class="text-status-resolved text-xs font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">trending_up</span> 2.4%
+                            </span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-3">
+<div class="bg-status-resolved h-full rounded-full" style="width: 94.2%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-border-subtle shadow-sm flex flex-col gap-1">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Avg. Response Time</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-3xl font-bold text-primary">4.2h</span>
+<span class="text-status-resolved text-xs font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">trending_down</span> 0.8h
+                            </span>
+</div>
+<p class="text-on-surface-variant text-[11px] mt-3 italic">Internal goal: &lt; 6.0h</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-border-subtle shadow-sm flex flex-col gap-1">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Student Satisfaction</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-3xl font-bold text-primary">4.8</span>
+<span class="text-on-surface-variant text-lg">/ 5.0</span>
+</div>
+<div class="flex gap-1 mt-3">
+<span class="material-symbols-outlined text-status-pending text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-status-pending text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-status-pending text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-status-pending text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-status-pending text-sm" style="font-variation-settings: 'FILL' 1">star_half</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Detailed Performance Section -->
+<section class="relative z-10 mb-stack-loose">
+<h3 class="font-headline-md text-headline-md text-primary mb-gutter-card flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">badge</span>
+                    Detailed Performance
+                </h3>
+<div class="overflow-hidden border border-border-subtle rounded-xl bg-surface-container-lowest">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="px-6 py-4 font-label-caps text-label-caps text-primary border-b border-border-subtle">Faculty Member</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-primary border-b border-border-subtle">Assigned</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-primary border-b border-border-subtle">Resolved</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-primary border-b border-border-subtle text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr class="hover:bg-surface-gray transition-colors group">
+<td class="px-6 py-4 relative">
+<div class="status-bar bg-status-resolved"></div>
+<div class="flex flex-col">
+<span class="font-bold text-primary">Dr. Elena Rodriguez</span>
+<span class="text-xs text-on-surface-variant">Senior Professor, CS</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-primary">124</td>
+<td class="px-6 py-4 font-body-md text-primary">122</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-green-50 text-status-resolved text-[10px] font-bold uppercase rounded-full border border-status-resolved/20">Top Performer</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-gray transition-colors relative">
+<td class="px-6 py-4 relative">
+<div class="status-bar bg-status-forwarded"></div>
+<div class="flex flex-col">
+<span class="font-bold text-primary">Prof. Alan Turing Jr.</span>
+<span class="text-xs text-on-surface-variant">Assistant Professor</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-primary">89</td>
+<td class="px-6 py-4 font-body-md text-primary">81</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-blue-50 text-status-forwarded text-[10px] font-bold uppercase rounded-full border border-status-forwarded/20">On Track</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-gray transition-colors">
+<td class="px-6 py-4 relative">
+<div class="status-bar bg-status-resolved"></div>
+<div class="flex flex-col">
+<span class="font-bold text-primary">Dr. Sarah Jenkins</span>
+<span class="text-xs text-on-surface-variant">Research Lead</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-primary">56</td>
+<td class="px-6 py-4 font-body-md text-primary">55</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-green-50 text-status-resolved text-[10px] font-bold uppercase rounded-full border border-status-resolved/20">Top Performer</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-gray transition-colors">
+<td class="px-6 py-4 relative">
+<div class="status-bar bg-status-pending"></div>
+<div class="flex flex-col">
+<span class="font-bold text-primary">Mr. Kevin Mitchell</span>
+<span class="text-xs text-on-surface-variant">Lab Coordinator</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-primary">112</td>
+<td class="px-6 py-4 font-body-md text-primary">94</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-amber-50 text-status-pending text-[10px] font-bold uppercase rounded-full border border-status-pending/20">Observation</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Departmental Insights -->
+<section class="relative z-10 mb-stack-loose">
+<h3 class="font-headline-md text-headline-md text-primary mb-gutter-card flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">trending_up</span>
+                    Departmental Insights
+                </h3>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<p class="text-on-surface-variant text-body-md mb-6">Resolution Trend (Past 6 Months)</p>
+<div class="h-40 flex items-end justify-between gap-2 px-4 border-b border-border-subtle">
+<div class="group relative flex flex-col items-center flex-1">
+<div class="w-full bg-primary/10 group-hover:bg-primary/20 transition-all rounded-t h-24"></div>
+<span class="text-[10px] text-on-surface-variant mt-2 font-label-caps">JUL</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1">
+<div class="w-full bg-primary/10 group-hover:bg-primary/20 transition-all rounded-t h-28"></div>
+<span class="text-[10px] text-on-surface-variant mt-2 font-label-caps">AUG</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1">
+<div class="w-full bg-primary/10 group-hover:bg-primary/20 transition-all rounded-t h-32"></div>
+<span class="text-[10px] text-on-surface-variant mt-2 font-label-caps">SEP</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1">
+<div class="w-full bg-primary group-hover:bg-primary/90 transition-all rounded-t h-36"></div>
+<span class="text-[10px] font-bold text-primary mt-2 font-label-caps">OCT</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1">
+<div class="w-full bg-primary group-hover:bg-primary/90 transition-all rounded-t h-34"></div>
+<span class="text-[10px] font-bold text-primary mt-2 font-label-caps">NOV</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1">
+<div class="w-full bg-primary group-hover:bg-primary/90 transition-all rounded-t h-38"></div>
+<span class="text-[10px] font-bold text-primary mt-2 font-label-caps">DEC</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Administrative Remarks -->
+<section class="relative z-10 mb-stack-loose pt-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="flex flex-col gap-12">
+<div class="border-b border-on-surface-variant/30 pb-2">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant block mb-8">Generated by (Automated)</span>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">DA</div>
+<div class="flex flex-col">
+<span class="text-body-md font-bold text-primary">Department Administrator</span>
+<span class="text-[11px] text-on-surface-variant italic">Ref ID: DCMS-REPORT-88219</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-12">
+<div class="border-b border-on-surface-variant/30 pb-2">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant block mb-8">Official Stamp &amp; Signature</span>
+<div class="h-10"></div> <!-- Placeholder for signature -->
+</div>
+</div>
+</div>
+<div class="mt-stack-loose bg-surface-container-low p-4 rounded-lg border border-dashed border-border-subtle">
+<h4 class="text-[11px] font-bold text-primary uppercase mb-2">Administrative Notes</h4>
+<p class="text-[12px] text-on-surface-variant leading-relaxed">
+                        This report was generated automatically based on the DCMS internal grievance registry. Performance metrics are evaluated against the institutional service-level agreements (SLA) defined for the Academic Year 2023-24. Any discrepancies should be reported to the IT Governance Board within 5 business days.
+                    </p>
+</div>
+</section>
+<!-- Footer -->
+<footer class="mt-stack-loose border-t border-border-subtle pt-6 flex flex-col md:flex-row justify-between items-center text-[10px] text-on-surface-variant font-label-caps uppercase tracking-widest gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">lock</span>
+                    Strictly Confidential - For Departmental Use Only
+                </div>
+<div>Page 01 of 01</div>
+<div>Document ID: DCMS-PR-2023-Q4-001</div>
+</footer>
+</article>
+<!-- Contextual FAB (Shared Component Style) - Suppressed for Details/Transaction Focused Screens as per instructions, but adding a print button toggle for UI utility -->
+<button class="fixed bottom-6 right-6 bg-primary text-on-primary w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all no-print" onclick="window.print()">
+<span class="material-symbols-outlined">print</span>
+</button>
+</main>
+<!-- Bottom Navigation Bar (Mobile View) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-dim border-t border-border-subtle dark:border-outline-variant flex justify-around items-center h-16 px-4 pb-safe no-print">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px]">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-xl px-3 py-1 scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">analytics</span>
+<span class="font-label-caps text-[10px]">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-[10px]">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[10px]">Settings</span>
+</div>
+</nav>
+<script>
+        // Micro-interactions for the preview
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('cursor-pointer');
+            });
+        });
+        
+        // Simple animation for the bar chart on load
+        window.addEventListener('load', () => {
+            const bars = document.querySelectorAll('.rounded-t');
+            bars.forEach((bar, index) => {
+                const height = bar.style.height;
+                bar.style.height = '0px';
+                setTimeout(() => {
+                    bar.style.transition = 'height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    bar.style.height = height;
+                }, index * 100);
+            });
+        });
+    </script>
+</body></html>

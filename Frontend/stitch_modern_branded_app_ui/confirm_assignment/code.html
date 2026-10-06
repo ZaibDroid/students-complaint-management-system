@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Assignment Confirmation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hanken+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-secondary-fixed-variant": "#454747",
+                    "secondary-container": "#dfe0e0",
+                    "on-error": "#ffffff",
+                    "status-pending": "#F59E0B",
+                    "secondary-fixed": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#505d84",
+                    "inverse-surface": "#303033",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-tertiary-container": "#b0855a",
+                    "status-resolved": "#10B981",
+                    "surface-bright": "#fbf8fc",
+                    "surface-container": "#efedf1",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b8c5f1",
+                    "outline": "#75777f",
+                    "status-forwarded": "#6366F1",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fbf8fc",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-primary-container": "#7f8db6",
+                    "tertiary-container": "#3b2000",
+                    "secondary": "#5d5f5f",
+                    "on-surface-variant": "#45464e",
+                    "on-surface": "#1b1b1e",
+                    "on-background": "#1b1b1e",
+                    "surface-container-high": "#eae7eb",
+                    "status-rejected": "#EF4444",
+                    "background": "#fbf8fc",
+                    "surface-dim": "#dbd9dd",
+                    "primary-fixed": "#dae2ff",
+                    "primary-container": "#172548",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "border-subtle": "#E2E8F0",
+                    "tertiary": "#1e0e00",
+                    "surface-gray": "#F8FAFC",
+                    "surface-variant": "#e4e2e5",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "inverse-on-surface": "#f2f0f3",
+                    "on-secondary-container": "#616363",
+                    "on-primary-fixed-variant": "#38466a",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#0b1a3c",
+                    "primary": "#010f32",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "outline-variant": "#c5c6cf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-tight": "8px",
+                    "base-unit": "4px",
+                    "stack-loose": "24px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "label-caps": ["JetBrains Mono"],
+                    "button-text": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-layer-1 {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .gradient-mesh {
+            background-color: #fbf8fc;
+            background-image: radial-gradient(at 0% 0%, rgba(218, 226, 255, 0.3) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen gradient-mesh">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface border-b border-border-subtle z-50">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="cursor-pointer active:opacity-80 p-2 hover:bg-surface-container-low transition-colors rounded-full">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Confirm Staff Assignment</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden md:block">
+<p class="font-button-text text-button-text text-on-surface">Admin Portal</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant">DCMS Administrator</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold border border-outline-variant">
+                    AD
+                </div>
+</div>
+</div>
+</header>
+<main class="max-w-5xl mx-auto px-margin-page py-stack-loose pb-24">
+<!-- Breadcrumb / Progress -->
+<nav class="mb-stack-loose flex items-center gap-2 text-on-surface-variant">
+<span class="font-label-caps text-label-caps">Staff Directory</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-label-caps text-label-caps text-primary font-bold">Confirmation</span>
+</nav>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-stack-loose">
+<!-- Left Side: Selection Summary (Bento Style) -->
+<div class="md:col-span-7 flex flex-col gap-stack-loose">
+<section class="flex flex-col gap-stack-tight">
+<h2 class="font-headline-md text-headline-md text-on-surface">Review Assignment</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Please verify the academic section and staff details before finalizing the assignment.</p>
+</section>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-stack-tight md:gap-stack-loose">
+<!-- Section Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-layer-1 flex flex-col justify-between">
+<div>
+<span class="font-label-caps text-label-caps text-primary bg-primary-fixed px-2 py-1 rounded-md mb-4 inline-block">Target Section</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-2">2024 CS - Section A</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Computer Science Department</p>
+</div>
+<div class="mt-6 flex items-center gap-2 text-status-forwarded">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+<span class="font-button-text text-button-text">42 Enrolled Students</span>
+</div>
+</div>
+<!-- Staff Profile Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-layer-1">
+<div class="flex items-start justify-between mb-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged academic staff member with glasses, wearing a sharp navy blue blazer over a white shirt. The background is a blurred academic office with books and a soft, professional lighting setup. The visual style is clean, corporate, and trustworthy, matching the minimalist university administrative interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbIcxvdz5T5jaYpJdhIW1fM9AjzMlNa5lbYCejC00qCdmN-zG65BM86W4wwLeXX3PO98vHD8QYS356DWz8flDC5qdgL4IzLO0EexWieK-RdIM6Hz9yLV5I2Kyj_ayunOq19AE19cKEd10E9I7OIqLlrAOhbbh0Atr1KlyQf27pSnBsU9oEr52U_Pal-_MkCl0kSEXXvHRex4d0h1K2TjmWD35N5hrT1mFEC6Yz_FxeYBZeEj8YrLIjiOGwzIWZYlqcuU51WQxuODWD"/>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Dr. Elena Rodriguez</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-1">Associate Professor</p>
+<div class="mt-4 pt-4 border-t border-border-subtle">
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+<span class="font-body-md text-body-md">e.rodriguez@university.edu</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Assignment Form -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-border-subtle tonal-layer-1 flex flex-col gap-6">
+<div class="space-y-2">
+<label class="font-button-text text-button-text text-on-surface flex items-center gap-2" for="role-select">
+                            Designated Role
+                            <span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-3 appearance-none focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-on-surface outline-none transition-all" id="role-select">
+<option disabled="" selected="" value="">Select a role...</option>
+<option value="batch-adviser">Batch Adviser</option>
+<option value="coordinator">Program Coordinator</option>
+<option value="instructor">Lead Instructor</option>
+<option value="mentor">Academic Mentor</option>
+</select>
+<div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-button-text text-button-text text-on-surface" for="remarks">Remarks (Optional)</label>
+<textarea class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-on-surface outline-none transition-all resize-none" id="remarks" placeholder="Add any specific instructions or notes regarding this assignment..." rows="4"></textarea>
+</div>
+</div>
+</div>
+<!-- Right Side: Action Panel / Visual Identity -->
+<div class="md:col-span-5 flex flex-col gap-stack-loose h-full">
+<div class="relative h-64 md:h-full rounded-2xl overflow-hidden bg-primary-container group">
+<div class="absolute inset-0 opacity-40 mix-blend-overlay">
+<div class="w-full h-full bg-cover bg-center" data-alt="A sophisticated abstract background with flowing mathematical curves and geometric patterns in shades of navy, slate, and royal blue. The lighting is low-key with subtle highlights that suggest a high-tech academic environment. The composition is balanced and elegant, reinforcing institutional authority and professional rigor." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC-Hc20rgw625Gfxc_7c8f_-IppEpo1CsKADvElC0Dl7JkNcBDAd8CpOwhrDI-ER0i-2t53T5vhC7vov0t-3OiTOo9io6l4_xl4Yunc4yYu9wwvVuYtj4Hp2-tOTGSnbuRpgHspFdb2hITwTa6Fq5GPAuASBWdi7-zXh4zE-qojopt-JLIDLIRoKUAnQhO_81EB5imDRfmTxb_KPSHqRnfQePC56ESYnd_V_HENzw8jN-ft6VcxTGCilhkCmIxEEuPDGdW3OH8i9WWa')"></div>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-8 flex flex-col gap-4">
+<div class="w-12 h-1 bg-on-primary-fixed-variant rounded-full"></div>
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile text-on-primary font-bold">Institutional Rigor</h4>
+<p class="font-body-md text-body-md text-primary-fixed max-w-xs">Ensuring seamless administrative transitions for academic excellence.</p>
+</div>
+<!-- Overlay Confirmation Trigger (Simulated Interaction) -->
+<div class="hidden md:flex absolute top-6 right-6 flex-col items-center gap-2">
+<div class="w-12 h-12 rounded-full bg-surface-bright/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+</div>
+</div>
+<!-- Footer Buttons (Mobile & Desktop sticky container) -->
+<div class="flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary/90 text-on-primary font-button-text text-button-text py-4 rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Confirm Assignment
+                        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+</button>
+<button class="w-full bg-transparent hover:bg-surface-container-low text-primary border border-primary/20 font-button-text text-button-text py-4 rounded-xl active:scale-[0.98] transition-all">
+                        Cancel & Go Back
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-border-subtle shadow-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 cursor-pointer">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 cursor-pointer">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Profile</span>
+</div>
+</nav>
+<script>
+        // Micro-interactions for inputs
+        document.querySelectorAll('select, textarea').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.parentElement.parentElement.classList.add('ring-offset-2');
+            });
+            el.addEventListener('blur', () => {
+                el.parentElement.parentElement.classList.remove('ring-offset-2');
+            });
+        });
+
+        // Simple click effect for the confirm button
+        const confirmBtn = document.querySelector('button.bg-primary');
+        confirmBtn.addEventListener('click', () => {
+            confirmBtn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing...
+            `;
+            setTimeout(() => {
+                confirmBtn.innerHTML = `Success! <span class="material-symbols-outlined">verified</span>`;
+                confirmBtn.classList.replace('bg-primary', 'bg-status-resolved');
+            }, 1500);
+        });
+    </script>
+</body></html>

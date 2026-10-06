@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DCMS Staff Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "status-forwarded": "#6366F1",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#3b2000",
+                    "inverse-primary": "#b8c5f1",
+                    "secondary": "#5d5f5f",
+                    "status-resolved": "#10B981",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-primary-fixed": "#0b1a3c",
+                    "on-background": "#1b1b1e",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c5c6cf",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "status-rejected": "#EF4444",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-secondary-fixed-variant": "#454747",
+                    "surface-dim": "#dbd9dd",
+                    "tertiary": "#1e0e00",
+                    "on-primary-container": "#7f8db6",
+                    "primary-fixed": "#dae2ff",
+                    "surface": "#fbf8fc",
+                    "status-pending": "#F59E0B",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed-variant": "#38466a",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#dfe0e0",
+                    "border-subtle": "#E2E8F0",
+                    "surface-gray": "#F8FAFC",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#b0855a",
+                    "inverse-on-surface": "#f2f0f3",
+                    "surface-container-low": "#f5f3f6",
+                    "primary": "#010f32",
+                    "outline": "#75777f",
+                    "on-surface-variant": "#45464e",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-bright": "#fbf8fc",
+                    "surface-container": "#efedf1",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-secondary-container": "#616363",
+                    "surface-container-high": "#eae7eb",
+                    "background": "#fbf8fc",
+                    "on-surface": "#1b1b1e",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#505d84",
+                    "primary-container": "#172548",
+                    "surface-variant": "#e4e2e5",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#303033"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-loose": "24px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px",
+                    "base-unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .tonal-elevation {
+            box-shadow: 0 4px 12px 0 rgba(0,0,0,0.04);
+        }
+        body {
+            background-color: #fbf8fc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface border-b border-border-subtle dark:border-outline-variant shadow-sm flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a university administrator in a modern office. The lighting is soft and natural, emphasizing a high-trust, authoritative environment. The style is clean, corporate photography with a shallow depth of field, using a palette of blues and soft grays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9QlDNtvJQd3AGsr3528Yor6OWd0VM_zB6-JGqzTvUH2Je2bAhCGmFbyBlLT1Sb3VJL8Wn0qPltsePj7s50FG5PlLX45tSfO3NqaLFfFxNX1EnYlz6SJrU6dLWoFNUt7knKtW5flAhEMdb5LwgMl4pyOSrP2VDg9kKrtDhiWTrsyHK0e-Wqr-naVsB7XTU9tMYGPudMIIIHbcpzEZnsxRfoiheCCxO8uS9Q8rjR-WJ34DSe1DbgOiE1YDTtPqz6OJfwqMfVTohUNsQ"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-inverse-primary">Staff Dashboard</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container dark:hover:bg-primary-container transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="pt-20 pb-24 px-margin-page max-w-5xl mx-auto">
+<!-- Metrics Section (Bento Style) -->
+<section class="grid grid-cols-2 md:grid-cols-3 gap-stack-tight mb-stack-loose">
+<div class="col-span-1 bg-surface-container-lowest tonal-elevation p-4 rounded-xl border-l-4 border-status-pending">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Pending</p>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">12</h3>
+</div>
+<div class="col-span-1 bg-surface-container-lowest tonal-elevation p-4 rounded-xl border-l-4 border-primary">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Assigned to Me</p>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">05</h3>
+</div>
+<div class="col-span-2 md:col-span-1 bg-surface-container-lowest tonal-elevation p-4 rounded-xl border-l-4 border-status-resolved">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Resolved</p>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">48</h3>
+</div>
+</section>
+<!-- Filter Chips -->
+<div class="flex gap-2 overflow-x-auto pb-4 custom-scrollbar no-scrollbar">
+<button class="flex items-center px-4 py-2 rounded-full bg-primary text-on-primary font-button-text text-button-text transition-all active:scale-95">
+                All Cases
+            </button>
+<button class="flex items-center px-4 py-2 rounded-full bg-surface-container border border-border-subtle text-on-surface-variant font-button-text text-button-text hover:bg-surface-container-high transition-all active:scale-95">
+<span class="w-2 h-2 rounded-full bg-status-rejected mr-2"></span> Urgent
+            </button>
+<button class="flex items-center px-4 py-2 rounded-full bg-surface-container border border-border-subtle text-on-surface-variant font-button-text text-button-text hover:bg-surface-container-high transition-all active:scale-95">
+                Newest
+            </button>
+<button class="flex items-center px-4 py-2 rounded-full bg-surface-container border border-border-subtle text-on-surface-variant font-button-text text-button-text hover:bg-surface-container-high transition-all active:scale-95">
+                Escalated
+            </button>
+</div>
+<!-- Scrollable Complaint List -->
+<div class="flex flex-col gap-4 mt-2">
+<!-- Complaint Card 1 -->
+<article class="bg-surface-container-lowest tonal-elevation rounded-xl p-4 border border-border-subtle hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex-1 flex gap-4">
+<div class="mt-1">
+<span class="w-3 h-3 rounded-full bg-status-rejected block ring-4 ring-status-rejected/10" title="Urgent"></span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="font-label-caps text-label-caps text-on-primary-container px-2 py-0.5 bg-primary-fixed rounded">#DC-2945</span>
+<span class="font-label-caps text-label-caps text-status-pending bg-status-pending/10 px-2 py-0.5 rounded">Maintenance</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1">Library Cooling System</h4>
+<p class="font-body-md text-on-surface-variant">Submitted by <span class="font-semibold">Alex Rivera</span> • 2h ago</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 md:flex-none px-6 py-2 bg-primary text-on-primary rounded-lg font-button-text text-button-text hover:brightness-110 active:scale-95 transition-all">
+                        Review
+                    </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</article>
+<!-- Complaint Card 2 -->
+<article class="bg-surface-container-lowest tonal-elevation rounded-xl p-4 border border-border-subtle hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex-1 flex gap-4">
+<div class="mt-1">
+<span class="w-3 h-3 rounded-full bg-transparent border-2 border-outline-variant block"></span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="font-label-caps text-label-caps text-on-primary-container px-2 py-0.5 bg-primary-fixed rounded">#DC-3012</span>
+<span class="font-label-caps text-label-caps text-on-secondary-fixed-variant bg-secondary-container px-2 py-0.5 rounded">Academic</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1">Transcript Discrepancy</h4>
+<p class="font-body-md text-on-surface-variant">Submitted by <span class="font-semibold">Sarah Chen</span> • 5h ago</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 md:flex-none px-6 py-2 bg-primary text-on-primary rounded-lg font-button-text text-button-text hover:brightness-110 active:scale-95 transition-all">
+                        Review
+                    </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</article>
+<!-- Complaint Card 3 -->
+<article class="bg-surface-container-lowest tonal-elevation rounded-xl p-4 border border-border-subtle hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 opacity-75">
+<div class="flex-1 flex gap-4">
+<div class="mt-1">
+<span class="w-3 h-3 rounded-full bg-status-resolved block" title="Resolved"></span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant px-2 py-0.5 bg-surface-container-highest rounded">#DC-2890</span>
+<span class="font-label-caps text-label-caps text-status-resolved bg-status-resolved/10 px-2 py-0.5 rounded">Security</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1 line-through decoration-on-surface-variant/30">ID Card Scanner Fault</h4>
+<p class="font-body-md text-on-surface-variant">Submitted by <span class="font-semibold">Jordan Smith</span> • Resolved 1d ago</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 md:flex-none px-6 py-2 border border-primary text-primary rounded-lg font-button-text text-button-text hover:bg-primary/5 active:scale-95 transition-all">
+                        View History
+                    </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</article>
+<!-- Complaint Card 4 (Maintenance) -->
+<article class="bg-surface-container-lowest tonal-elevation rounded-xl p-4 border border-border-subtle hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex-1 flex gap-4">
+<div class="mt-1">
+<span class="w-3 h-3 rounded-full bg-status-forwarded block ring-4 ring-status-forwarded/10" title="Forwarded"></span>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="font-label-caps text-label-caps text-on-primary-container px-2 py-0.5 bg-primary-fixed rounded">#DC-3044</span>
+<span class="font-label-caps text-label-caps text-status-pending bg-status-pending/10 px-2 py-0.5 rounded">Maintenance</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1">Broken Elevator - Block B</h4>
+<p class="font-body-md text-on-surface-variant">Submitted by <span class="font-semibold">Marcus Lee</span> • 30m ago</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 md:flex-none px-6 py-2 bg-primary text-on-primary rounded-lg font-button-text text-button-text hover:brightness-110 active:scale-95 transition-all">
+                        Review
+                    </button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-16 bg-surface dark:bg-inverse-surface border-t border-border-subtle shadow-[0_-4px_12px_0_rgba(0,0,0,0.04)] flex justify-around items-center px-2 pb-safe z-50">
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-label-caps text-label-caps mt-0.5">Assigned</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-primary-container/50 p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps mt-0.5">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-primary-container/50 p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-label-caps mt-0.5">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-primary-container/50 p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-0.5">Account</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for chips
+        const chips = document.querySelectorAll('.no-scrollbar button');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => {
+                    c.classList.remove('bg-primary', 'text-on-primary');
+                    c.classList.add('bg-surface-container', 'text-on-surface-variant');
+                });
+                chip.classList.add('bg-primary', 'text-on-primary');
+                chip.classList.remove('bg-surface-container', 'text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

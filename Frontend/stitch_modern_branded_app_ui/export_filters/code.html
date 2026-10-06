@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DCMS - Export Filters</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f5f3f6",
+                        "on-background": "#1b1b1e",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-surface-variant": "#45464e",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#fbf8fc",
+                        "outline": "#75777f",
+                        "surface-variant": "#e4e2e5",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b0855a",
+                        "surface-tint": "#505d84",
+                        "on-tertiary": "#ffffff",
+                        "border-subtle": "#E2E8F0",
+                        "on-primary-fixed-variant": "#38466a",
+                        "on-primary-container": "#7f8db6",
+                        "inverse-surface": "#303033",
+                        "tertiary-fixed": "#ffdcbc",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-secondary": "#ffffff",
+                        "background": "#fbf8fc",
+                        "outline-variant": "#c5c6cf",
+                        "on-secondary-container": "#616363",
+                        "status-rejected": "#EF4444",
+                        "tertiary-container": "#3b2000",
+                        "status-pending": "#F59E0B",
+                        "secondary": "#5d5f5f",
+                        "primary-container": "#172548",
+                        "status-resolved": "#10B981",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "primary-fixed": "#dae2ff",
+                        "surface-gray": "#F8FAFC",
+                        "secondary-container": "#dfe0e0",
+                        "surface-container": "#efedf1",
+                        "error-container": "#ffdad6",
+                        "status-forwarded": "#6366F1",
+                        "on-primary-fixed": "#0b1a3c",
+                        "inverse-primary": "#b8c5f1",
+                        "surface-container-high": "#eae7eb",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-error": "#ffffff",
+                        "primary": "#010f32",
+                        "tertiary": "#1e0e00",
+                        "error": "#ba1a1a",
+                        "surface": "#fbf8fc",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-dim": "#dbd9dd",
+                        "on-surface": "#1b1b1e",
+                        "secondary-fixed-dim": "#c6c6c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base-unit": "4px",
+                        "margin-page": "20px",
+                        "stack-tight": "8px",
+                        "gutter-card": "16px",
+                        "stack-loose": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-surface dark:bg-surface-dim border-b border-border-subtle dark:border-outline-variant flex items-center justify-between px-margin-page h-16 w-full shadow-sm">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high p-2 rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Export Filters</h1>
+</div>
+<button class="font-button-text text-button-text text-primary-container bg-surface-container-high px-4 py-1.5 rounded-lg hover:bg-surface-container-highest transition-colors active:scale-95">
+            Reset
+        </button>
+</header>
+<main class="max-w-3xl mx-auto px-margin-page py-stack-loose space-y-stack-loose">
+<!-- Section: Date Range -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-border-subtle">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary-container">calendar_month</span>
+<h2 class="font-headline-md text-headline-md text-primary">Date Range</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-1.5">FROM</label>
+<div class="relative">
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none transition-all font-body-md text-on-background" type="date" value="2023-10-01"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-1.5">TO</label>
+<div class="relative">
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none transition-all font-body-md text-on-background" type="date" value="2023-10-31"/>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full bg-primary-container text-on-primary font-button-text text-sm transition-all hover:brightness-110 active:scale-95">Last 7 Days</button>
+<button class="px-4 py-2 rounded-full border border-border-subtle bg-white text-on-surface-variant font-button-text text-sm hover:bg-surface-container-high transition-all active:scale-95">Last Month</button>
+<button class="px-4 py-2 rounded-full border border-border-subtle bg-white text-on-surface-variant font-button-text text-sm hover:bg-surface-container-high transition-all active:scale-95">Custom</button>
+</div>
+</section>
+<!-- Section: Staff Members -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-border-subtle">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">groups</span>
+<h2 class="font-headline-md text-headline-md text-primary">Staff Members</h2>
+</div>
+<span class="text-xs font-label-caps text-on-surface-variant px-2 py-1 bg-surface-variant rounded">3 Selected</span>
+</div>
+<div class="relative mb-4">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-gray border border-border-subtle rounded-lg focus:ring-2 focus:ring-primary-container outline-none font-body-md transition-all" placeholder="Search faculty name..." type="text"/>
+</div>
+<div class="max-h-48 overflow-y-auto custom-scrollbar pr-2 space-y-2">
+<label class="flex items-center p-3 hover:bg-surface-container-low rounded-lg cursor-pointer transition-colors border border-transparent hover:border-border-subtle">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container transition-all" type="checkbox"/>
+<span class="ml-4 flex-1">
+<div class="font-body-md text-on-background font-semibold">Prof. Reed</div>
+<div class="text-xs text-on-surface-variant">Engineering Department</div>
+</span>
+<span class="material-symbols-outlined text-status-resolved text-sm">verified_user</span>
+</label>
+<label class="flex items-center p-3 hover:bg-surface-container-low rounded-lg cursor-pointer transition-colors border border-transparent hover:border-border-subtle">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container transition-all" type="checkbox"/>
+<span class="ml-4 flex-1">
+<div class="font-body-md text-on-background font-semibold">Dr. Vance</div>
+<div class="text-xs text-on-surface-variant">Physics Department</div>
+</span>
+</label>
+<label class="flex items-center p-3 hover:bg-surface-container-low rounded-lg cursor-pointer transition-colors border border-transparent hover:border-border-subtle">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container transition-all" type="checkbox"/>
+<span class="ml-4 flex-1">
+<div class="font-body-md text-on-background font-semibold">Mr. Chen</div>
+<div class="text-xs text-on-surface-variant">Student Affairs</div>
+</span>
+</label>
+<label class="flex items-center p-3 hover:bg-surface-container-low rounded-lg cursor-pointer transition-colors border border-transparent hover:border-border-subtle">
+<input class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container transition-all" type="checkbox"/>
+<span class="ml-4 flex-1">
+<div class="font-body-md text-on-background font-semibold">Dr. Amelia Watson</div>
+<div class="text-xs text-on-surface-variant">Mathematics Faculty</div>
+</span>
+</label>
+</div>
+</section>
+<!-- Section: Complaint Categories -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-border-subtle">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary-container">category</span>
+<h2 class="font-headline-md text-headline-md text-primary">Complaint Categories</h2>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-primary-container bg-primary-container/5 text-primary-container transition-all hover:bg-primary-container/10">
+<span class="material-symbols-outlined mb-2" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="text-xs font-button-text">Grading</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border border-border-subtle bg-white text-on-surface-variant transition-all hover:border-primary-container/30 hover:bg-surface-container-high">
+<span class="material-symbols-outlined mb-2">event_note</span>
+<span class="text-xs font-button-text">Attendance</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border border-border-subtle bg-white text-on-surface-variant transition-all hover:border-primary-container/30 hover:bg-surface-container-high">
+<span class="material-symbols-outlined mb-2">apartment</span>
+<span class="text-xs font-button-text">Facilities</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border border-border-subtle bg-white text-on-surface-variant transition-all hover:border-primary-container/30 hover:bg-surface-container-high">
+<span class="material-symbols-outlined mb-2">account_balance</span>
+<span class="text-xs font-button-text">Administrative</span>
+</button>
+</div>
+</section>
+<!-- Section: Output Format -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-border-subtle">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary-container">file_download</span>
+<h2 class="font-headline-md text-headline-md text-primary">Output Format</h2>
+</div>
+<div class="bg-surface-gray p-1 rounded-xl flex">
+<button class="flex-1 py-3 text-center rounded-lg bg-white shadow-sm border border-border-subtle text-primary font-button-text flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-error text-lg">picture_as_pdf</span>
+                    PDF
+                </button>
+<button class="flex-1 py-3 text-center rounded-lg text-on-surface-variant hover:bg-surface-container-high font-button-text flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-status-resolved text-lg">csv</span>
+                    CSV
+                </button>
+<button class="flex-1 py-3 text-center rounded-lg text-on-surface-variant hover:bg-surface-container-high font-button-text flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-status-resolved text-lg">table_chart</span>
+                    Excel
+                </button>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell & Primary Action -->
+<div class="fixed bottom-0 left-0 w-full bg-surface dark:bg-surface-dim border-t border-border-subtle p-4 z-50 flex flex-col gap-4 shadow-lg md:px-margin-page">
+<button class="w-full bg-primary text-white font-headline-md py-4 rounded-xl flex items-center justify-center gap-3 shadow-md hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined">analytics</span>
+            Apply Filters &amp; Generate
+        </button>
+<!-- Bottom Bar (Navigation) -->
+<nav class="flex justify-around items-center py-2 px-4 bg-surface dark:bg-surface-dim">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant py-1 px-4 hover:bg-surface-container-high rounded-xl transition-colors">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px] mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant py-1 px-4 hover:bg-surface-container-high rounded-xl transition-colors">
+<span class="material-symbols-outlined">assignment_late</span>
+<span class="font-label-caps text-[10px] mt-1">Complaints</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-fixed-dim text-on-primary-container dark:text-on-primary-fixed rounded-xl py-1 px-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-caps text-[10px] mt-1">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant py-1 px-4 hover:bg-surface-container-high rounded-xl transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[10px] mt-1">Settings</span>
+</div>
+</nav>
+</div>
+<script>
+        // Micro-interactions for chip selection
+        document.querySelectorAll('.selectable-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('border-primary-container');
+                chip.classList.toggle('bg-primary-container/5');
+            });
+        });
+
+        // Simple mock for "Reset" functionality
+        const resetBtn = document.querySelector('header button:last-child');
+        resetBtn.addEventListener('click', () => {
+            if(confirm('Are you sure you want to reset all filters?')) {
+                window.location.reload();
+            }
+        });
+    </script>
+</body></html>

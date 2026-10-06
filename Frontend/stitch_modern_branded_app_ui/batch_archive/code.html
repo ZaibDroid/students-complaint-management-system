@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Batch Archive - DCMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#454747",
+                    "status-forwarded": "#6366F1",
+                    "status-resolved": "#10B981",
+                    "on-primary-container": "#7f8db6",
+                    "surface-container-low": "#f5f3f6",
+                    "secondary-fixed": "#e2e2e2",
+                    "secondary-container": "#dfe0e0",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#616363",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-tertiary-fixed": "#2c1600",
+                    "surface-container-high": "#eae7eb",
+                    "inverse-primary": "#b8c5f1",
+                    "status-pending": "#F59E0B",
+                    "primary-fixed": "#dae2ff",
+                    "inverse-on-surface": "#f2f0f3",
+                    "surface-gray": "#F8FAFC",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#0b1a3c",
+                    "surface-container-highest": "#e4e2e5",
+                    "primary": "#010f32",
+                    "surface-container": "#efedf1",
+                    "secondary": "#5d5f5f",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-error": "#ffffff",
+                    "primary-container": "#172548",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-surface-variant": "#45464e",
+                    "error": "#ba1a1a",
+                    "border-subtle": "#E2E8F0",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fbf8fc",
+                    "outline": "#75777f",
+                    "on-tertiary-container": "#b0855a",
+                    "status-rejected": "#EF4444",
+                    "on-surface": "#1b1b1e",
+                    "tertiary": "#1e0e00",
+                    "surface-tint": "#505d84",
+                    "surface-variant": "#e4e2e5",
+                    "inverse-surface": "#303033",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#3b2000",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#dbd9dd",
+                    "on-background": "#1b1b1e",
+                    "surface": "#fbf8fc",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "on-primary-fixed-variant": "#38466a",
+                    "outline-variant": "#c5c6cf",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "on-error-container": "#93000a",
+                    "background": "#fbf8fc"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-loose": "24px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px",
+                    "base-unit": "4px",
+                    "stack-tight": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "button-text": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar from JSON Authority -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-page h-16 bg-surface dark:bg-inverse-surface border-b border-border-subtle dark:border-outline-variant transition-colors duration-200">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed transition-colors duration-200 active:scale-95">
+                menu
+            </button>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed">Batch Archive</h1>
+</div>
+<div class="flex items-center">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed transition-colors duration-200 active:scale-95">
+                search
+            </button>
+</div>
+</header>
+<main class="pt-20 px-margin-page">
+<!-- Search & Filter Section -->
+<section class="mt-stack-tight space-y-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-gray border border-border-subtle rounded-xl py-3 pl-11 pr-4 font-body-md text-on-surface focus:outline-none focus:border-primary transition-all duration-200 placeholder:text-on-surface-variant/60" placeholder="Search by year or batch ID" type="text"/>
+</div>
+<!-- Scrollable Filter Chips -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+<button class="bg-primary text-on-primary font-button-text text-button-text px-4 py-1.5 rounded-full whitespace-nowrap active:scale-95 transition-transform">All Years</button>
+<button class="bg-surface-container-high text-on-surface-variant font-button-text text-button-text px-4 py-1.5 rounded-full whitespace-nowrap hover:bg-surface-container-highest transition-colors active:scale-95">2023</button>
+<button class="bg-surface-container-high text-on-surface-variant font-button-text text-button-text px-4 py-1.5 rounded-full whitespace-nowrap hover:bg-surface-container-highest transition-colors active:scale-95">2022</button>
+<button class="bg-surface-container-high text-on-surface-variant font-button-text text-button-text px-4 py-1.5 rounded-full whitespace-nowrap hover:bg-surface-container-highest transition-colors active:scale-95">2021</button>
+<button class="bg-surface-container-high text-on-surface-variant font-button-text text-button-text px-4 py-1.5 rounded-full whitespace-nowrap flex items-center gap-1 active:scale-95 transition-transform">
+<span>More</span>
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+</div>
+</section>
+<!-- Archive List Section -->
+<div class="mt-stack-loose space-y-stack-loose">
+<!-- Grouping: Class of 2023 -->
+<section class="space-y-4">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest border-l-2 border-primary pl-3">Class of 2023</h2>
+<div class="space-y-4">
+<!-- Batch Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-subtle p-gutter-card shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-resolved"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">BATCH_ID: 1923_CS</span>
+<h3 class="font-headline-md text-headline-md text-primary">Batch 2019-2023 (CS)</h3>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer">archive</span>
+</div>
+<div class="flex flex-wrap gap-4 mt-3">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span class="font-body-md text-body-md">4 Sections</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span class="font-body-md text-body-md">182 Students</span>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex justify-between items-center">
+<span class="bg-[#D1FAE5] text-[#065F46] font-label-caps text-label-caps px-2.5 py-0.5 rounded-full">Archived - Jun 2023</span>
+<button class="font-button-text text-button-text text-primary flex items-center gap-1 active:translate-x-1 transition-transform">
+                                View Records <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Batch Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-subtle p-gutter-card shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-resolved"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">BATCH_ID: 1923_SE</span>
+<h3 class="font-headline-md text-headline-md text-primary">Batch 2019-2023 (SE)</h3>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer">archive</span>
+</div>
+<div class="flex flex-wrap gap-4 mt-3">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span class="font-body-md text-body-md">2 Sections</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span class="font-body-md text-body-md">94 Students</span>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex justify-between items-center">
+<span class="bg-[#D1FAE5] text-[#065F46] font-label-caps text-label-caps px-2.5 py-0.5 rounded-full">Archived - Jun 2023</span>
+<button class="font-button-text text-button-text text-primary flex items-center gap-1 active:translate-x-1 transition-transform">
+                                View Records <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Grouping: Class of 2022 -->
+<section class="space-y-4">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest border-l-2 border-primary pl-3">Class of 2022</h2>
+<div class="space-y-4">
+<!-- Batch Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-subtle p-gutter-card shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-resolved"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">BATCH_ID: 1822_CS</span>
+<h3 class="font-headline-md text-headline-md text-primary">Batch 2018-2022 (CS)</h3>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer">archive</span>
+</div>
+<div class="flex flex-wrap gap-4 mt-3">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span class="font-body-md text-body-md">4 Sections</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span class="font-body-md text-body-md">176 Students</span>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex justify-between items-center">
+<span class="bg-[#D1FAE5] text-[#065F46] font-label-caps text-label-caps px-2.5 py-0.5 rounded-full">Archived - Jun 2022</span>
+<button class="font-button-text text-button-text text-primary flex items-center gap-1 active:translate-x-1 transition-transform">
+                                View Records <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar from JSON Authority -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base-unit py-2 bg-surface dark:bg-inverse-surface border-t border-border-subtle dark:border-outline-variant shadow-sm dark:shadow-none transition-colors duration-200">
+<!-- Dashboard (Default active context) -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-xl px-4 py-1 transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<!-- Complaints -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps">Complaints</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-1 hover:text-primary dark:hover:text-primary-fixed transition-transform duration-200 active:scale-90" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for chips
+        document.querySelectorAll('.overflow-x-auto button').forEach(chip => {
+            chip.addEventListener('click', function() {
+                // Reset all
+                document.querySelectorAll('.overflow-x-auto button').forEach(c => {
+                    c.classList.remove('bg-primary', 'text-on-primary');
+                    c.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                });
+                // Set active
+                this.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                this.classList.add('bg-primary', 'text-on-primary');
+            });
+        });
+    </script>
+</body></html>

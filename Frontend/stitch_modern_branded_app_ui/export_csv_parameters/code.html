@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Export Configuration - Batch AR-2023-B</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fbf8fc",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "surface-container-highest": "#e4e2e5",
+                    "outline": "#75777f",
+                    "surface": "#fbf8fc",
+                    "outline-variant": "#c5c6cf",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-surface-variant": "#45464e",
+                    "inverse-primary": "#b8c5f1",
+                    "surface-dim": "#dbd9dd",
+                    "secondary-container": "#dfe0e0",
+                    "on-background": "#1b1b1e",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#dae2ff",
+                    "error": "#ba1a1a",
+                    "status-rejected": "#EF4444",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-variant": "#e4e2e5",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-surface": "#1b1b1e",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container": "#efedf1",
+                    "primary-container": "#172548",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed-variant": "#38466a",
+                    "on-primary-container": "#7f8db6",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#3b2000",
+                    "on-error": "#ffffff",
+                    "primary": "#010f32",
+                    "on-tertiary-container": "#b0855a",
+                    "surface-gray": "#F8FAFC",
+                    "on-secondary-container": "#616363",
+                    "status-resolved": "#10B981",
+                    "status-forwarded": "#6366F1",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#1e0e00",
+                    "background": "#fbf8fc",
+                    "on-primary-fixed": "#0b1a3c",
+                    "inverse-surface": "#303033",
+                    "inverse-on-surface": "#f2f0f3",
+                    "border-subtle": "#E2E8F0",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-secondary": "#ffffff",
+                    "status-pending": "#F59E0B",
+                    "surface-container-high": "#eae7eb",
+                    "surface-tint": "#505d84",
+                    "secondary": "#5d5f5f",
+                    "primary-fixed-dim": "#b8c5f1"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-loose": "24px",
+                    "base-unit": "4px",
+                    "gutter-card": "16px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+        .card-elevation {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-container-high w-full top-0 sticky border-b border-border-subtle dark:border-outline-variant z-40">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 duration-150 text-primary dark:text-primary-fixed">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Export Configuration</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 duration-150 text-on-surface-variant dark:text-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-2xl mx-auto px-margin-page mt-stack-loose space-y-stack-loose">
+<!-- Batch Context Info -->
+<div class="flex flex-col gap-base-unit">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Active Batch</span>
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span class="text-headline-md font-headline-md">Batch AR-2023-B</span>
+</div>
+</div>
+<!-- Section: Data Range -->
+<section class="space-y-stack-tight">
+<h3 class="font-headline-md text-headline-md text-primary">Data Range Selection</h3>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-stack-tight card-elevation">
+<div class="grid grid-cols-1 gap-2">
+<label class="flex items-center justify-between p-4 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent has-[:checked]:border-primary-container has-[:checked]:bg-primary-fixed">
+<div class="flex items-center gap-3">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary" name="range" type="radio" value="all"/>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-primary">All Records</span>
+<span class="text-on-surface-variant text-body-md">Export 1,240 records across entire batch</span>
+</div>
+</div>
+</label>
+<label class="flex items-center justify-between p-4 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent has-[:checked]:border-primary-container has-[:checked]:bg-primary-fixed">
+<div class="flex items-center gap-3">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="range" type="radio" value="current"/>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-primary">Current Page</span>
+<span class="text-on-surface-variant text-body-md">Export active view selection (50 records)</span>
+</div>
+</div>
+</label>
+<label class="flex items-center justify-between p-4 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent has-[:checked]:border-primary-container has-[:checked]:bg-primary-fixed">
+<div class="flex items-center gap-3">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="range" type="radio" value="custom"/>
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-primary">Custom Range</span>
+<span class="text-on-surface-variant text-body-md">Select specific IDs or date intervals</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Section: Field Selection -->
+<section class="space-y-stack-tight">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-primary">Field Selection</h3>
+<button class="text-primary font-button-text hover:underline flex items-center gap-1" id="selectAllBtn">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+                    Select All
+                </button>
+</div>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-gutter-card card-elevation grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="flex items-center gap-3 group cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Student Name</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Enrollment ID</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Section</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Graduation Year</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Complaint History</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Resolution Status</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Faculty Advisor</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Contact Email</span>
+</label>
+</div>
+</section>
+<!-- Section: Export Settings -->
+<section class="space-y-stack-tight">
+<h3 class="font-headline-md text-headline-md text-primary">Export Settings</h3>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-gutter-card card-elevation space-y-6">
+<!-- Toggle: Admin Notes -->
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-body-lg text-body-lg font-semibold text-primary">Include Administrative Notes</span>
+<span class="text-on-surface-variant text-body-md">Append private registrar comments to each row</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<hr class="border-border-subtle"/>
+<!-- File Naming -->
+<div class="space-y-2">
+<label class="block font-body-md text-body-md font-semibold text-primary">File Naming Convention</label>
+<div class="relative">
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-3 text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all text-on-surface font-label-caps" placeholder="[Batch_ID]_Records_[Date]" type="text" value="AR-2023-B_Records_20231027"/>
+<span class="absolute right-3 top-3.5 text-on-surface-variant font-label-caps text-[10px]">.csv</span>
+</div>
+<p class="text-[11px] text-on-surface-variant italic">Default: [Batch_Code]_[Entity]_[Timestamp]</p>
+</div>
+</div>
+</section>
+<!-- Primary Action -->
+<div class="pt-4">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl font-button-text flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary-container/20">
+<span class="material-symbols-outlined">download</span>
+                Generate CSV
+            </button>
+<p class="text-center text-[12px] text-on-surface-variant mt-3">Estimated file size: ~450 KB</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 pb-safe bg-surface dark:bg-surface-container-low border-t border-border-subtle dark:border-outline-variant shadow-sm z-50">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-xl px-4 py-1 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-caps text-label-caps">Archive</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1 hover:text-primary dark:hover:text-primary-fixed active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interactions
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.sr-only)');
+        
+        selectAllBtn.addEventListener('click', () => {
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+        });
+
+        // Toggle visual feedback for radios
+        document.querySelectorAll('input[name="range"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                // Tailwind CSS Peer and has() handled automatically in modern browsers
+                // Just keeping this hook for potential additional logic
+            });
+        });
+
+        // Simple ripple effect simulator
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

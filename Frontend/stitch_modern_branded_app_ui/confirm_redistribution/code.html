@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Case Redistribution - Final Confirmation</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-gray": "#F8FAFC",
+                        "surface": "#fbf8fc",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-secondary-fixed-variant": "#454747",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f5f3f6",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-container": "#b0855a",
+                        "on-primary-fixed": "#0b1a3c",
+                        "surface-bright": "#fbf8fc",
+                        "on-surface-variant": "#45464e",
+                        "border-subtle": "#E2E8F0",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1b1b1e",
+                        "tertiary-container": "#3b2000",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "surface-container": "#efedf1",
+                        "surface-dim": "#dbd9dd",
+                        "background": "#fbf8fc",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-surface": "#1b1b1e",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "primary-fixed": "#dae2ff",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c5c6cf",
+                        "inverse-primary": "#b8c5f1",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#303033",
+                        "outline": "#75777f",
+                        "secondary": "#5d5f5f",
+                        "on-primary-fixed-variant": "#38466a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-tertiary-fixed": "#2c1600",
+                        "secondary-container": "#dfe0e0",
+                        "primary-container": "#172548",
+                        "primary": "#010f32",
+                        "tertiary": "#1e0e00",
+                        "status-rejected": "#EF4444",
+                        "on-primary-container": "#7f8db6",
+                        "status-forwarded": "#6366F1",
+                        "status-resolved": "#10B981",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#eae7eb",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#505d84",
+                        "surface-variant": "#e4e2e5",
+                        "on-secondary-container": "#616363",
+                        "status-pending": "#F59E0B",
+                        "inverse-on-surface": "#f2f0f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "20px",
+                        "stack-loose": "24px",
+                        "base-unit": "4px",
+                        "stack-tight": "8px",
+                        "gutter-card": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-surface dark:bg-surface-container-low border-b border-border-subtle dark:border-outline-variant flex justify-between items-center px-margin-page h-16 w-full z-50">
+<div class="flex items-center gap-4 cursor-pointer active:scale-95 transition-transform" onclick="history.back()">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">arrow_back</span>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-inverse-primary">Case Redistribution</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-outline cursor-pointer active:scale-95 transition-transform">help_outline</span>
+</div>
+</header>
+<main class="pt-24 px-margin-page max-w-3xl mx-auto">
+<!-- Progress Indicator -->
+<div class="mb-stack-loose flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
+<span class="text-label-caps font-label-caps text-outline">Source</span>
+</div>
+<div class="h-px bg-border-subtle flex-1"></div>
+<div class="flex items-center gap-2">
+<span class="bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
+<span class="text-label-caps font-label-caps text-outline">Recipient</span>
+</div>
+<div class="h-px bg-primary flex-1"></div>
+<div class="flex items-center gap-2">
+<span class="bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold">3</span>
+<span class="text-label-caps font-label-caps text-primary">Confirm</span>
+</div>
+</div>
+<!-- Header -->
+<div class="mb-stack-loose">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Final Confirmation</h2>
+<p class="text-body-lg text-on-surface-variant mt-2">Please review the transfer details before executing the workload balance.</p>
+</div>
+<!-- Summary Card (Bento Style Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter-card mb-stack-loose">
+<!-- Source & Target -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 bento-card shadow-[0_4px_12px_rgba(0,0,0,0.04)] col-span-1 md:col-span-2">
+<div class="flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex-1 text-center md:text-left">
+<span class="text-label-caps font-label-caps text-outline block mb-2">SOURCE FACULTY</span>
+<div class="flex items-center justify-center md:justify-start gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of Professor Reed, a senior academic with a distinguished and welcoming expression, set against a blurred university library background with soft, natural lighting. The style is professional and high-fidelity, following a clean corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8K1tl72DeHnpLHK7iiEDKpILEZdfuns5GKuMQQHMtKlv1fYgBpj81vpW6vBRDRXw6Cujw2GgQ5-Qoa583_CcvtTlEmNAYcsqzm0FPYBphQJ2HM38GRBCPnAqXqZYBB0ObLGjzVuDEvii2Ul-jwbM_hSQAy4ax4RRGEl7G2S-fll4CKM8XVTDALnWVcyb2gTFphoBHxXUzVABcWAcV-vC_4WfOu2Hd5SleN6YQt8Ht7WAXU1fakyf9kHgUrhb9JzeZhAXyJUA5rI5x"/>
+</div>
+<span class="font-headline-md text-headline-md text-primary">Prof. Reed</span>
+</div>
+</div>
+<div class="flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">trending_flat</span>
+</div>
+</div>
+<div class="flex-1 text-center md:text-right">
+<span class="text-label-caps font-label-caps text-outline block mb-2">RECIPIENT FACULTY</span>
+<div class="flex items-center justify-center md:justify-end gap-3 flex-row-reverse">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of Dr. Vance, a younger faculty member with a sharp, modern appearance and a friendly smile, captured in a brightly lit academic office setting. High-quality photography with a clean, light-mode commercial feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgPzgin-wI63WfWnHFnTzthG0Q7CtRImHUieNGb7hfiT3iioydLZYIFzpDYsCXD8kpCwe-RcqkJtMUnFqE3r3OJom2LQDk09HYuZYtJGjED8KgsM3EThUgcn0UibEhr1t2sM3qRFs6GvT75ysiX_RqD3_-Ed_Dh9roMVzOnIhZX2O6nG9ZOxdM2sgJE-XLLF2oda6FUt-ar994vVq3MXAoZNsMvcdbOs63DKc8SNZoXBt9pfPne6n6SgeuAHoL9ARQgeMgglXyv4kn"/>
+</div>
+<span class="font-headline-md text-headline-md text-primary">Dr. Vance</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Case Count -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 bento-card shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<span class="text-label-caps font-label-caps text-outline block mb-4 uppercase">Volume to Transfer</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">12</span>
+<span class="text-body-lg text-on-surface-variant">Active Cases</span>
+</div>
+<div class="mt-4 flex gap-1 h-1 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/2"></div>
+<div class="h-full bg-primary-fixed-dim w-1/4"></div>
+</div>
+</div>
+<!-- Impact Info -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-6 bento-card border border-primary/10">
+<span class="text-label-caps font-label-caps text-on-primary-container/70 block mb-4">SYSTEM IMPACT</span>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary-container">info</span>
+<p class="text-body-md font-medium italic">"This action will balance departmental workload."</p>
+</div>
+</div>
+</div>
+<!-- Remarks Field -->
+<div class="mb-stack-loose space-y-2">
+<label class="text-label-caps font-label-caps text-primary" for="remarks">TRANSFER LOG REMARKS (OPTIONAL)</label>
+<div class="relative group">
+<textarea class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-3 text-body-md focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none" id="remarks" placeholder="Provide context for this redistribution (e.g., Leave of absence, departmental shift)..." rows="3"></textarea>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-4 mb-32">
+<button class="w-full h-14 bg-primary text-on-primary rounded-xl font-button-text text-button-text flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-md" id="executeBtn">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                Execute Redistribution
+            </button>
+<button class="w-full h-14 bg-transparent text-primary font-button-text text-button-text flex items-center justify-center hover:bg-surface-container transition-colors rounded-xl" onclick="history.back()">
+                Cancel
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Relevance Check: Dashboard contextual items) -->
+<nav class="md:hidden fixed bottom-0 w-full flex justify-around items-center py-2 bg-surface dark:bg-surface-container-low border-t border-border-subtle dark:border-outline-variant shadow-sm z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-3 py-1 cursor-pointer active:scale-90 transition-transform">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px] mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-fixed-dim text-on-primary-container dark:text-on-primary-fixed rounded-xl px-3 py-1 cursor-pointer active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-label-caps text-[10px] mt-1">Complaints</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-3 py-1 cursor-pointer active:scale-90 transition-transform">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-[10px] mt-1">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-3 py-1 cursor-pointer active:scale-90 transition-transform">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-[10px] mt-1">Reports</span>
+</div>
+</nav>
+<!-- Feedback Overlay (Simulated Success State) -->
+<div class="fixed inset-0 z-[100] bg-surface flex items-center justify-center hidden opacity-0 transition-opacity duration-300" id="successOverlay">
+<div class="text-center p-margin-page">
+<div class="w-20 h-20 bg-status-resolved text-white rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-4xl">check_circle</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-2">Redistribution Successful</h3>
+<p class="text-body-lg text-on-surface-variant mb-8">Workload has been balanced between Prof. Reed and Dr. Vance.</p>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-button-text" onclick="location.reload()">
+                Return to Dashboard
+            </button>
+</div>
+</div>
+<script>
+        document.getElementById('executeBtn').addEventListener('click', function() {
+            const btn = this;
+            const overlay = document.getElementById('successOverlay');
+            
+            // Loading state
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Processing...';
+            btn.classList.add('pointer-events-none', 'opacity-70');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.add('opacity-100');
+                }, 10);
+            }, 1200);
+        });
+
+        // Add micro-interaction for cards
+        const cards = document.querySelectorAll('.bento-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = 'var(--primary)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = 'var(--border-subtle)';
+            });
+        });
+    </script>
+</body></html>

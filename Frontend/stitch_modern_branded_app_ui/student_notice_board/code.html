@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Student Notice Board | DCMS</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#0b1a3c",
+                    "status-rejected": "#EF4444",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-dim": "#dbd9dd",
+                    "status-pending": "#F59E0B",
+                    "secondary-fixed": "#e2e2e2",
+                    "outline": "#75777f",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#172548",
+                    "surface-container-highest": "#e4e2e5",
+                    "primary": "#010f32",
+                    "outline-variant": "#c5c6cf",
+                    "on-surface": "#1b1b1e",
+                    "inverse-primary": "#b8c5f1",
+                    "surface-tint": "#505d84",
+                    "on-secondary": "#ffffff",
+                    "status-forwarded": "#6366F1",
+                    "border-subtle": "#E2E8F0",
+                    "surface-container-high": "#eae7eb",
+                    "on-error": "#ffffff",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "inverse-surface": "#303033",
+                    "surface": "#fbf8fc",
+                    "surface-variant": "#e4e2e5",
+                    "status-resolved": "#10B981",
+                    "on-surface-variant": "#45464e",
+                    "tertiary": "#1e0e00",
+                    "on-tertiary-container": "#b0855a",
+                    "secondary": "#5d5f5f",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-bright": "#fbf8fc",
+                    "surface-container": "#efedf1",
+                    "secondary-container": "#dfe0e0",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-secondary-fixed-variant": "#454747",
+                    "surface-gray": "#F8FAFC",
+                    "on-primary-fixed-variant": "#38466a",
+                    "background": "#fbf8fc",
+                    "on-secondary-container": "#616363",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-background": "#1b1b1e",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#7f8db6",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "inverse-on-surface": "#f2f0f3",
+                    "primary-fixed": "#dae2ff",
+                    "tertiary-container": "#3b2000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base-unit": "4px",
+                    "stack-loose": "24px",
+                    "stack-tight": "8px",
+                    "gutter-card": "16px",
+                    "margin-page": "20px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "button-text": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .notice-card {
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease-in-out;
+      }
+      .notice-card:active {
+        transform: scale(0.98);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 0px;
+        width: 0px;
+        display: none;
+      }
+      .status-border-urgent {
+        box-shadow: inset 4px 0 0 0 #EF4444;
+      }
+      .status-border-academic {
+        box-shadow: inset 4px 0 0 0 #010f32;
+      }
+      .status-border-events {
+        box-shadow: inset 4px 0 0 0 #6366F1;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md pb-32">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-40 w-full flex justify-between items-center px-margin-page py-4 border-b border-border-subtle">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Notice Board</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant cursor-pointer active:scale-95 transition-transform">notifications</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed cursor-pointer active:scale-95 transition-transform">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a college student in a minimalist photography studio. The lighting is soft and natural, emphasizing a bright and clean academic atmosphere. The student wears a simple professional navy blazer, reflecting the DCMS app's corporate aesthetic. The background is a clean, neutral gray that complements the minimalist UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNPsDmcO3Yrmk1hdQAMYIwkiwtqY0tDdfI5JvI-POliyD40AwIjGjAV9CKttjIQqfmLv8l7lI-E_qF_OT6UVeWNGYQU2aSMXhuxRigjgz0DkHlMQRzujyGGdlDmez5oBgmV1RGVfGkpU3WQ209hlICRxjfm6lGO7fmuLp0QxgLU2tof1Ta5UobE8XMXqXlHfRYKCKqJRpYx2GYrSBEvpxmBMTexvha9Ni75S4BxZ81HTOx1aYnMZy64yd_-Q5eM9Uc_QfAUcGf-rBr"/>
+</div>
+</div>
+</header>
+<!-- Filter Bar -->
+<nav class="bg-background/80 backdrop-blur-md sticky top-[68px] z-30 py-4 px-margin-page overflow-x-auto custom-scrollbar flex gap-3 whitespace-nowrap">
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary font-button-text transition-colors shadow-sm">All</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text hover:bg-surface-container-high transition-colors">Academic</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text hover:bg-surface-container-high transition-colors">Events</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text hover:bg-surface-container-high transition-colors">Urgent</button>
+</nav>
+<!-- Main Content Canvas -->
+<main class="px-margin-page mt-4 space-y-gutter-card">
+<!-- Urgent Notice (Hero Style) -->
+<div class="notice-card relative p-5 bg-error-container/20 rounded-xl border border-error/20 status-border-urgent shadow-sm cursor-pointer overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<span class="px-2.5 py-0.5 rounded bg-error text-on-error font-label-caps text-label-caps uppercase">Urgent</span>
+<span class="text-on-surface-variant font-label-caps text-label-caps">2 hours ago</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Mid-term Exam Schedule Released</h2>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mb-4">The comprehensive schedule for the Spring 2024 Mid-term examinations has been finalized. All students are requested to download the PDF from the portal and verify their seat plans by Friday.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-error/10">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-white">person</span>
+</div>
+<span class="text-body-md font-semibold text-primary">Chairman Office</span>
+</div>
+<!-- Atmospheric Hint -->
+<div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined text-[120px]">assignment_late</span>
+</div>
+</div>
+<!-- Academic Notice -->
+<div class="notice-card p-5 bg-surface-container-lowest rounded-xl border border-border-subtle status-border-academic shadow-sm cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="px-2.5 py-0.5 rounded bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase">Academic</span>
+<span class="text-on-surface-variant font-label-caps text-label-caps">Oct 25</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Supplementary Class for CSE 402</h2>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mb-4">A special review session for Compiler Design (CSE 402) will be held this Saturday at Lab 304 to cover the syntax analysis phase.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-border-subtle">
+<div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-secondary-container">school</span>
+</div>
+<span class="text-body-md font-semibold text-primary">Dr. Sarah Ahmed</span>
+</div>
+</div>
+<!-- Event Notice -->
+<div class="notice-card p-5 bg-surface-container-lowest rounded-xl border border-border-subtle status-border-events shadow-sm cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="px-2.5 py-0.5 rounded bg-status-forwarded/10 text-status-forwarded font-label-caps text-label-caps uppercase">Events</span>
+<span class="text-on-surface-variant font-label-caps text-label-caps">Oct 24</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Annual Cultural Fest 2024</h2>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mb-4">Registrations for the much-awaited Cultural Fest are now open. Interested students can sign up for various categories including Music, Dance, and Drama.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-border-subtle">
+<div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-secondary-container">campaign</span>
+</div>
+<span class="text-body-md font-semibold text-primary">Cultural Club</span>
+</div>
+</div>
+<!-- Academic Notice -->
+<div class="notice-card p-5 bg-surface-container-lowest rounded-xl border border-border-subtle status-border-academic shadow-sm cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="px-2.5 py-0.5 rounded bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase">Academic</span>
+<span class="text-on-surface-variant font-label-caps text-label-caps">Oct 22</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Holiday Announcement: Winter Break</h2>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mb-4">The University will remain closed from December 24th to January 2nd for the upcoming winter holidays and New Year celebrations.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-border-subtle">
+<div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-secondary-container">groups</span>
+</div>
+<span class="text-body-md font-semibold text-primary">Registrar Office</span>
+</div>
+</div>
+<!-- Visual Anchor (Bento Style Preview) -->
+<div class="relative w-full h-48 rounded-xl overflow-hidden mt-8">
+<img class="w-full h-full object-cover" data-alt="A panoramic wide-angle shot of a high-tech modern university campus courtyard at dusk. The architecture features clean glass facades and sleek navy steel beams, reflecting a professional administrative vibe. The lighting is low-key with glowing interior windows and minimalist bollard lights casting soft pools of light on pristine concrete walkways. The color palette is dominated by deep blues, crisp whites, and subtle metallic grays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvQ5dJ985ovcIYysldVCARAiLjvy38eFLlqOmQYRaTCGjCU1GawksI6N-QgejsPvWJLxOExqncBJAJcE9INK-z5P9dNXgP8UhmUMcTR0kI4GXrseyn6MQhQ0BTpWSlBhe9uyycasKnSoE2zhUWbuO1Ydr710WYcJ2wit3YD164cEDCOdQxL2RSMdsbKgRPU8WRkuEJkUhmG0KCBnrjPxotHHfceOzt6K5yRhWAYL6ZSfLIdyD3wfKjqDlPaLiHNFhSrr12_UzvdmDR"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-6">
+<div class="text-white">
+<p class="font-label-caps text-label-caps uppercase opacity-80 mb-1">Campus Life</p>
+<h3 class="font-headline-md text-headline-md">New Digital Library Access Now Live</h3>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface border-t border-border-subtle z-50 pb-safe">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<!-- Complaints -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_late">assignment_late</span>
+<span class="font-label-caps text-label-caps mt-1">Complaints</span>
+</a>
+<!-- Notices (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="font-label-caps text-label-caps mt-1">Notices</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('.notice-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Subtle feedback before navigation would happen
+                card.style.transform = 'scale(0.97)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Simple Filter logic (visual only)
+        const filterButtons = document.querySelectorAll('nav button');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('bg-surface-container', 'text-on-surface-variant');
+                });
+                btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+                btn.classList.add('bg-primary', 'text-on-primary');
+            });
+        });
+    </script>
+</body></html>

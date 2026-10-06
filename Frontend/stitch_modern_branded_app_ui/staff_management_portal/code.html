@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Management | DCMS Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Hanken+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#303033",
+                        "primary-fixed": "#dae2ff",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1b1e",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "inverse-primary": "#b8c5f1",
+                        "outline-variant": "#c5c6cf",
+                        "on-primary-fixed-variant": "#38466a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e4e2e5",
+                        "secondary": "#5d5f5f",
+                        "outline": "#75777f",
+                        "status-forwarded": "#6366F1",
+                        "status-rejected": "#EF4444",
+                        "on-primary-container": "#7f8db6",
+                        "status-resolved": "#10B981",
+                        "secondary-container": "#dfe0e0",
+                        "primary-container": "#172548",
+                        "on-tertiary-fixed": "#2c1600",
+                        "tertiary": "#1e0e00",
+                        "primary": "#010f32",
+                        "surface-variant": "#e4e2e5",
+                        "on-secondary-container": "#616363",
+                        "inverse-on-surface": "#f2f0f3",
+                        "status-pending": "#F59E0B",
+                        "surface-container-high": "#eae7eb",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#505d84",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "surface-gray": "#F8FAFC",
+                        "surface": "#fbf8fc",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-tertiary-container": "#b0855a",
+                        "on-primary-fixed": "#0b1a3c",
+                        "surface-container-low": "#f5f3f6",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "border-subtle": "#E2E8F0",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1b1b1e",
+                        "on-surface-variant": "#45464e",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "tertiary-container": "#3b2000",
+                        "surface-bright": "#fbf8fc",
+                        "tertiary-fixed": "#ffdcbc",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "surface-container": "#efedf1",
+                        "surface-dim": "#dbd9dd",
+                        "background": "#fbf8fc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-card": "16px",
+                        "stack-tight": "8px",
+                        "margin-page": "20px",
+                        "stack-loose": "24px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .staff-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface border-b border-border-subtle z-40">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer active:opacity-80">menu</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">Staff Management</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container cursor-pointer active:opacity-80">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a university administrator for an institutional portal. The subject is a middle-aged woman with a confident expression, wearing a navy blue blazer over a white shirt. The background is a blurred academic office with books and soft morning light. The overall aesthetic is clean, professional, and trustworthy, matching a high-stakes corporate administrative environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWvXszuEHbkGd9pJ7wWm2BebaMKdWV2idnch1Dlifft3bfVdhvzItVCLaGWUQNMw7Czo-9_U38PbitIBOpoD1hu6w0oHJhhjmY0cEfQHN5d8mQ1pzib0etyQYAcG1_hTeF44rZUdEzJyxCSoGAJG2MXgTT7J2Cl6D3lZ1lvrZB9nOSomjtlp2RQuZGK94XoVRGQuavZ_2RBY9huyCHYghOQBaTypy16YdjzNLZh8KVwOUeKGTWGtbV44N2NV6Fu-q5xFBKfWgec0DF"/>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-margin-page py-stack-loose space-y-stack-loose">
+<!-- Search and Filter Section -->
+<section class="space-y-stack-loose">
+<!-- Search Bar -->
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-gray border border-border-subtle rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md shadow-sm outline-none" placeholder="Search staff by name or ID..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex items-center gap-3 overflow-x-auto hide-scrollbar pb-2">
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary font-button-text whitespace-nowrap transition-transform active:scale-95 shadow-md">All</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant border border-border-subtle font-button-text whitespace-nowrap hover:bg-surface-container-high transition-all active:scale-95">Advisers</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant border border-border-subtle font-button-text whitespace-nowrap hover:bg-surface-container-high transition-all active:scale-95">Coordinators</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant border border-border-subtle font-button-text whitespace-nowrap hover:bg-surface-container-high transition-all active:scale-95">Office Staff</button>
+</div>
+</section>
+<!-- Staff List (Bento Grid Layout) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-stack-loose">
+<!-- Staff Card 1 -->
+<div class="bg-white rounded-xl staff-card-shadow overflow-hidden flex flex-col relative border-l-4 border-status-resolved group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="p-6 space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male university professor in his late 40s for a staff directory. He is wearing a charcoal suit with a crisp light blue tie. He has a friendly yet professional demeanor, with soft studio lighting that highlights his facial features against a neutral grey background. The style is modern institutional, focusing on clarity and authority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3YLDh8z5R2Q3tCSsU_ZrDAvK71H8Mr-Jzq0493-IWQmRHhBZCcIZEQrb4CvsKqBvb3ONtDUvusGyjZa1blU1Omd5kb_RgfXVbH-8GTpvP_XmJSHfcjqUcjDqSarZXuGn3WQdwNNaujv7LRLyNqcKlptkK4POZsL7_FkV33DB8iC8S_zHR9EeBblTyKyQzz_Lthoj1EX5VaPAT6on811TXG5MNtaAD088cda8aY_UwUv6uSasNi3TbUIleK_811ivAEHX0aZ48m7a6"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase">DCMS-7201</p>
+<h3 class="font-headline-md text-headline-md text-primary">Dr. Julian Vance</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-pointer">more_vert</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">workspace_premium</span>
+<span class="text-on-surface-variant font-body-md font-semibold">Chairman</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+<span class="text-on-surface-variant font-body-md">2021 Fall - Admin Suite</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-button-text hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Manage Profile
+                    </button>
+</div>
+</div>
+<!-- Staff Card 2 -->
+<div class="bg-white rounded-xl staff-card-shadow overflow-hidden flex flex-col relative border-l-4 border-status-forwarded group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="p-6 space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a young female academic advisor for a university management system. She has a bright, approachable smile and is wearing a smart-casual olive green blazer. The lighting is natural and airy, coming from a large window off-camera. The background shows a modern university hallway with minimalist architecture. The image conveys helpfulness and efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkNUjzjRdmBmKJ1GvkyvYDTU999UKEH_9VEns3Jctqc-Y4hvLK3h5cu1mtX0OrFQb4zFGzwBVsyCsbDGTo1ludaPqj3fDwE1k5XNM_iO-b2DbXMnjOOdUrvV9cHAo3sBbVB2O0wpCyaYIRp0BzcSddihJOeLZrVIahkhbU93-mRvVvkFNI-mfR-9pxgMjMzTNQckAWqUXcdwd4DPYrtOAEzxZuLjbURcIWEHS70n7VtX_l_Bdmb7JlNFVYOTEe9W5JGSsJftaWWi3Q"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase">DCMS-8842</p>
+<h3 class="font-headline-md text-headline-md text-primary">Elena Rodriguez</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-pointer">more_vert</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">person_check</span>
+<span class="text-on-surface-variant font-body-md font-semibold">Batch Adviser</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">groups</span>
+<span class="text-on-surface-variant font-body-md">2021 Fall - CS Section A</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-button-text hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Manage Profile
+                    </button>
+</div>
+</div>
+<!-- Staff Card 3 -->
+<div class="bg-white rounded-xl staff-card-shadow overflow-hidden flex flex-col relative border-l-4 border-status-pending group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="p-6 space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male administrative coordinator in a modern university setting. He is wearing a crisp white dress shirt and dark trousers, looking directly at the camera with a focused and organized expression. He is holding a digital tablet. The setting is a clean, minimalist administrative office with subtle navy blue accents. High-quality corporate photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEW_wxJj6xaMitgr61Xg-xRY5rsHDyy_aB7Z7W5_bxkV0p9Rjb74iEBnqgJg1VbqpCl1bem6OANkudIhmhmoAUuzZ1_fAbbnyv49r1zPHkmSW7Mi6Kg-b9D8CO442gGbzcD-DP7KvvA6VmHGWvtvkFm4HSIEPopAq86ZTqyV8pcJe-UqSImap3O3RvUcYHcJ2yAWim6tH8t3Y8SO_xivZSGHDlSDPujJsE1i7M0fUWtUN97Od-rmqXuqcbgcIBtCf65oJPTKJ1Lgyo"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase">DCMS-1044</p>
+<h3 class="font-headline-md text-headline-md text-primary">Marcus Chen</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-pointer">more_vert</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">hub</span>
+<span class="text-on-surface-variant font-body-md font-semibold">Coordinator</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">home_work</span>
+<span class="text-on-surface-variant font-body-md">2022 Spring - IT Dept</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-button-text hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Manage Profile
+                    </button>
+</div>
+</div>
+<!-- Staff Card 4 -->
+<div class="bg-white rounded-xl staff-card-shadow overflow-hidden flex flex-col relative border-l-4 border-status-resolved group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="p-6 space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male senior professor with glasses. He has a warm smile and is wearing a tweed blazer over a turtleneck. The background is a library with mahogany shelves and leather-bound books, slightly out of focus. The lighting is warm and academic, creating a sense of wisdom and institutional history. High contrast and sharp detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZTMAjNW5wfvpkNsCE7pJvmMv1NVk70wDe7Ta6pjKYDdWAORGQ8zy2Q8IAwIY84Rl9pwfFzsKKRknZt3ECgmbYNq3t-gDkUQ9g7fsvLNbK7UxrG6VWgygNrhxsEs3rucFcokfUHDIHxVJhUIqntGMGzbW-znojTGeTWlM5H60P1Jtw0VxWsT1FRweXrTn0JFJ3JXgNTjv5KZyKrXUjy92p2ImU0CQs13GIAcxFQryUb9O01yyOI8I50q_Hpe_m-j2QDogxO-eZE7F7"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase">DCMS-4412</p>
+<h3 class="font-headline-md text-headline-md text-primary">Prof. Silas Thorne</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-pointer">more_vert</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+<span class="text-on-surface-variant font-body-md font-semibold">Head of Research</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">science</span>
+<span class="text-on-surface-variant font-body-md">Core Lab - Physics</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-button-text hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Manage Profile
+                    </button>
+</div>
+</div>
+<!-- Staff Card 5 -->
+<div class="bg-white rounded-xl staff-card-shadow overflow-hidden flex flex-col relative border-l-4 border-status-forwarded group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="p-6 space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a young male administrative assistant in a clean, modern university office. He is wearing a light blue oxford shirt and has a professional, helpful expression. The background is minimalist with glass partitions and soft white lighting. The image style is bright, clean, and corporate, emphasizing organizational efficiency and institutional support." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADJO2EwhK38k9_clf9_gILX9l1FByoZgH-M1arfZgAnuB1RfFJcsPvYAKDT2vQcpBNIa1BlPfLWxQUFBIMPOANrg9DAF2NxQ6bxEl_lLTjP9I1nC5lqguoaAllY2e1Y9r_RMYPIXV0NswsuXf69YflcalhiCYMerqxQANG1P5ET1lrQl1Oy5LegrKGha9VUtNajn_tHTEE4m9qGgoGOE8pUQa0APoPsxbjv7Cf855zkcc8PzSpWUTVoPFYjF-mi9SS5uW6YVI_yJ4J"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase">DCMS-9902</p>
+<h3 class="font-headline-md text-headline-md text-primary">Liam O'Connor</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-pointer">more_vert</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">support_agent</span>
+<span class="text-on-surface-variant font-body-md font-semibold">Office Assistant</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">assignment</span>
+<span class="text-on-surface-variant font-body-md">Registrar's Office</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-button-text hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Manage Profile
+                    </button>
+</div>
+</div>
+<!-- Staff Card 6 -->
+<div class="bg-white rounded-xl staff-card-shadow overflow-hidden flex flex-col relative border-l-4 border-status-resolved group hover:translate-y-[-4px] transition-transform duration-300">
+<div class="p-6 space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a mature female university administrator with an authoritative yet kind expression. She is wearing a dark navy blue suit with a silk scarf. The background is a bright, upscale boardroom with clean lines and soft lighting. The image conveys leadership, experience, and professional rigor in a high-stakes academic environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARe1AdOaq2JfJZOQ0zLlSQd8tIvzhG3CTQb0ZOmx9H4QPs0GICnGwMG2CcH_pzwq8q2KM3LU9ZKUu3y1F3KW3Kyiz3KF7hMfXVJKdVe-bd6zrK-wWPfWNiENWAqO8IpybfVGgD-GHURoqHsNV0GrK2ed1j0ozKA4DhzN7IZzAdcjqlKOQPmngTRpzKPVgrmbQll275z4WVUO2z2nhqXYbCi0PAkftztkYATnqIFkUX_D2HN1JQ5pjrwKFEkNBDz8vk6wr5xFODMR6Y"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline uppercase">DCMS-1288</p>
+<h3 class="font-headline-md text-headline-md text-primary">Dr. Sarah Jenkins</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors cursor-pointer">more_vert</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">shield_person</span>
+<span class="text-on-surface-variant font-body-md font-semibold">Dean of Students</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">business_center</span>
+<span class="text-on-surface-variant font-body-md">Main Administration</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-button-text hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Manage Profile
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-8 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-50 group">
+<span class="material-symbols-outlined text-[32px]">add</span>
+<span class="absolute right-full mr-4 bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-button-text whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+            Add New Staff
+        </span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-border-subtle shadow-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:opacity-90 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 hover:opacity-90 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span class="font-label-caps text-label-caps font-bold">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:opacity-90 active:scale-95 transition-transform cursor-pointer relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-caps text-label-caps">Alerts</span>
+<div class="absolute top-2 right-4 w-2 h-2 bg-error rounded-full"></div>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:opacity-90 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for filter chips
+        const filterButtons = document.querySelectorAll('button.whitespace-nowrap');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
+                    b.classList.add('bg-surface-container', 'text-on-surface-variant');
+                });
+                btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
+            });
+        });
+    </script>
+</body></html>

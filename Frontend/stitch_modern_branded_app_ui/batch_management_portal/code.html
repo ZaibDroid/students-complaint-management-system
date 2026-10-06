@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Batch Management Portal | DCMS</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#5d5f5f",
+                    "primary-container": "#172548",
+                    "tertiary-container": "#3b2000",
+                    "status-pending": "#F59E0B",
+                    "status-rejected": "#EF4444",
+                    "secondary-container": "#dfe0e0",
+                    "surface-gray": "#F8FAFC",
+                    "status-resolved": "#10B981",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary-fixed": "#dae2ff",
+                    "on-primary-container": "#7f8db6",
+                    "inverse-surface": "#303033",
+                    "on-primary-fixed-variant": "#38466a",
+                    "surface-tint": "#505d84",
+                    "on-tertiary": "#ffffff",
+                    "border-subtle": "#E2E8F0",
+                    "on-secondary": "#ffffff",
+                    "background": "#fbf8fc",
+                    "outline-variant": "#c5c6cf",
+                    "on-secondary-container": "#616363",
+                    "surface-container-highest": "#e4e2e5",
+                    "tertiary-fixed": "#ffdcbc",
+                    "outline": "#75777f",
+                    "surface-bright": "#fbf8fc",
+                    "on-tertiary-container": "#b0855a",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e4e2e5",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-surface-variant": "#45464e",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1b1b1e",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-dim": "#dbd9dd",
+                    "on-surface": "#1b1b1e",
+                    "secondary-fixed": "#e2e2e2",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#f2f0f3",
+                    "on-secondary-fixed-variant": "#454747",
+                    "surface": "#fbf8fc",
+                    "tertiary": "#1e0e00",
+                    "error": "#ba1a1a",
+                    "primary": "#010f32",
+                    "on-error": "#ffffff",
+                    "status-forwarded": "#6366F1",
+                    "surface-container": "#efedf1",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "inverse-primary": "#b8c5f1",
+                    "surface-container-high": "#eae7eb",
+                    "on-primary-fixed": "#0b1a3c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "20px",
+                    "stack-tight": "8px",
+                    "gutter-card": "16px",
+                    "stack-loose": "24px",
+                    "base-unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "button-text": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fc; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .bento-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+        }
+        .glass-effect {
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface pb-24 min-h-screen">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-surface flex justify-between items-center px-margin-page py-4 border-b border-border-subtle transition-colors duration-200">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Batch Management</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden md:flex flex-col items-end mr-2">
+<span class="font-button-text text-button-text text-primary">Admin User</span>
+<span class="font-label-caps text-label-caps text-secondary">SUPERVISOR</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary-fixed overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate administrator in a high-key office environment. The subject is wearing a crisp navy suit, looking directly at the camera with a confident expression. The lighting is soft and even, highlighting a modern, minimalist workspace in the background with subtle blue accents. The overall aesthetic is professional, clean, and reliable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf0EQRRBDQ-VTEA9sg0Zy3jtYs5BXmTaPOTb3QAy16bPwkRVA7SCEoL6mgil_G-dg9TXXBPgC10NrNmChZ1a_uRheVep0BPs5TNXqzo6oszlH-e2hc5Pl9tSA7_iKKJ0e7Pt_DF_yqZKrQIVPfnFmf0vg8cieQVAqaBSFRSNMtKj9pgdiOqpSn5-LB3n_WqBa9xZ1sZVKXTP8P472TGpZy8vXfklfcDqmTPW15bU3OW5_W4DGqT0s95I-n2Abj82EVVJ9DyB2M32E0"/>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-margin-page pt-stack-loose space-y-stack-loose">
+<!-- Summary Dashboard (Bento Layout) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<div class="md:col-span-2 bento-card bg-surface-container-lowest border border-border-subtle rounded-xl p-6 flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-label-caps text-label-caps text-secondary mb-2">OPERATIONAL OVERVIEW</h2>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">24 Active Batches</span>
+<span class="font-body-md text-body-md text-status-resolved flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>+3 this semester
+                        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-sm">Managing core academic records across 6 major engineering and science departments for the 2024 academic cycle.</p>
+</div>
+<!-- Abstract visual element -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-primary opacity-[0.03] rounded-full blur-3xl"></div>
+</div>
+<div class="bento-card bg-primary-container text-on-primary-container rounded-xl p-6 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-3xl opacity-80">groups</span>
+<h2 class="font-label-caps text-label-caps mt-4 opacity-70">TOTAL STUDENTS</h2>
+</div>
+<div class="mt-4">
+<span class="font-headline-lg text-headline-lg text-white leading-none">4,280</span>
+<div class="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-on-primary-container h-full w-4/5"></div>
+</div>
+<p class="font-label-caps text-[10px] mt-2 opacity-60">80% CAPACITY UTILIZED</p>
+</div>
+</div>
+</section>
+<!-- Search and Filter Bar -->
+<section class="flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="relative w-full md:max-w-md group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all font-body-md text-body-md outline-none border border-transparent focus:border-border-subtle" placeholder="Search by batch name, department or year..." type="text"/>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-surface-container-high rounded-xl font-button-text text-button-text text-primary hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-xl">filter_list</span>
+                    Filter
+                </button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-button-text text-button-text hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95">
+<span class="material-symbols-outlined text-xl">add</span>
+                    New Batch
+                </button>
+</div>
+</section>
+<!-- Batch Cards List -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-card pb-12">
+<!-- Card 1 -->
+<div class="bento-card bg-surface-container-lowest border border-border-subtle rounded-xl p-5 flex flex-col relative group">
+<div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-surface-container-high rounded-lg text-outline">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-start gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">computer</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary leading-tight">2024 Computer Science</h3>
+<p class="font-label-caps text-label-caps text-secondary">DEPT: CS & INFO</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto">
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">SECTIONS</p>
+<p class="font-headline-md text-headline-md text-primary">4 <span class="text-xs font-normal opacity-60">Units</span></p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">STUDENTS</p>
+<p class="font-headline-md text-headline-md text-primary">180 <span class="text-xs font-normal opacity-60">Total</span></p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex gap-2">
+<button class="flex-1 py-2 font-button-text text-button-text text-primary hover:bg-primary-fixed/30 rounded-lg transition-colors">Manage</button>
+<button class="px-3 py-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bento-card bg-surface-container-lowest border border-border-subtle rounded-xl p-5 flex flex-col relative group">
+<div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-surface-container-high rounded-lg text-outline">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-start gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl">bolt</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary leading-tight">2023 Electrical Engineering</h3>
+<p class="font-label-caps text-label-caps text-secondary">DEPT: ELECTRICAL</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto">
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">SECTIONS</p>
+<p class="font-headline-md text-headline-md text-primary">3 <span class="text-xs font-normal opacity-60">Units</span></p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">STUDENTS</p>
+<p class="font-headline-md text-headline-md text-primary">124 <span class="text-xs font-normal opacity-60">Total</span></p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex gap-2">
+<button class="flex-1 py-2 font-button-text text-button-text text-primary hover:bg-primary-fixed/30 rounded-lg transition-colors">Manage</button>
+<button class="px-3 py-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bento-card bg-surface-container-lowest border border-border-subtle rounded-xl p-5 flex flex-col relative group">
+<div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-surface-container-high rounded-lg text-outline">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-start gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-2xl">precision_manufacturing</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary leading-tight">2022 Mechanical Eng.</h3>
+<p class="font-label-caps text-label-caps text-secondary">DEPT: MECHANICAL</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto">
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">SECTIONS</p>
+<p class="font-headline-md text-headline-md text-primary">6 <span class="text-xs font-normal opacity-60">Units</span></p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">STUDENTS</p>
+<p class="font-headline-md text-headline-md text-primary">240 <span class="text-xs font-normal opacity-60">Total</span></p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex gap-2">
+<button class="flex-1 py-2 font-button-text text-button-text text-primary hover:bg-primary-fixed/30 rounded-lg transition-colors">Manage</button>
+<button class="px-3 py-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bento-card bg-surface-container-lowest border border-border-subtle rounded-xl p-5 flex flex-col relative group">
+<div class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-surface-container-high rounded-lg text-outline">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-start gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed-dim flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">science</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary leading-tight">2024 Biotechnology</h3>
+<p class="font-label-caps text-label-caps text-secondary">DEPT: BIO SCIENCES</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto">
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">SECTIONS</p>
+<p class="font-headline-md text-headline-md text-primary">2 <span class="text-xs font-normal opacity-60">Units</span></p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-[10px] text-secondary">STUDENTS</p>
+<p class="font-headline-md text-headline-md text-primary">65 <span class="text-xs font-normal opacity-60">Total</span></p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-subtle flex gap-2">
+<button class="flex-1 py-2 font-button-text text-button-text text-primary hover:bg-primary-fixed/30 rounded-lg transition-colors">Manage</button>
+<button class="px-3 py-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</div>
+<!-- Add Batch Placeholder Card -->
+<button class="border-2 border-dashed border-border-subtle hover:border-primary-fixed hover:bg-primary-fixed/10 transition-all rounded-xl p-5 flex flex-col items-center justify-center gap-3 text-secondary group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl">add</span>
+</div>
+<span class="font-button-text text-button-text">Create New Batch</span>
+</button>
+</section>
+</main>
+<!-- FAB for Mobile -->
+<button class="md:hidden fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center z-50 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface border-t border-border-subtle shadow-sm z-50">
+<a class="flex flex-col items-center justify-center text-secondary px-4 py-1 hover:text-primary transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-label-caps text-label-caps mt-1">Batches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary px-4 py-1 hover:text-primary transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-caps text-label-caps mt-1">Staff</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary px-4 py-1 hover:text-primary transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps mt-1">Analytics</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for batch cards
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Subtle lift already handled by CSS
+            });
+        });
+
+        // Search highlight effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.bento-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query) || query === '') {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body></html>

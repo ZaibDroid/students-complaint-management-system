@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DCMS Splash Screen</title>
+<!-- Material Symbols Link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container": "#efedf1",
+                        "surface-container-highest": "#e4e2e5",
+                        "surface-bright": "#fbf8fc",
+                        "on-secondary-container": "#616363",
+                        "background": "#fbf8fc",
+                        "surface-container-high": "#eae7eb",
+                        "primary-container": "#172548",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1b1e",
+                        "surface-tint": "#505d84",
+                        "surface-variant": "#e4e2e5",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#303033",
+                        "secondary-container": "#dfe0e0",
+                        "border-subtle": "#E2E8F0",
+                        "surface-gray": "#F8FAFC",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#b0855a",
+                        "inverse-on-surface": "#f2f0f3",
+                        "surface-container-low": "#f5f3f6",
+                        "primary": "#010f32",
+                        "outline": "#75777f",
+                        "on-surface-variant": "#45464e",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c5c6cf",
+                        "on-error": "#ffffff",
+                        "status-rejected": "#EF4444",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-dim": "#dbd9dd",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-primary-container": "#7f8db6",
+                        "tertiary": "#1e0e00",
+                        "surface": "#fbf8fc",
+                        "primary-fixed": "#dae2ff",
+                        "status-pending": "#F59E0B",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-primary-fixed-variant": "#38466a",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "status-forwarded": "#6366F1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#3b2000",
+                        "inverse-primary": "#b8c5f1",
+                        "status-resolved": "#10B981",
+                        "secondary": "#5d5f5f",
+                        "on-tertiary-fixed": "#2c1600",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-primary-fixed": "#0b1a3c",
+                        "on-background": "#1b1b1e",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-card": "16px",
+                        "base-unit": "4px",
+                        "stack-loose": "24px",
+                        "stack-tight": "8px",
+                        "margin-page": "20px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button-text": ["14px", { "lineHeight": "20px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #172548; /* Exact brand navy from JSON and prompt */
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+
+        .fade-in {
+            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .scale-up {
+            animation: scaleUp 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0) 40%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 60%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            animation: shimmerEffect 3s infinite;
+        }
+
+        @keyframes shimmerEffect {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen">
+<!-- Splash Container -->
+<main class="flex flex-col items-center justify-center text-center space-y-6 px-margin-page scale-up">
+<!-- Logo Container -->
+<div class="relative w-32 h-32 md:w-48 md:h-48 overflow-hidden rounded-xl shadow-2xl">
+<img alt="DCMS App Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAJPNtvIxE06THjKlr-2IuU00CizVLRcJMV9wZgLcvaG9BynEA30qyqi8HMn9mGp7iVWudSmMgmVXAgYkMuESZhMPJUiJkW7QHOmKiwcZtUlnSm43-pDO6oTZtAEgEVfL6TferYJMhm7qxgF98bwNYZbKqIlIN6Y6nry2KSo828pCUlp91Dh6R-ieEQnfElaE3I6Pktz4pAykemwCD0mzsNGB9poQZXqyTTxlNktFgCD2AkMKJHlDXfwPbBOcc_i0KNvhod2Qy1YB8"/>
+<!-- Overlay Shimmer for high-end feel -->
+<div class="absolute inset-0 shimmer pointer-events-none"></div>
+</div>
+<!-- Text Label -->
+<div class="fade-in" style="animation-delay: 0.3s;">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-primary tracking-[0.2em] font-bold">
+                DCMS
+            </h1>
+<p class="font-label-caps text-label-caps text-on-primary-container opacity-80 mt-2 tracking-widest">
+                DEPARTMENT COMPLAINT MANAGEMENT SYSTEM
+            </p>
+</div>
+</main>
+<!-- Subtle Footer (Optional task-focused status indicator) -->
+<div class="fixed bottom-12 fade-in w-full flex justify-center" style="animation-delay: 0.8s;">
+<div class="flex items-center space-x-3">
+<div class="w-1.5 h-1.5 bg-on-primary rounded-full animate-pulse"></div>
+<span class="font-body-md text-body-md text-on-primary opacity-60">Initializing secure session...</span>
+</div>
+</div>
+<script>
+        // Micro-interaction: Subtle parallax or entrance logic could go here
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DCMS Splash Screen Loaded');
+            
+            // Artificial delay before potentially navigating (UX simulation)
+            /* 
+            setTimeout(() => {
+                window.location.href = '/dashboard'; 
+            }, 3000);
+            */
+        });
+    </script>
+</body></html>

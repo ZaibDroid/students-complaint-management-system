@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Generator - Configure Parameters</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#efedf1",
+                        "status-forwarded": "#6366F1",
+                        "inverse-primary": "#b8c5f1",
+                        "border-subtle": "#E2E8F0",
+                        "outline-variant": "#c5c6cf",
+                        "surface-container-high": "#eae7eb",
+                        "status-pending": "#F59E0B",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-secondary-container": "#616363",
+                        "on-primary": "#ffffff",
+                        "surface-gray": "#F8FAFC",
+                        "background": "#fbf8fc",
+                        "on-background": "#1b1b1e",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "secondary-fixed": "#e2e2e2",
+                        "outline": "#75777f",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#45464e",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-primary-fixed": "#0b1a3c",
+                        "primary-container": "#172548",
+                        "on-surface": "#1b1b1e",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#1e0e00",
+                        "on-tertiary-container": "#b0855a",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#38466a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e4e2e5",
+                        "surface-dim": "#dbd9dd",
+                        "status-rejected": "#EF4444",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fbf8fc",
+                        "surface": "#fbf8fc",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "primary": "#010f32",
+                        "on-tertiary-fixed": "#2c1600",
+                        "status-resolved": "#10B981",
+                        "on-primary-container": "#7f8db6",
+                        "on-secondary-fixed-variant": "#454747",
+                        "tertiary-container": "#3b2000",
+                        "primary-fixed": "#dae2ff",
+                        "surface-tint": "#505d84",
+                        "secondary-container": "#dfe0e0",
+                        "surface-container-low": "#f5f3f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "secondary": "#5d5f5f",
+                        "inverse-surface": "#303033",
+                        "on-tertiary-fixed-variant": "#61401a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base-unit": "4px",
+                        "gutter-card": "16px",
+                        "stack-tight": "8px",
+                        "margin-page": "20px",
+                        "stack-loose": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .tonal-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .step-active {
+            transition: all 0.3s ease;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-surface border-b border-border-subtle flex items-center justify-between px-margin-page h-16">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Report Generator</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-primary" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-margin-page py-stack-loose space-y-stack-loose">
+<!-- Progress Indicator -->
+<section class="w-full">
+<div class="flex justify-between items-end mb-stack-tight">
+<span class="font-label-caps text-label-caps text-primary uppercase">Step 2 of 3</span>
+<span class="font-body-md text-body-md text-on-surface-variant italic">Configure Parameters</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/3 rounded-full transition-all duration-500 ease-out"></div>
+</div>
+</section>
+<!-- Configuration Form -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter-card">
+<!-- Left Column: Date Range Selection -->
+<div class="md:col-span-7 space-y-stack-loose">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Date Range</h2>
+<div class="flex flex-wrap gap-2 mb-6">
+<button class="px-4 py-2 rounded-full border border-primary bg-primary text-white font-button-text text-button-text transition-all">
+                            Last 7 Days
+                        </button>
+<button class="px-4 py-2 rounded-full border border-border-subtle bg-surface-gray text-on-surface-variant font-button-text text-button-text hover:bg-surface-container transition-all">
+                            Last 30 Days
+                        </button>
+<button class="px-4 py-2 rounded-full border border-border-subtle bg-surface-gray text-on-surface-variant font-button-text text-button-text hover:bg-surface-container transition-all">
+                            Current Semester
+                        </button>
+<button class="px-4 py-2 rounded-full border border-border-subtle bg-surface-gray text-on-surface-variant font-button-text text-button-text hover:bg-surface-container transition-all">
+                            Custom Range
+                        </button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Start Date</label>
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" type="date" value="2023-10-01"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">End Date</label>
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" type="date" value="2023-10-08"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Batch Selection</h2>
+<div class="relative mb-4">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-gray border border-border-subtle rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Search batch..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="flex items-center gap-1.5 px-3 py-1.5 bg-secondary-container text-on-secondary-fixed rounded-full font-body-md text-body-md">
+                            2024 Computer Science
+                            <button class="material-symbols-outlined text-sm leading-none" data-icon="close">close</button>
+</span>
+<span class="flex items-center gap-1.5 px-3 py-1.5 bg-secondary-container text-on-secondary-fixed rounded-full font-body-md text-body-md">
+                            2023 Electrical Eng
+                            <button class="material-symbols-outlined text-sm leading-none" data-icon="close">close</button>
+</span>
+<button class="flex items-center gap-1 px-3 py-1.5 text-primary font-button-text text-button-text hover:underline">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                            Add Batch
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Staff & Context Filters -->
+<div class="md:col-span-5 space-y-stack-loose">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle tonal-card">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Staff Filter</h2>
+<p class="text-on-surface-variant text-body-md mb-4">Generate reports for specific department members.</p>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-3 bg-surface-gray rounded-lg border border-border-subtle hover:border-primary transition-all cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a faculty member for a corporate academic portal. The subject is a middle-aged man with glasses, smiling slightly, dressed in business casual attire. The lighting is soft and corporate, set against a blurred academic office background with warm tones. High-end professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjzsvzZJFY1mUVPQ0rFJh5x3icf_WFrKbUWABNFac3a8J0biCTudE7rp0sEDENeLlvnBC8cNoWTa1hvYdb5cBiilSYB-n3xcRFXzAmXbZVElDvwP4wtVApjl918BxRJHLooSeiVdcu-sI_o-ZVMO-9k4lgY2y2bGxDPxm0r3ZTwP09cPIuwQZ63ipRA8Uief1QoGSaM8ZupFRQ_l--wfH9rL_QhHlkbTZQUvVOd7X8ON9jB-Ov2s4UBf8Uzbni3opl6KOk36Y7A8-1"/>
+</div>
+<div class="flex-1">
+<p class="font-body-lg text-body-lg text-primary font-bold">Dr. Sarah Jenkins</p>
+<p class="text-on-surface-variant text-label-caps font-label-caps">Dean of Engineering</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-primary-fixed-variant flex items-center justify-center group-hover:border-primary">
+<div class="w-3 h-3 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-gray rounded-lg border border-primary transition-all cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a university administrator for a management interface. The subject is a woman with a confident expression, wearing a tailored blazer. The background is a clean, minimalist ivory wall with soft natural side-lighting. Minimalist and corporate aesthetic with deep blues and soft whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2icfRdBVegYRBQpRxjbVzBK1G62ozp2zG8HY6ug3YgmrCSHMSquHGvMm9xl0faS3BOHZySGq6iPjpToieEJUb5jPlZn4BbwPZdkfANKlnmeuf7rMh4Dv70KrU2W8C8XmXGMlH28AAfGjtZhmjiEfB_k80F_fmcODrXzaGoUFXoKwWNQvw0ceHzaVBU0XVRF15-7pb4_qym4F9t-szElDeHlEIWXHzDxB6Ghx04yZ0WRObcAAz6vjOi-3rftjoN_pkkOfMzSey0-r2"/>
+</div>
+<div class="flex-1">
+<p class="font-body-lg text-body-lg text-primary font-bold">Prof. Alan Turing</p>
+<p class="text-on-surface-variant text-label-caps font-label-caps">HOD - Computer Science</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary-container p-6 rounded-xl text-on-primary-container tonal-card relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-on-primary mb-2">Parameter Summary</h3>
+<div class="space-y-2 opacity-90">
+<div class="flex justify-between text-body-md">
+<span>Report Type:</span>
+<span class="font-bold">Student Complaint Metrics</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span>Range:</span>
+<span class="font-bold">Oct 1 - Oct 8, 2023</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span>Staff:</span>
+<span class="font-bold text-right">Prof. Alan Turing</span>
+</div>
+</div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary opacity-20 rounded-full blur-2xl"></div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Buttons -->
+<div class="fixed bottom-0 left-0 right-0 bg-surface border-t border-border-subtle p-4 z-40 md:static md:bg-transparent md:border-none md:p-0">
+<div class="max-w-4xl mx-auto flex items-center justify-between">
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-surface border border-primary text-primary font-button-text text-button-text hover:bg-surface-container transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+                    Back
+                </button>
+<button class="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-button-text text-button-text hover:opacity-90 transition-all shadow-md active:scale-95">
+                    Next Step
+                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface border-t border-border-subtle flex justify-around items-center h-16 px-4 pb-safe shadow-sm">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-transform duration-150 scale-95">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-[10px] uppercase">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 transition-transform duration-150 scale-95">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-caps text-[10px] uppercase">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-transform duration-150 scale-95">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-caps text-[10px] uppercase">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-transform duration-150 scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-[10px] uppercase">Settings</span>
+</div>
+</nav>
+<script>
+        // Micro-interactions for chip selection
+        document.querySelectorAll('.flex.flex-wrap button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active classes from siblings
+                this.parentNode.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+                    btn.classList.add('bg-surface-gray', 'text-on-surface-variant', 'border-border-subtle');
+                });
+                // Add active classes to clicked
+                this.classList.remove('bg-surface-gray', 'text-on-surface-variant', 'border-border-subtle');
+                this.classList.add('bg-primary', 'text-white', 'border-primary');
+            });
+        });
+
+        // Simple Staff selection logic
+        document.querySelectorAll('.space-y-3 > div').forEach(card => {
+            card.addEventListener('click', function() {
+                // Reset all
+                document.querySelectorAll('.space-y-3 > div').forEach(c => {
+                    c.classList.remove('border-primary');
+                    c.classList.add('border-border-subtle');
+                    c.querySelector('.w-6.h-6 div').classList.add('opacity-0');
+                    c.querySelector('.w-6.h-6 div').classList.remove('opacity-100');
+                });
+                // Set active
+                this.classList.add('border-primary');
+                this.classList.remove('border-border-subtle');
+                this.querySelector('.w-6.h-6 div').classList.add('opacity-100');
+                this.querySelector('.w-6.h-6 div').classList.remove('opacity-0');
+            });
+        });
+    </script>
+</body></html>

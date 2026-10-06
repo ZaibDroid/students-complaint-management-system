@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report History | Admin Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#efedf1",
+                    "status-forwarded": "#6366F1",
+                    "inverse-primary": "#b8c5f1",
+                    "border-subtle": "#E2E8F0",
+                    "outline-variant": "#c5c6cf",
+                    "surface-container-high": "#eae7eb",
+                    "status-pending": "#F59E0B",
+                    "inverse-on-surface": "#f2f0f3",
+                    "on-secondary-container": "#616363",
+                    "on-primary": "#ffffff",
+                    "surface-gray": "#F8FAFC",
+                    "background": "#fbf8fc",
+                    "on-background": "#1b1b1e",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "secondary-fixed": "#e2e2e2",
+                    "outline": "#75777f",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#45464e",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-primary-fixed": "#0b1a3c",
+                    "primary-container": "#172548",
+                    "on-surface": "#1b1b1e",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#1e0e00",
+                    "on-tertiary-container": "#b0855a",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#38466a",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e4e2e5",
+                    "surface-dim": "#dbd9dd",
+                    "status-rejected": "#EF4444",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fbf8fc",
+                    "surface": "#fbf8fc",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "primary": "#010f32",
+                    "on-tertiary-fixed": "#2c1600",
+                    "status-resolved": "#10B981",
+                    "on-primary-container": "#7f8db6",
+                    "on-secondary-fixed-variant": "#454747",
+                    "tertiary-container": "#3b2000",
+                    "primary-fixed": "#dae2ff",
+                    "surface-tint": "#505d84",
+                    "secondary-container": "#dfe0e0",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "secondary": "#5d5f5f",
+                    "inverse-surface": "#303033",
+                    "on-tertiary-fixed-variant": "#61401a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base-unit": "4px",
+                    "gutter-card": "16px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px",
+                    "stack-loose": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .report-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .sidebar-active {
+            box-shadow: inset 4px 0 0 0 #010f32;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- Desktop Navigation Drawer -->
+<aside class="fixed left-0 top-0 hidden md:flex flex-col h-full w-80 bg-surface-container-low dark:bg-surface-dim shadow-md dark:shadow-none z-40 transition-all">
+<div class="p-margin-page flex flex-col gap-base-unit">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary">Admin Portal</h1>
+<p class="text-xs text-on-surface-variant font-body-md">Department Management</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-2">
+<a class="flex items-center gap-4 text-on-surface-variant m-2 p-3 rounded-lg hover:bg-surface-container-highest transition-transform translate-x-1" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant m-2 p-3 rounded-lg hover:bg-surface-container-highest transition-transform translate-x-1" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-body-md">Staff Performance</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant m-2 p-3 rounded-lg hover:bg-surface-container-highest transition-transform translate-x-1" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-body-md">Complaint Trends</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant m-2 p-3 rounded-lg hover:bg-surface-container-highest transition-transform translate-x-1" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-body-md">Activity Logs</span>
+</a>
+<!-- Active State: Export History (mapped to Reports/History intent) -->
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container font-bold rounded-lg m-2 p-3 shadow-sm" href="#">
+<span class="material-symbols-outlined">folder_zip</span>
+<span class="font-body-md">Export History</span>
+</a>
+</nav>
+<div class="p-margin-page border-t border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="text-xs">
+<p class="font-bold">Dept. Admin</p>
+<p class="text-on-surface-variant">v2.4.0</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">settings</span>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 w-full h-16 flex items-center justify-between px-margin-page z-30 border-b border-border-subtle md:pl-[340px]">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 rounded-full hover:bg-surface-container-high transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-primary">Report Generator</h2>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-on-secondary-container">search</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-on-secondary-container">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:ml-80 min-h-screen p-margin-page pb-24 md:pb-10 bg-background transition-all">
+<!-- Header Section with Bento Elements -->
+<section class="max-w-6xl mx-auto space-y-stack-loose">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+<div>
+<span class="font-label-caps text-label-caps text-on-secondary-container uppercase">Archive &amp; Automation</span>
+<h3 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mt-1">Scheduled Reports</h3>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 bg-surface-container-lowest border border-border-subtle px-4 py-2 rounded-lg font-button-text text-button-text text-primary hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                    </button>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-button-text text-button-text hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">add</span> Generate New
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Summary -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card mb-stack-loose">
+<div class="md:col-span-2 bg-primary-container p-6 rounded-xl relative overflow-hidden text-on-primary-container">
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md mb-2">Automated Reports</h4>
+<p class="font-body-md opacity-80 mb-4 max-w-sm">3 recurring report schedules are currently active. Next sync is scheduled for Monday, 8:00 AM.</p>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps opacity-70">ACTIVE JOBS</span>
+<span class="font-headline-lg text-headline-lg text-white">03</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps opacity-70">LAST 30 DAYS</span>
+<span class="font-headline-lg text-headline-lg text-white">128</span>
+</div>
+</div>
+</div>
+<div class="absolute right-[-20px] bottom-[-20px] opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">auto_awesome_motion</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-border-subtle p-6 rounded-xl report-card-shadow flex flex-col justify-between">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant">STORAGE UTILIZATION</h4>
+<div class="py-4">
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-status-forwarded w-[64%]"></div>
+</div>
+<p class="mt-2 font-body-md text-on-surface">6.4 GB / 10 GB</p>
+</div>
+<button class="text-primary font-button-text text-button-text flex items-center gap-1 hover:underline">
+                        Manage Storage <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Tabs Section -->
+<div class="space-y-stack-loose"><section> <div class="flex items-center gap-2 mb-4"> <span class="material-symbols-outlined text-primary">schedule</span> <h4 class="font-headline-md text-headline-md text-primary">Upcoming Schedules</h4> </div> </section> <section> <div class="flex items-center gap-2 mb-4 pt-4"> <span class="material-symbols-outlined text-primary">history</span> <h4 class="font-headline-md text-headline-md text-primary">Past Deliveries</h4> </div> </section></div>
+<!-- Report List Layout -->
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile only) -->
+<footer class="md:hidden fixed bottom-0 w-full h-16 bg-surface border-t border-border-subtle flex justify-around items-center px-4 pb-safe z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps">Activity</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</button>
+</footer>
+<!-- Floating Action Button (Mobile Contextual) -->
+<button class="md:hidden fixed right-6 bottom-20 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined">add</span>
+</button>
+<script>
+        // Micro-interaction for hover effects on cards
+        document.querySelectorAll('.report-card-shadow').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-md');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-md');
+            });
+        });
+
+        // Simple tab switching logic for demo
+        const tabs = document.querySelectorAll('.border-b button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => {
+                    t.classList.remove('border-b-2', 'border-primary', 'text-primary', 'font-bold');
+                    t.classList.add('text-on-surface-variant');
+                });
+                tab.classList.add('border-b-2', 'border-primary', 'text-primary', 'font-bold');
+                tab.classList.remove('text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

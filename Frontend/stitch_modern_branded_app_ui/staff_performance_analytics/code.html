@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Performance Dashboard | DCMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1b1e",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#0b1a3c",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-tertiary-fixed": "#2c1600",
+                        "secondary": "#5d5f5f",
+                        "status-resolved": "#10B981",
+                        "inverse-primary": "#b8c5f1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#3b2000",
+                        "status-forwarded": "#6366F1",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "on-primary-fixed-variant": "#38466a",
+                        "error-container": "#ffdad6",
+                        "status-pending": "#F59E0B",
+                        "primary-fixed": "#dae2ff",
+                        "surface": "#fbf8fc",
+                        "tertiary": "#1e0e00",
+                        "on-primary-container": "#7f8db6",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-dim": "#dbd9dd",
+                        "status-rejected": "#EF4444",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c5c6cf",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#45464e",
+                        "primary": "#010f32",
+                        "outline": "#75777f",
+                        "surface-container-low": "#f5f3f6",
+                        "on-tertiary-container": "#b0855a",
+                        "inverse-on-surface": "#f2f0f3",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "error": "#ba1a1a",
+                        "surface-gray": "#F8FAFC",
+                        "secondary-container": "#dfe0e0",
+                        "border-subtle": "#E2E8F0",
+                        "inverse-surface": "#303033",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e4e2e5",
+                        "on-surface": "#1b1b1e",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#505d84",
+                        "primary-container": "#172548",
+                        "surface-container-high": "#eae7eb",
+                        "background": "#fbf8fc",
+                        "on-secondary-container": "#616363",
+                        "surface-bright": "#fbf8fc",
+                        "surface-container": "#efedf1",
+                        "surface-container-highest": "#e4e2e5",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#61401a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-loose": "24px",
+                        "stack-tight": "8px",
+                        "margin-page": "20px",
+                        "base-unit": "4px",
+                        "gutter-card": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .performance-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .performance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .chart-bar {
+            transition: height 1s ease-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-50 w-full border-b border-border-subtle shadow-sm px-margin-page h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined cursor-pointer active:opacity-70 text-primary p-2 hover:bg-surface-container-low transition-colors rounded-full">arrow_back</button>
+<h1 class="font-headline-md text-headline-md text-primary font-bold">Staff Performance</h1>
+</div>
+<div class="flex items-center">
+<button class="material-symbols-outlined cursor-pointer active:opacity-70 text-primary p-2 hover:bg-surface-container-low transition-colors rounded-full">more_vert</button>
+</div>
+</header>
+<main class="max-w-5xl mx-auto px-margin-page py-stack-loose space-y-stack-loose">
+<!-- KPI Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<!-- Avg. Resolution -->
+<div class="performance-card bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Avg. Resolution</span>
+<span class="material-symbols-outlined text-status-resolved bg-status-resolved/10 p-1.5 rounded-lg text-sm">speed</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-lg text-headline-lg text-primary">4.2 days</span>
+<div class="flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-status-resolved text-sm" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="text-status-resolved font-button-text text-xs">12% improvement</span>
+</div>
+</div>
+</div>
+<!-- Workload -->
+<div class="performance-card bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Workload</span>
+<span class="material-symbols-outlined text-status-pending bg-status-pending/10 p-1.5 rounded-lg text-sm">donut_large</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-lg text-headline-lg text-primary">85%</span>
+<div class="w-full bg-surface-variant h-2 rounded-full mt-4 overflow-hidden">
+<div class="bg-status-pending h-full w-[85%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Avg. Rating -->
+<div class="performance-card bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Avg. Rating</span>
+<span class="material-symbols-outlined text-status-forwarded bg-status-forwarded/10 p-1.5 rounded-lg text-sm">stars</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-lg text-headline-lg text-primary">4.8<span class="text-on-surface-variant font-body-md text-body-md ml-1">/5.0</span></span>
+<div class="flex items-center gap-0.5 mt-2 text-status-forwarded">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content Area: Chart and List -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-loose">
+<!-- Performance Chart Card -->
+<section class="lg:col-span-2">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle performance-card h-full">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Monthly Resolution Trend</h2>
+<p class="text-on-surface-variant text-body-md">Complaint resolutions from Jan to Jun</p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-label-caps">This Year</span>
+</div>
+</div>
+<div class="relative h-[240px] flex items-end justify-between px-4 pb-8 border-b border-outline-variant">
+<!-- Chart Bars -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="chart-bar bg-primary/20 hover:bg-primary-container w-10 md:w-16 rounded-t-lg relative" style="height: 60%">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white px-2 py-1 rounded text-[10px]">142</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">JAN</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="chart-bar bg-primary/20 hover:bg-primary-container w-10 md:w-16 rounded-t-lg relative" style="height: 75%">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white px-2 py-1 rounded text-[10px]">168</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">FEB</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="chart-bar bg-primary/20 hover:bg-primary-container w-10 md:w-16 rounded-t-lg relative" style="height: 45%">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white px-2 py-1 rounded text-[10px]">98</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">MAR</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="chart-bar bg-primary/20 hover:bg-primary-container w-10 md:w-16 rounded-t-lg relative" style="height: 90%">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white px-2 py-1 rounded text-[10px]">210</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">APR</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="chart-bar bg-primary w-10 md:w-16 rounded-t-lg relative" style="height: 82%">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-100 bg-primary text-white px-2 py-1 rounded text-[10px]">185</span>
+</div>
+<span class="font-label-caps text-[10px] text-primary font-bold">MAY</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="chart-bar bg-primary/20 hover:bg-primary-container w-10 md:w-16 rounded-t-lg relative" style="height: 68%">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white px-2 py-1 rounded text-[10px]">155</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">JUN</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Individual Performance List -->
+<section class="lg:col-span-1">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle performance-card h-full">
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Individual Performance</h2>
+<div class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+<!-- Staff Item 1 -->
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors border border-transparent hover:border-border-subtle group">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-surface shadow-sm" data-alt="Professional headshot of a middle-aged male academic with a confident smile, wearing glasses and a formal navy suit. The lighting is studio-quality, high-key, creating a clean corporate portrait style consistent with a high-stakes administrative dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnsJOCi_mH3x4SXXldw-nc9bcZVlw4-HpxxLS9yJnSzjPAykjpzh5GL_KLpfU01_hREYi5VXOwoYf1bW2yx5QZkg9pXwCLiFGG9hJSaPLCUJdqxKtQxDlUtSVHGOilknCvzuY0zQIKiAZG6A-0JA4RidknmrpxnpUVACasHF0PataQH_CL6_jsln0vDhD2QoTdc3atdWBKwg1Gt4J6egg9c2Axk3jGDNNqD8CgGzTxedsirCBXMXHlcPtWX-13O0fBJPdjKBAocNWt"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-status-resolved rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-primary font-bold truncate">Dr. Salman K.</p>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[10px] font-label-caps text-status-resolved">32 Resolved</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">4 Pending</span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center justify-end text-status-forwarded mb-0.5">
+<span class="text-xs font-bold mr-1">4.9</span>
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] font-label-caps text-on-surface-variant opacity-60">SCORE</span>
+</div>
+</div>
+<!-- Staff Item 2 -->
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors border border-transparent hover:border-border-subtle group">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-surface shadow-sm" data-alt="Elegant professional portrait of a woman in her late 30s wearing business attire. She has a knowledgeable and helpful expression. High-contrast lighting with a neutral gray background, maintaining the professional rigor of the DCMS administrative interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUZIOV2x41dRhu3acObevH5McxnqS_eUH1MTuSsIz3E9UwfPml3n-Ax5tJmtVqHjf_1hv86u0f7UFtVTcgx5TWiYpFTDpTzhCHc6laL6hUys1EVwRRZR0Pw7toW7ARGzbijmK9Q9wrUfQrIDrWpCYpxihkIEOsv5UCCqXnNUhBEpf8m7RaExVw0u4LjNtNhvM0dXOMCOV--AtphygRTNDhXogn9lhoOV2Iui5AI87NCRRLK0CAr6bMhwWYvjHpHVhA7qlhBVgB_276"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-status-resolved rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-primary font-bold truncate">Engr. Maria A.</p>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[10px] font-label-caps text-status-resolved">28 Resolved</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">2 Pending</span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center justify-end text-status-forwarded mb-0.5">
+<span class="text-xs font-bold mr-1">4.7</span>
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] font-label-caps text-on-surface-variant opacity-60">SCORE</span>
+</div>
+</div>
+<!-- Staff Item 3 -->
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors border border-transparent hover:border-border-subtle group">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-surface shadow-sm" data-alt="A focused young professional male employee, wearing a white shirt and dark blue sweater, sitting in a modern office environment with blurred computer screens in the background. Crisp detail and authentic corporate mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKr9bqa9jgs-01XbSsIpEyR1RBhsl3Dr1zXk8WaGc8Y2bLx71BVit0NpV56_r0Nl6wHRcINKLeViv09keOjY9OLawkA53RRfCgakm7qDXxFG8icELo5ZNRb1eLClzUbO7fH3XlxgYrR-FAXQGvdbNWepLjfW4W0-R0hvucm3gwkYdO4mLhZBugbP9wfOUrzkjSXhlgD9WU0YX0yqxo9EI3DeDz4LZNXcMaI1n6z0qTDzRgKbjmW-AY0vw-9xqT-SWclXQ3sLM_movt"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-status-pending rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-primary font-bold truncate">Mr. Ahmed Raza</p>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[10px] font-label-caps text-status-resolved">21 Resolved</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">9 Pending</span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center justify-end text-status-forwarded mb-0.5">
+<span class="text-xs font-bold mr-1">4.5</span>
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] font-label-caps text-on-surface-variant opacity-60">SCORE</span>
+</div>
+</div>
+<!-- Staff Item 4 -->
+<div class="flex items-center gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors border border-transparent hover:border-border-subtle group">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-surface shadow-sm" data-alt="A senior female faculty member with grey hair and a friendly but professional demeanor, wearing a black blazer. High-key lighting, minimalist background, focused on clarity and institutional trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTPcaNuOGmq2ghUlfCkf6pwf77evdmCv_wVP1rXNbxw3yUZAuk3PYnheYOyyKW-lkSybl8erYGcs9BW4sZ3qGYq5y3BTN5_Zjp_QGIZ_de1pdzzR24g_vH7aAFG-Bu4rLr3ZXV6ErFWF7Ae-k98I7J2UnObWxJVXTE5rUzOXPABk0oLL0XehHPbKcHcqLBNWZsk8SQqU3heWohJH12B0VNPqD0IOFxeNyRNtkiVcMxymPZmL1kqyKkV23m8gEK2CXQMbiJ0t7HE6ry"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-status-resolved rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-primary font-bold truncate">Dr. Fatima S.</p>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[10px] font-label-caps text-status-resolved">15 Resolved</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">1 Pending</span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center justify-end text-status-forwarded mb-0.5">
+<span class="text-xs font-bold mr-1">4.8</span>
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] font-label-caps text-on-surface-variant opacity-60">SCORE</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-primary text-primary font-button-text text-button-text rounded-lg hover:bg-primary-fixed-dim transition-colors active:scale-[0.98]">
+                        View All Staff
+                    </button>
+</div>
+</section>
+</div>
+<!-- Detail Insights / Asymmetric section -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter-card">
+<div class="md:col-span-1 bg-primary text-white p-6 rounded-xl relative overflow-hidden flex flex-col justify-between h-48">
+<div class="z-10">
+<p class="font-label-caps text-[10px] uppercase opacity-70">Top Performer</p>
+<h3 class="font-headline-md text-headline-md mt-1">Dr. Salman K.</h3>
+</div>
+<div class="z-10 flex items-center gap-2">
+<span class="material-symbols-outlined text-4xl opacity-50">workspace_premium</span>
+<span class="text-xs font-body-md">98% Satisfaction Rate</span>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 transform rotate-12">
+<span class="material-symbols-outlined text-[120px]">emoji_events</span>
+</div>
+</div>
+<div class="md:col-span-3 bg-surface-container-lowest p-6 rounded-xl border border-border-subtle flex flex-col justify-center h-48">
+<div class="flex items-center gap-6">
+<div class="flex-shrink-0 w-24 h-24 rounded-full border-4 border-status-forwarded/20 flex items-center justify-center p-2">
+<div class="w-full h-full rounded-full border-4 border-status-forwarded flex items-center justify-center">
+<span class="font-headline-md text-headline-md text-primary">92%</span>
+</div>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary">Departmental Efficiency</h4>
+<p class="text-on-surface-variant text-body-md mt-1">Your team's efficiency is 12% higher than the institutional average this month.</p>
+<button class="mt-3 text-status-forwarded font-button-text text-button-text flex items-center gap-1 hover:underline">
+                            Read Full Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 bg-surface border-t border-border-subtle shadow-[0_-4px_12px_rgba(0,0,0,0.04)] z-50 md:hidden">
+<button class="flex flex-col items-center justify-center text-secondary transition-all duration-200 active:scale-95 group">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-caps text-label-caps mt-1">Staff</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary transition-all duration-200 active:scale-95 group">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-label-caps mt-1">Reports</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary transition-all duration-200 active:scale-95 group">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps mt-1">Settings</span>
+</button>
+</nav>
+<!-- Desktop Navigation Side Anchors (Visible only md+) -->
+<div class="hidden md:flex fixed bottom-8 left-1/2 -translate-x-1/2 bg-surface-container-highest/80 backdrop-blur-md px-6 py-4 rounded-full border border-border-subtle shadow-xl gap-8 items-center z-50">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-button-text">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+        </button>
+<button class="flex items-center gap-2 text-primary font-bold transition-colors font-button-text">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span> Staff
+        </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-button-text">
+<span class="material-symbols-outlined">assessment</span> Reports
+        </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-button-text">
+<span class="material-symbols-outlined">settings</span> Settings
+        </button>
+</div>
+<script>
+        // Micro-interactions for chart bars
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach((bar, index) => {
+                const targetHeight = bar.style.height;
+                bar.style.height = '0%';
+                setTimeout(() => {
+                    bar.style.height = targetHeight;
+                }, index * 100);
+            });
+        });
+    </script>
+</body></html>

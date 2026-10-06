@@ -1,0 +1,315 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Notification Settings | DCMS</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fbf8fc",
+                    "status-rejected": "#EF4444",
+                    "outline-variant": "#c5c6cf",
+                    "tertiary-container": "#3b2000",
+                    "primary": "#010f32",
+                    "surface-tint": "#505d84",
+                    "secondary": "#5d5f5f",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-bright": "#fbf8fc",
+                    "secondary-container": "#dfe0e0",
+                    "inverse-on-surface": "#f2f0f3",
+                    "tertiary": "#1e0e00",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-secondary-container": "#616363",
+                    "on-primary-fixed-variant": "#38466a",
+                    "on-surface-variant": "#45464e",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "status-resolved": "#10B981",
+                    "surface": "#fbf8fc",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-container-high": "#eae7eb",
+                    "primary-container": "#172548",
+                    "on-surface": "#1b1b1e",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-primary": "#ffffff",
+                    "border-subtle": "#E2E8F0",
+                    "surface-dim": "#dbd9dd",
+                    "surface-container-highest": "#e4e2e5",
+                    "inverse-surface": "#303033",
+                    "on-error-container": "#93000a",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed": "#dae2ff",
+                    "on-primary-container": "#7f8db6",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "error": "#ba1a1a",
+                    "status-forwarded": "#6366F1",
+                    "surface-container": "#efedf1",
+                    "surface-container-low": "#f5f3f6",
+                    "inverse-primary": "#b8c5f1",
+                    "tertiary-fixed": "#ffdcbc",
+                    "status-pending": "#F59E0B",
+                    "outline": "#75777f",
+                    "on-tertiary-container": "#b0855a",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e4e2e5",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#e2e2e2",
+                    "error-container": "#ffdad6",
+                    "surface-gray": "#F8FAFC",
+                    "on-background": "#1b1b1e",
+                    "on-primary-fixed": "#0b1a3c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "20px",
+                    "stack-tight": "8px",
+                    "stack-loose": "24px",
+                    "gutter-card": "16px",
+                    "base-unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "button-text": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .toggle-checkbox:checked {
+            @apply right-0 bg-white;
+            right: 0;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            @apply bg-primary-container;
+        }
+        .custom-toggle {
+            transition: all 0.3s ease;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-container-highest flex items-center justify-between px-margin-page h-16 w-full border-b border-border-subtle dark:border-outline-variant z-50">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 duration-150 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">Notification Settings</h1>
+</div>
+<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 duration-150 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<main class="max-w-2xl mx-auto px-margin-page py-stack-loose pb-32">
+<!-- General Settings: Mute All -->
+<section class="mb-stack-loose">
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-gutter-card shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="bg-primary-fixed text-on-primary-fixed p-3 rounded-lg">
+<span class="material-symbols-outlined" data-icon="notifications_off">notifications_off</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Mute All Notifications</h2>
+<p class="font-body-md text-on-surface-variant">Temporarily silence all alerts across the app</p>
+</div>
+</div>
+<div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-secondary-container checked:right-0 checked:border-primary-container focus:outline-none transition-all duration-300 right-6" id="mute-all" name="toggle" type="checkbox">
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-secondary-container cursor-pointer transition-colors duration-300" for="mute-all"></label>
+</div>
+</div>
+</section>
+<!-- Complaint Alerts -->
+<section class="mb-stack-loose">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">COMPLAINT ALERTS</h3>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<!-- Row 1 -->
+<div class="flex items-center justify-between p-gutter-card border-b border-border-subtle hover:bg-surface-gray transition-colors">
+<div class="flex-1 pr-4">
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold">New Complaint Submitted</h4>
+<p class="font-body-md text-on-surface-variant">Get notified when a new complaint is filed in your department</p>
+</div>
+<div class="relative inline-block w-10 h-5">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-secondary-container appearance-none cursor-pointer checked:right-0 checked:border-primary-container right-5 transition-all duration-200" id="new-complaint" type="checkbox">
+<label class="toggle-label block h-5 rounded-full bg-secondary-container cursor-pointer transition-colors" for="new-complaint"></label>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between p-gutter-card border-b border-border-subtle hover:bg-surface-gray transition-colors">
+<div class="flex-1 pr-4">
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold">Complaint Forwarded</h4>
+<p class="font-body-md text-on-surface-variant">Alert when a case is escalated or moved to another office</p>
+</div>
+<div class="relative inline-block w-10 h-5">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-secondary-container appearance-none cursor-pointer checked:right-0 checked:border-primary-container right-5 transition-all duration-200" id="complaint-forwarded" type="checkbox">
+<label class="toggle-label block h-5 rounded-full bg-secondary-container cursor-pointer transition-colors" for="complaint-forwarded"></label>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center justify-between p-gutter-card hover:bg-surface-gray transition-colors">
+<div class="flex-1 pr-4">
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold">Complaint Resolved</h4>
+<p class="font-body-md text-on-surface-variant">Final confirmation when a case is successfully closed</p>
+</div>
+<div class="relative inline-block w-10 h-5">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-secondary-container appearance-none cursor-pointer checked:right-0 checked:border-primary-container right-5 transition-all duration-200" id="complaint-resolved" type="checkbox">
+<label class="toggle-label block h-5 rounded-full bg-secondary-container cursor-pointer transition-colors" for="complaint-resolved"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Departmental Notices -->
+<section class="mb-stack-loose">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">DEPARTMENTAL NOTICES</h3>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<div class="flex items-center justify-between p-gutter-card hover:bg-surface-gray transition-colors">
+<div class="flex-1 pr-4">
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold">New Notice Posted</h4>
+<p class="font-body-md text-on-surface-variant">Alerts for broad announcements or administrative updates</p>
+</div>
+<div class="relative inline-block w-10 h-5">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-secondary-container appearance-none cursor-pointer checked:right-0 checked:border-primary-container right-5 transition-all duration-200" id="new-notice" type="checkbox">
+<label class="toggle-label block h-5 rounded-full bg-secondary-container cursor-pointer transition-colors" for="new-notice"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Security & System -->
+<section class="mb-stack-loose">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">SECURITY &amp; SYSTEM</h3>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<div class="flex items-center justify-between p-gutter-card hover:bg-surface-gray transition-colors">
+<div class="flex-1 pr-4">
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold">New Login Detected</h4>
+<p class="font-body-md text-on-surface-variant">Security alert for unrecognized device access</p>
+</div>
+<div class="relative inline-block w-10 h-5">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 border-secondary-container appearance-none cursor-pointer checked:right-0 checked:border-primary-container right-5 transition-all duration-200" id="new-login" type="checkbox">
+<label class="toggle-label block h-5 rounded-full bg-secondary-container cursor-pointer transition-colors" for="new-login"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Channel Preferences -->
+<section class="mb-stack-loose">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-tight px-1">CHANNEL PREFERENCES</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Push Notifications Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-gutter-card shadow-[0_4px_12px_rgba(0,0,0,0.04)] cursor-pointer hover:border-primary transition-all">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-primary" data-icon="stay_current_portrait">stay_current_portrait</span>
+<h4 class="font-body-lg text-body-lg font-bold">Push Alerts</h4>
+</div>
+<p class="text-xs text-on-surface-variant mb-4">Instant updates on your device</p>
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold text-primary">ENABLED</span>
+<div class="w-2 h-2 rounded-full bg-status-resolved"></div>
+</div>
+</div>
+<!-- Email Digest Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-gutter-card shadow-[0_4px_12px_rgba(0,0,0,0.04)] cursor-pointer hover:border-primary transition-all relative"><div class="flex items-center gap-3 mb-4"><span class="material-symbols-outlined text-primary" data-icon="mail">mail</span><h4 class="font-body-lg text-body-lg font-bold">Email Digest</h4></div><div class="flex flex-col gap-3"><label class="flex items-center justify-between p-3 rounded-lg border border-border-subtle hover:bg-surface-gray cursor-pointer transition-colors"><div class="flex-1"> <span class="block font-semibold text-on-surface">Daily Recap</span> <span class="block text-xs text-on-surface-variant">Every evening at 6 PM</span></div><input type="radio" name="digest-freq" value="daily" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant"></label><label class="flex items-center justify-between p-3 rounded-lg border-2 border-primary bg-primary-container/5 hover:bg-primary-container/10 cursor-pointer transition-colors"><div class="flex-1"> <span class="block font-semibold text-on-surface">Weekly Summary</span> <span class="block text-xs text-on-surface-variant">Every Friday morning</span></div><input type="radio" name="digest-freq" value="weekly" checked="" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant"></label><label class="flex items-center justify-between p-3 rounded-lg border border-border-subtle hover:bg-surface-gray cursor-pointer transition-colors"><div class="flex-1"> <span class="block font-semibold text-on-surface">Monthly Report</span> <span class="block text-xs text-on-surface-variant">First day of each month</span></div><input type="radio" name="digest-freq" value="monthly" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant"></label></div></div>
+</div>
+</section>
+<!-- Decorative Asset -->
+<div class="mt-8 opacity-40">
+
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface dark:bg-surface-container-highest border-t border-border-subtle dark:border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+<button class="flex flex-col items-center justify-center text-on-secondary-container dark:text-secondary-fixed-dim hover:bg-secondary-container dark:hover:bg-on-secondary-fixed-variant transition-all active:scale-90 duration-200 px-4 py-1 rounded-xl">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-secondary-container dark:text-secondary-fixed-dim hover:bg-secondary-container dark:hover:bg-on-secondary-fixed-variant transition-all active:scale-90 duration-200 px-4 py-1 rounded-xl">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-caps text-label-caps">Complaints</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-secondary-container dark:text-secondary-fixed-dim hover:bg-secondary-container dark:hover:bg-on-secondary-fixed-variant transition-all active:scale-90 duration-200 px-4 py-1 rounded-xl">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="font-label-caps text-label-caps">Notices</span>
+</button>
+<!-- Active Tab: Settings -->
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-xl px-4 py-1 active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for Toggles
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                const label = e.target.nextElementSibling;
+                if(e.target.checked) {
+                    label.classList.add('bg-primary-container');
+                    label.classList.remove('bg-secondary-container');
+                } else {
+                    label.classList.remove('bg-primary-container');
+                    label.classList.add('bg-secondary-container');
+                }
+            });
+        });
+
+        // Global Mute logic
+        const muteToggle = document.getElementById('mute-all');
+        muteToggle.addEventListener('change', (e) => {
+            const allOtherToggles = document.querySelectorAll('.toggle-checkbox:not(#mute-all)');
+            if(e.target.checked) {
+                allOtherToggles.forEach(t => {
+                    t.disabled = true;
+                    t.closest('.relative').style.opacity = '0.5';
+                });
+            } else {
+                allOtherToggles.forEach(t => {
+                    t.disabled = false;
+                    t.closest('.relative').style.opacity = '1';
+                });
+            }
+        });
+    </script>
+
+
+</body></html>

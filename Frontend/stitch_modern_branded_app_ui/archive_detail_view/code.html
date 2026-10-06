@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Complaint Detail - COMP-2024-0891</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#b0855a",
+                        "background": "#fbf8fc",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-variant": "#e4e2e5",
+                        "outline": "#75777f",
+                        "on-primary-container": "#7f8db6",
+                        "surface-container-low": "#f5f3f6",
+                        "inverse-surface": "#303033",
+                        "surface-container-highest": "#e4e2e5",
+                        "surface": "#fbf8fc",
+                        "secondary-container": "#dfe0e0",
+                        "on-primary-fixed-variant": "#38466a",
+                        "status-rejected": "#EF4444",
+                        "secondary": "#5d5f5f",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "on-secondary-container": "#616363",
+                        "surface-dim": "#dbd9dd",
+                        "error": "#ba1a1a",
+                        "primary-container": "#172548",
+                        "on-primary-fixed": "#0b1a3c",
+                        "surface-bright": "#fbf8fc",
+                        "status-resolved": "#10B981",
+                        "surface-container": "#efedf1",
+                        "outline-variant": "#c5c6cf",
+                        "on-surface": "#1b1b1e",
+                        "surface-gray": "#F8FAFC",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#dae2ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#45464e",
+                        "inverse-primary": "#b8c5f1",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "status-pending": "#F59E0B",
+                        "on-background": "#1b1b1e",
+                        "inverse-on-surface": "#f2f0f3",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "border-subtle": "#E2E8F0",
+                        "tertiary-container": "#3b2000",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "surface-container-high": "#eae7eb",
+                        "surface-tint": "#505d84",
+                        "status-forwarded": "#6366F1",
+                        "tertiary-fixed": "#ffdcbc",
+                        "tertiary": "#1e0e00",
+                        "on-error": "#ffffff",
+                        "primary": "#010f32",
+                        "on-tertiary-fixed": "#2c1600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "20px",
+                        "stack-tight": "8px",
+                        "stack-loose": "24px",
+                        "gutter-card": "16px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fbf8fc;
+            color: #1b1b1e;
+        }
+        .shadow-level-1 {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .timeline-line {
+            background: repeating-linear-gradient(to bottom, #E2E8F0 0, #E2E8F0 4px, transparent 4px, transparent 8px);
+        }
+        .safe-pb {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md antialiased pb-24">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface-dim flex justify-between items-center px-margin-page h-16 border-b border-border-subtle dark:border-outline-variant">
+<div class="flex items-center gap-4 cursor-pointer active:opacity-70 transition-colors hover:bg-surface-container-low" onclick="history.back()">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">arrow_back</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Archive Detail</h1>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-button-text text-button-text hover:opacity-90 active:scale-95 transition-all">
+            Export PDF
+        </button>
+</header>
+<main class="mt-20 px-margin-page space-y-stack-loose max-w-4xl mx-auto">
+<!-- Status Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-level-1 border-l-[6px] border-status-resolved relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">COMP-2024-0891</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Late Grade Submission: CS301</h2>
+</div>
+<div class="bg-[#D1FAE5] text-status-resolved px-3 py-1 rounded-full font-label-caps text-label-caps flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    RESOLVED
+                </div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant bg-surface-gray p-3 rounded-lg border border-border-subtle">
+<span class="material-symbols-outlined text-status-resolved">calendar_today</span>
+<span class="font-body-md">Resolved on Oct 12, 2023</span>
+</div>
+</div>
+<!-- Student Info Bento Card -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<div class="md:col-span-2 bg-surface-container-lowest rounded-xl p-6 shadow-level-1 border border-border-subtle flex items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-surface-variant overflow-hidden flex-shrink-0 border-2 border-primary/10">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a young South Asian male student named Ali Ahmed wearing a clean white oxford shirt. The background is a soft, blurred administrative office setting with books and a wooden desk, reflecting a serious academic environment. Lighting is bright and neutral, emphasizing a clean-cut and disciplined appearance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhzMcHGBPWU0SWqYJFeNCDByANY6y2H4aR_xJsuByNFLY4dFRd8lzCKPI6f_zD6lh9sp4W3fqh25k89dw6HCmUJ1gqztb3mACMP5kazcTmREAaU-Zb0ie2rmJISsD430Rp-fP4r-Z7lbwJj7-1DEXs1Z23K6mY68xcsrX1inMO8_VKplaQ2AuFkMTAaHYR-xFMhshwb7JcQgCIxsrCi4GBxk7mayALaV6M9EX0gG9E6UC2WYfuTBLtTKyxXiIyMxINDyZ731TxyCgb"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">STUDENT PROFILE</p>
+<h3 class="font-headline-md text-headline-md text-primary">Ali Ahmed</h3>
+<p class="text-on-surface-variant">Reg ID: 2021-CS-15 • Batch: 2021 Fall</p>
+</div>
+</div>
+<div class="bg-primary-container text-on-primary-container rounded-xl p-6 shadow-level-1 flex flex-col justify-center">
+<p class="font-label-caps text-label-caps opacity-80">CATEGORY</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-on-primary-container">school</span>
+<span class="font-headline-md">Academic</span>
+</div>
+</div>
+</div>
+<!-- Complaint Content -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-level-1 border border-border-subtle space-y-4">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">DESCRIPTION</p>
+<p class="font-body-lg text-body-lg leading-relaxed text-on-surface">
+                    "My grades for CS301 were not uploaded on the portal despite the deadline passing. This is affecting my scholarship application for the upcoming semester."
+                </p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-3">ATTACHMENTS (1)</p>
+<div class="flex items-center gap-4 p-4 border border-border-subtle rounded-xl bg-surface-gray cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="w-12 h-12 bg-error-container/20 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-error">picture_as_pdf</span>
+</div>
+<div class="flex-1">
+<p class="font-button-text">Grade_Portal_Screenshot.pdf</p>
+<p class="text-[12px] text-on-surface-variant">842 KB</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">download</span>
+</div>
+</div>
+</div>
+<!-- Resolution Box -->
+<div class="bg-status-resolved/5 border border-status-resolved/20 rounded-xl p-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-status-resolved">task_alt</span>
+<p class="font-label-caps text-label-caps text-status-resolved">OFFICIAL RESOLUTION</p>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">
+                "Grades have been verified and updated on the portal. The delay was due to a technical sync issue between the departmental CMS and the central registrar database."
+            </p>
+</div>
+<!-- Timeline Section -->
+<div class="space-y-4">
+<h3 class="font-headline-md text-headline-md text-primary px-2">Tracking History</h3>
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-level-1 border border-border-subtle relative">
+<!-- Timeline Items -->
+<div class="space-y-10 relative">
+<!-- Vertical Line -->
+<div class="absolute left-[11px] top-2 bottom-2 w-[2px] timeline-line z-0"></div>
+<!-- Step 1 -->
+<div class="flex gap-6 relative z-10">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+</div>
+<div>
+<p class="font-button-text text-primary">Complaint Submitted</p>
+<p class="text-label-caps text-on-surface-variant">OCT 05, 2023 • 09:12 AM</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex gap-6 relative z-10">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+</div>
+<div>
+<p class="font-button-text text-primary">Forwarded to Coordinator</p>
+<p class="text-label-caps text-on-surface-variant">OCT 07, 2023 • 02:45 PM</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex gap-6 relative z-10">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-button-text text-primary">Remarks by Chairman</p>
+<span class="bg-surface-variant text-[10px] px-2 py-0.5 rounded font-label-caps">INTERNAL</span>
+</div>
+<p class="font-body-md text-on-surface italic mt-1">"Verified with Dept. Office. Technical glitch identified."</p>
+<p class="text-label-caps text-on-surface-variant">OCT 10, 2023 • 11:20 AM</p>
+</div>
+</div>
+<!-- Step 4 (Resolved) -->
+<div class="flex gap-6 relative z-10">
+<div class="w-6 h-6 rounded-full bg-status-resolved flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[14px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<p class="font-button-text text-status-resolved">Complaint Resolved</p>
+<p class="text-label-caps text-on-surface-variant">OCT 12, 2023 • 04:00 PM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-dim flex justify-around items-center px-4 py-2 pb-safe border-t border-border-subtle dark:border-outline-variant shadow-md rounded-t-xl">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</a>
+<!-- History (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-variant dark:text-on-primary-fixed-variant rounded-full px-4 py-1 scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-caps text-label-caps mt-0.5">History</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('button, a, .cursor-pointer').forEach(el => {
+            el.addEventListener('mousedown', () => el.style.transform = 'scale(0.98)');
+            el.addEventListener('mouseup', () => el.style.transform = 'scale(1)');
+            el.addEventListener('mouseleave', () => el.style.transform = 'scale(1)');
+        });
+
+        // Simulating Export Action
+        document.querySelector('button.bg-primary').addEventListener('click', function() {
+            this.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Exporting...';
+            setTimeout(() => {
+                this.innerHTML = 'Export PDF';
+            }, 2000);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hanken+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#dfe0e0",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-container-high": "#eae7eb",
+                    "on-tertiary-container": "#b0855a",
+                    "surface-gray": "#F8FAFC",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "status-resolved": "#10B981",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "primary": "#010f32",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#616363",
+                    "surface": "#fbf8fc",
+                    "surface-container-highest": "#e4e2e5",
+                    "surface-dim": "#dbd9dd",
+                    "tertiary": "#1e0e00",
+                    "on-error-container": "#93000a",
+                    "status-forwarded": "#6366F1",
+                    "on-primary": "#ffffff",
+                    "outline": "#75777f",
+                    "status-rejected": "#EF4444",
+                    "on-primary-fixed": "#0b1a3c",
+                    "inverse-on-surface": "#f2f0f3",
+                    "surface-bright": "#fbf8fc",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed-variant": "#38466a",
+                    "secondary": "#5d5f5f",
+                    "surface-tint": "#505d84",
+                    "inverse-primary": "#b8c5f1",
+                    "background": "#fbf8fc",
+                    "status-pending": "#F59E0B",
+                    "on-surface-variant": "#45464e",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffdcbc",
+                    "primary-fixed": "#dae2ff",
+                    "on-surface": "#1b1b1e",
+                    "secondary-fixed": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#3b2000",
+                    "primary-container": "#172548",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#2c1600",
+                    "inverse-surface": "#303033",
+                    "border-subtle": "#E2E8F0",
+                    "surface-variant": "#e4e2e5",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-primary-container": "#7f8db6",
+                    "surface-container": "#efedf1",
+                    "on-background": "#1b1b1e",
+                    "outline-variant": "#c5c6cf",
+                    "surface-container-low": "#f5f3f6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "20px",
+                    "stack-loose": "24px",
+                    "stack-tight": "8px",
+                    "base-unit": "4px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "button-text": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .timeline-line {
+            background-image: linear-gradient(to bottom, #E2E8F0 50%, rgba(255,255,255,0) 0%);
+            background-position: right;
+            background-size: 2px 8px;
+            background-repeat: repeat-y;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md text-body-md overflow-x-hidden pb-24">
+<!-- TopAppBar -->
+<header class="w-full top-0 flex justify-between items-center px-margin-page py-4 bg-surface dark:bg-on-background border-b border-border-subtle dark:border-outline-variant sticky z-40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform">arrow_back</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Track Complaint</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:scale-95 transition-transform">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young university student in a clean, high-key office setting. The lighting is soft and neutral, reflecting a corporate academic environment. The student is wearing a simple dark navy blazer, aligned with the institutional primary color palette. The background is a blurred minimalist office with white walls and subtle grey accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsJJIBxvbgKqbpK02pCgAMQ3b61GK4_L9gM6yEzWFmkBSodlMt4z5L7EpSfm5whgw4qXPkiL8ZfUDWTph_8qCO8yHUnTcfS74SrEbQQzL2pk2XcFRvfYNRH7uNSC0CadBPNihUNvR_EF7qa8Vq6M_gNuf54qcGJJSeEO0K905bq-n6D_oadncKZdhpAR89AGfeQpWky7HufBJK3GhiP7LfP6YHtXn9u5lCtlisMkUvFh6tbGj5ZAk39EDe2DcSqSRrJ6q_7Fz3gC_-"/>
+</div>
+</div>
+</header>
+<main class="px-margin-page mt-stack-loose space-y-stack-loose">
+<!-- Summary Card -->
+<section class="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 card-shadow relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-forwarded"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">#DC-2945</span>
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-status-forwarded/10 text-status-forwarded border border-status-forwarded/20">
+                    Forwarded
+                </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Library Cooling System</h2>
+<p class="text-on-surface-variant font-body-md">Reported: Oct 12, 2023 • General Maintenance</p>
+</section>
+<!-- Timeline Section -->
+<section class="space-y-stack-tight">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant px-1 mb-4">COMPLAINT JOURNEY</h3>
+<div class="relative pl-8 space-y-8">
+<!-- Vertical Line -->
+<div class="absolute left-[15px] top-4 bottom-4 w-[2px] timeline-line"></div>
+<!-- Stage 4: Pending (Future) -->
+<div class="relative">
+<div class="absolute -left-[24px] top-0 w-[18px] h-[18px] rounded-full bg-surface-container-high border-2 border-outline-variant z-10"></div>
+<div class="flex flex-col gap-1 opacity-60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">hourglass_empty</span>
+<h4 class="font-headline-md text-headline-md text-on-surface">Pending Chairman Approval</h4>
+</div>
+<p class="text-on-surface-variant text-body-md italic">Waiting for administrative review</p>
+</div>
+</div>
+<!-- Stage 3: Forwarded (Active) -->
+<div class="relative">
+<div class="absolute -left-[27px] -top-[3px] w-6 h-6 rounded-full bg-primary flex items-center justify-center z-10 shadow-lg">
+<span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'FILL' 1;">forward</span>
+</div>
+<div class="flex flex-col gap-2 p-4 bg-primary-container rounded-xl border border-primary/10">
+<div class="flex justify-between items-start">
+<h4 class="font-headline-md text-headline-md text-on-primary-fixed-variant">Forwarded to Coordinator</h4>
+<span class="font-label-caps text-label-caps text-on-primary-container">TODAY, 10:45 AM</span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-6 h-6 rounded-full bg-on-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-on-primary-container">person</span>
+</div>
+<span class="text-body-md text-on-primary-fixed-variant font-medium">Prof. Sarah Jenkins</span>
+</div>
+</div>
+</div>
+<!-- Stage 2: Reviewed (Completed) -->
+<div class="relative">
+<div class="absolute -left-[24px] top-0 w-[18px] h-[18px] rounded-full bg-status-resolved z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-white font-bold">check</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h4 class="font-headline-md text-headline-md text-primary">Reviewed by Batch Adviser</h4>
+<span class="font-label-caps text-label-caps text-on-surface-variant">OCT 13, 2:15 PM</span>
+</div>
+<div class="bg-surface-gray border border-border-subtle p-3 rounded-lg">
+<p class="text-on-surface-variant text-body-md leading-relaxed">
+<span class="font-bold text-primary">Remarks:</span> Issue verified. Cooling system in Sector B is non-functional. Requesting escalation to department coordinator for fund allocation.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Stage 1: Submitted (Completed) -->
+<div class="relative">
+<div class="absolute -left-[24px] top-0 w-[18px] h-[18px] rounded-full bg-status-resolved z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-white font-bold">check</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="font-headline-md text-headline-md text-primary">Complaint Submitted</h4>
+<span class="font-label-caps text-label-caps text-on-surface-variant">OCT 12, 9:00 AM</span>
+</div>
+<p class="text-on-surface-variant text-body-md">Ticket generated successfully by user.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Attachment Preview -->
+<section class="space-y-stack-tight">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant px-1 mb-2">ATTACHED MEDIA</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-square rounded-xl overflow-hidden border border-border-subtle cursor-pointer active:opacity-80 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="A professional close-up photograph of a ceiling-mounted industrial air conditioning vent in a university library. The lighting is cool and fluorescent. The vent shows slight dust accumulation, indicating maintenance needs. The composition is clean and technical, shot from a low angle looking up at the white paneled ceiling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLMJzKziNYaRIp8hNK27YwRusKmxHE3N3h50xP72iT6g2aMY3p0ekM5NBsEG3wWVe1suCitOSTcohztI216Rwe1J7cV_dQeW4rt44wDnHhmGnuaDv6O3pO6BMalcajaigwE1hXUy_7azeI-TA4aDAsEx0BgEHJgpdLlMKDlE4G7FUAcB3Q2Xy3t7txcQ3CJhBuMnxPF_dqrRQOdu5QZxN28VC9c9Sq7-SHveSO6s0XC6s6Ad-PXR_8ZRBxYoZL0kXA6ncz99YOR50E"/>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container flex flex-col items-center justify-center border border-dashed border-outline gap-2 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">ROOM_LOG.PDF</span>
+</div>
+</div>
+</section>
+<!-- Help/Support Action -->
+<div class="pt-4">
+<button class="w-full py-4 rounded-xl border border-primary text-primary font-button-text text-button-text flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+                Contact Support for this Ticket
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface dark:bg-on-background pb-safe border-t border-border-subtle dark:border-outline-variant z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed dark:text-on-primary-fixed rounded-xl px-4 py-1 transition-colors cursor-pointer active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment_late</span>
+<span class="font-label-caps text-label-caps">Complaints</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-caps text-label-caps">Notices</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('section').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = 'scale(0.99)';
+                card.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+            card.addEventListener('touchend', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

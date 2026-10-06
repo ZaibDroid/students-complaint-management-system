@@ -1,0 +1,460 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Staff Management - Section Assignment</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-fixed-variant": "#454747",
+                        "secondary-container": "#dfe0e0",
+                        "on-error": "#ffffff",
+                        "status-pending": "#F59E0B",
+                        "secondary-fixed": "#e2e2e2",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#505d84",
+                        "inverse-surface": "#303033",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "on-tertiary-container": "#b0855a",
+                        "status-resolved": "#10B981",
+                        "surface-bright": "#fbf8fc",
+                        "surface-container": "#efedf1",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#b8c5f1",
+                        "outline": "#75777f",
+                        "status-forwarded": "#6366F1",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fbf8fc",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-primary-container": "#7f8db6",
+                        "tertiary-container": "#3b2000",
+                        "secondary": "#5d5f5f",
+                        "on-surface-variant": "#45464e",
+                        "on-surface": "#1b1b1e",
+                        "on-background": "#1b1b1e",
+                        "surface-container-high": "#eae7eb",
+                        "status-rejected": "#EF4444",
+                        "background": "#fbf8fc",
+                        "surface-dim": "#dbd9dd",
+                        "primary-fixed": "#dae2ff",
+                        "primary-container": "#172548",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "border-subtle": "#E2E8F0",
+                        "tertiary": "#1e0e00",
+                        "surface-gray": "#F8FAFC",
+                        "surface-variant": "#e4e2e5",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-secondary-container": "#616363",
+                        "on-primary-fixed-variant": "#38466a",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f5f3f6",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#0b1a3c",
+                        "primary": "#010f32",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "outline-variant": "#c5c6cf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "8px",
+                        "base-unit": "4px",
+                        "stack-loose": "24px",
+                        "margin-page": "20px",
+                        "gutter-card": "16px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "button-text": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+<!-- Navigation Drawer (Desktop) -->
+<aside class="hidden md:flex flex-col py-stack-loose h-full bg-surface dark:bg-inverse-surface h-full w-72 fixed left-0 top-0 border-r border-border-subtle dark:border-outline-variant shadow-sm z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed leading-tight">Admin Portal</h2>
+<p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold">Department Management</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="text-on-surface-variant dark:text-outline mx-2 flex items-center gap-4 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant transition-all duration-200 cursor-pointer rounded-lg">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</div>
+<div class="text-on-surface-variant dark:text-outline mx-2 flex items-center gap-4 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant transition-all duration-200 cursor-pointer rounded-lg">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-body-md text-body-md">Complaints</span>
+</div>
+<div class="bg-primary-container text-on-primary-container dark:bg-primary dark:text-on-primary font-bold rounded-lg mx-2 flex items-center gap-4 px-4 py-3 transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</div>
+<div class="text-on-surface-variant dark:text-outline mx-2 flex items-center gap-4 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant transition-all duration-200 cursor-pointer rounded-lg">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</div>
+<div class="text-on-surface-variant dark:text-outline mx-2 flex items-center gap-4 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant transition-all duration-200 cursor-pointer rounded-lg">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</div>
+</nav>
+<div class="px-4 py-4 mt-auto border-t border-border-subtle">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-surface-container-low">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional studio portrait of a high-ranking academic administrator with a warm but authoritative expression. The individual is wearing a dark navy corporate blazer, set against a blurred background of a modern university library. The lighting is sophisticated and bright, reflecting a clean and professional institutional aesthetic with a focus on trust and competence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj9R3tYksbflAy39MLIBb4dopoxBt62eK_ulCxdom8LWN9121MzFFw7Nkl-zCwDRxM_ZskcP4JrDHbPZJpkSnuD7FWxlaJmbu20yYPs-lcBiVLLx9HfOTXkAmNmE1Pr-hwuv1QrdSukAxg293cfLVBfLnQntFj4ELYbW3jAWIxpS2mVqAfbsZantCPJGsfIHCF410o1oX8f89Nyc2E2XkRS6Qp8wp5UhGSCZwnyywnhzAKR75oph8OgUE69DUS-a3F2x-eFmxGFwlG">
+<div class="overflow-hidden">
+<p class="text-body-md font-bold truncate">DCMS Admin</p>
+<p class="text-[11px] text-on-surface-variant truncate">Staff Manager</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="w-full top-0 sticky z-40 bg-surface dark:bg-inverse-surface border-b border-border-subtle dark:border-outline-variant flat no shadows md:pl-72">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer md:hidden text-primary">menu</span>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed">Staff Management</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-surface-container-low px-3 py-1.5 rounded-full border border-border-subtle">
+<span class="material-symbols-outlined text-outline text-[20px] mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-48" placeholder="Search departments..." type="text">
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-border-subtle cursor-pointer active:opacity-80 transition-colors">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist profile avatar of a generic academic staff member. The image is rendered in a high-key digital style with soft, diffused lighting and a neutral grey background. The professional vibe is maintained through a sharp focus and institutional color palette of navy and white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0cluqX2azCwCrmxvxeaBt5eBHbfe_DWRloF_hTfFMuNJObvZxcIefaB-y-IFuMANfXHSq3X8IsgI5x14Db8xIpx6atBCpp481wuhZAxHqJuVmxVJ74JbQUXUrFZ8P_KzrdyRiJg_eGH3s9X6kNZc89Zd_Yo3xehXTPjR8wSKUWnTb1cr4uC8fbv6dGZx0TujkrR8e0S-1iLsgtcjVUamKcJiUIc1VEvPXa3-WmG5l3lgO_7KHqWxylg9q7uRDruKIkAOC6RSriHxy">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="md:pl-72 pb-24 md:pb-8">
+<div class="px-margin-page py-stack-loose max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-stack-loose flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<nav class="flex items-center gap-2 mb-2 text-on-surface-variant">
+<span class="text-label-caps font-label-caps hover:text-primary cursor-pointer">DIRECTORY</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-label-caps font-label-caps text-primary">ASSIGN STAFF</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-primary">Academic Section Assignment</h2>
+<p class="text-body-lg text-on-surface-variant max-w-2xl mt-2">Select a batch and section below to assign an Academic Adviser or Department Head. Green status indicates an active assignment.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-surface-container-lowest border border-border-subtle text-primary font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-surface-container transition-colors font-button-text text-button-text">
+<span class="material-symbols-outlined">filter_list</span>
+                        Filter
+                    </button>
+<button class="bg-primary text-on-primary font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all font-button-text text-button-text shadow-sm">
+<span class="material-symbols-outlined">person_add</span>
+                        Bulk Assign
+                    </button>
+</div>
+</div>
+<!-- Bento-style Dashboard/Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-card">
+<!-- Summary Card -->
+<div class="lg:col-span-12 bg-surface-container-lowest p-6 rounded-xl border border-border-subtle card-shadow flex flex-wrap items-center justify-between gap-6">
+<div class="flex items-center gap-6 divide-x divide-border-subtle">
+<div class="flex flex-col">
+<span class="text-label-caps font-label-caps text-on-surface-variant">TOTAL SECTIONS</span>
+<span class="font-headline-lg text-headline-lg text-primary">48</span>
+</div>
+<div class="flex flex-col pl-6">
+<span class="text-label-caps font-label-caps text-on-surface-variant">UNASSIGNED</span>
+<span class="font-headline-lg text-headline-lg text-error">12</span>
+</div>
+<div class="flex flex-col pl-6">
+<span class="text-label-caps font-label-caps text-on-surface-variant">RECENT ASSIGNMENTS</span>
+<span class="font-headline-lg text-headline-lg text-status-resolved">154</span>
+</div>
+</div>
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A portrait of a diverse faculty member in a clean, modern academic setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIrbqQ-xNBYC310L4JYAuIPWuC-5FCdyKFDo0CwPM8SxReRlHFDagO7ICgopVLboSXxCyiQ_feOd02nIZjkwbRXaMdUZDyJFQcb3gkSNlkggs1af7tfwrxuPINELBaKjGX8a5xNHFxTC6iMaFP3Sg9GZAg86E8Klgu9NVM52OavV2rE2KSib2UmFvmhs8latL0nBOdpNXwnOm3BZv2FVzOPIVIcD6Eg5b-mNumdRCp44-ijEHi-CPxQzPrZ4-V9NpbnCvl7E-4R-al">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A portrait of a professional university administrator with a clear institutional background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlCHb490SEOIrs9tLJYCOFAmdLzgsGedBrE9qiLY2I_khXL0yTLg5kBy5bbcjLeiYzkUXDGVHGO-ISB2xXwRxLiHrMEbtqevyPp5HMVo4lfad551c7tjJskpe0cJzRHyvKwYGtKzu6JAQqqSmKRzNaA_vG08R8vmevR2L5x55i3Op-tWyU0PwrkGhUtVcXRQjnEWFufQdmQ5gAWqZfJPz3qQFg30t11SjSzWqpmbwllYClyg6vPGSmt03HBMNsanWQVNBh3cXaSml6">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A smiling academic staff member in a bright, modern office." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGI5hjBV-dZA3pgG8mQt5pDSKrgEQzGO7_CF07AmNV7ndYMUNRri9pCN9iVY3OpjHgRh7JZ2TkJKssIOobZtzy_dx6rw1dJbmdQu8U6fgvCEOWa7CT27Ft3PoigqIDjjfmBJs-6B3ySY6KS8ea8OqSoTq0wz9fvemMhzjsXHWld6D3HMSGMbViyE-oFVO9SWH_QXjGOQr4elAX2vVbkdMygwITK8wNLMxYKt3O-9zE7Di9gn8mALl9AJglPMu0BeP7MuvZgBm0FBOM">
+<div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-container-high flex items-center justify-center text-[12px] font-bold text-on-surface-variant">+42</div>
+</div>
+</div>
+<!-- Main Section List Container -->
+<div class="lg:col-span-8 flex flex-col gap-gutter-card">
+<!-- Batch Group 1 -->
+<section class="flex flex-col gap-stack-tight">
+<div class="flex items-center justify-between px-2 py-1">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">folder_open</span>
+<h3 class="font-headline-md text-headline-md text-primary">Batch 2024 - Computer Science</h3>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">4 SECTIONS</span>
+</div>
+<!-- Section Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Card 1 (Assigned) -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 card-shadow relative overflow-hidden group hover:border-primary transition-all cursor-pointer">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-resolved"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">SECTION ID: CS-24-A</p>
+<h4 class="font-headline-md text-headline-md text-primary mt-1">CS Section A</h4>
+</div>
+<span class="bg-emerald-50 text-status-resolved text-[10px] font-bold px-2 py-1 rounded border border-emerald-100">ASSIGNED</span>
+</div>
+<div class="flex items-center gap-3 mt-auto">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A close-up portrait of a female university professor, smiling confidently. Professional lighting, neutral gray background, 8k resolution, minimalist academic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASUia6pjNaw05J1_BInCwlvYccJ24_nbcqoD6tIMnyvONddB43WOiwKgIAERKMxMX7FTyyt-HR4hreuESyHJ10XenSfM6NaF-Up1fxgKzgWy_7eIeSJvXkkkfWs4ysRDJKjwbOsH7bC4KFD1KxJa14QSj0ilwV2b6CMTZnTsVMcQ3CwwNVn2XD_23chRVGNnwrrSPy6xE5BIzQiAhstD_JofoNoxDaBzgxKjoadinUIAKLEpi1qBb-LQmetSICrWC7wfeIQAFa3-nx">
+<div>
+<p class="text-[11px] text-on-surface-variant font-bold leading-none">ADVISER</p>
+<p class="text-body-md text-on-surface font-semibold">Dr. Sarah Jenkins</p>
+</div>
+</div>
+<div class="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary">edit_square</span>
+</div>
+</div>
+<!-- Card 2 (Unassigned) -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 card-shadow relative overflow-hidden group hover:border-primary transition-all cursor-pointer">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-pending"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">SECTION ID: CS-24-B</p>
+<h4 class="font-headline-md text-headline-md text-primary mt-1">CS Section B</h4>
+</div>
+<span class="bg-amber-50 text-status-pending text-[10px] font-bold px-2 py-1 rounded border border-amber-100">UNASSIGNED</span>
+</div>
+<div class="flex items-center gap-3 mt-auto text-on-surface-variant italic">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</div>
+<p class="text-body-md">Assign Staff Member...</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Batch Group 2 -->
+<section class="flex flex-col gap-stack-tight mt-4">
+<div class="flex items-center justify-between px-2 py-1">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">folder_open</span>
+<h3 class="font-headline-md text-headline-md text-primary">Batch 2023 - Electrical Engineering</h3>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">2 SECTIONS</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Card 3 (Assigned) -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 card-shadow relative overflow-hidden group hover:border-primary transition-all cursor-pointer">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-resolved"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">SECTION ID: EE-23-A</p>
+<h4 class="font-headline-md text-headline-md text-primary mt-1">EE Section A</h4>
+</div>
+<span class="bg-emerald-50 text-status-resolved text-[10px] font-bold px-2 py-1 rounded border border-emerald-100">ASSIGNED</span>
+</div>
+<div class="flex items-center gap-3 mt-auto">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A portrait of a male engineering professor wearing professional attire, standing in front of a modern research facility. Bright, clean light-mode photography with high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeL1FSsGfUyzIUYKfnmh8fYT68O3Dmpwby28ZPCWxquwvMGVm-n2rkcZResd3SSFC4mvD6PSMxD7lP1OecyBxJOyH7U9tUvHDKYRjb1d1hmWAvlxU_ssKSlDYev27JKcRWct1MPQLHll6yCX1KoVA9iGpakqOIZMyIbj8ULjjXli26LDiGp1_SwzS9YSwNWP1cFMmWrV2r44eyaQpfMWzV9Soub707Tz0rhWOL8-b5KaW6fZAcwWE3RsiPtDtfKBRGYsZWnQXDgyNe">
+<div>
+<p class="text-[11px] text-on-surface-variant font-bold leading-none">ADVISER</p>
+<p class="text-body-md text-on-surface font-semibold">Prof. Michael Chen</p>
+</div>
+</div>
+</div>
+<!-- Card 4 (Unassigned) -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 card-shadow relative overflow-hidden group hover:border-primary transition-all cursor-pointer">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-pending"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">SECTION ID: EE-23-B</p>
+<h4 class="font-headline-md text-headline-md text-primary mt-1">EE Section B</h4>
+</div>
+<span class="bg-amber-50 text-status-pending text-[10px] font-bold px-2 py-1 rounded border border-amber-100">UNASSIGNED</span>
+</div>
+<div class="flex items-center gap-3 mt-auto text-on-surface-variant italic">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</div>
+<p class="text-body-md">Assign Staff Member...</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Sidebar (Activity / Quick Filters) -->
+<aside class="lg:col-span-4 flex flex-col gap-gutter-card">
+<!-- Quick Search & Stats -->
+<div class="bg-primary text-on-primary p-6 rounded-xl shadow-lg relative overflow-hidden">
+<div class="absolute -right-10 -bottom-10 opacity-10">
+<span class="material-symbols-outlined text-[120px]">assignment_turned_in</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Assignment Status</h3>
+<div class="space-y-4 relative z-10">
+<div class="flex justify-between items-center border-b border-on-primary/20 pb-2">
+<span class="text-body-md opacity-80">Full-time Advisers</span>
+<span class="font-bold">32</span>
+</div>
+<div class="flex justify-between items-center border-b border-on-primary/20 pb-2">
+<span class="text-body-md opacity-80">Visiting Faculty</span>
+<span class="font-bold">12</span>
+</div>
+<div class="flex justify-between items-center pb-2">
+<span class="text-body-md opacity-80">Available Staff</span>
+<span class="font-bold">8</span>
+</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 card-shadow">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Recent Changes</h3>
+<div class="space-y-6"><div class="flex gap-4 pb-4 border-b border-border-subtle/50">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-status-resolved shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
+</div>
+<div>
+<p class="text-body-md font-bold text-primary leading-tight">Jenkins <span class="font-normal text-on-surface-variant">assigned to</span> CS-24-A</p>
+<p class="text-[11px] text-on-surface-variant mt-1">2 hours ago • By Admin</p>
+</div>
+</div>
+<div class="flex gap-4 pb-4 border-b border-border-subtle/50">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-status-forwarded shadow-[0_0_8px_rgba(99,102,241,0.4)]"></div>
+</div>
+<div>
+<p class="text-body-md font-bold text-primary leading-tight">Batch 2024 <span class="font-normal text-on-surface-variant">Sections Created</span></p>
+<p class="text-[11px] text-on-surface-variant mt-1">Yesterday • System</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-status-resolved shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
+</div>
+<div>
+<p class="text-body-md font-bold text-primary leading-tight">EE-23-A <span class="font-normal text-on-surface-variant">Assignment Updated</span></p>
+<p class="text-[11px] text-on-surface-variant mt-1">2 days ago • By Registrar</p>
+</div>
+</div></div>
+<button class="w-full mt-8 py-2.5 text-primary font-bold text-label-caps border border-primary/20 rounded-lg hover:bg-primary hover:text-on-primary transition-all duration-200">
+                            VIEW FULL AUDIT LOG
+                        </button>
+</div>
+</aside>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t border-border-subtle dark:border-outline-variant bg-surface dark:bg-inverse-surface shadow-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed dark:text-on-primary-fixed rounded-xl p-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-caps text-label-caps mt-1">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-caps text-label-caps mt-1">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</div>
+</nav>
+<!-- Floating Action Button (FAB) - Desktop Contextual -->
+<div class="fixed bottom-8 right-8 hidden lg:block">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all group overflow-hidden">
+<span class="material-symbols-outlined">add</span>
+<div class="absolute right-full mr-4 bg-primary text-on-primary px-4 py-2 rounded-lg text-button-text font-button-text whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                Create New Batch
+            </div>
+</button>
+</div>
+<!-- Micro-interaction for Search Focus -->
+<script>
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput?.parentElement;
+
+        if (searchInput && searchContainer) {
+            searchInput.addEventListener('focus', () => {
+                searchContainer.classList.add('ring-2', 'ring-primary/20', 'border-primary');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchContainer.classList.remove('ring-2', 'ring-primary/20', 'border-primary');
+            });
+        }
+
+        // Simple interactive feedback for cards
+        document.querySelectorAll('.card-shadow').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.2s ease';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+
+
+</body></html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academic Operations - Resource Allocation Analytics</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#1b1b1e",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container": "#efedf1",
+                    "on-secondary-fixed-variant": "#454747",
+                    "tertiary-container": "#3b2000",
+                    "primary-container": "#172548",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed-variant": "#38466a",
+                    "on-primary-container": "#7f8db6",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#dae2ff",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-variant": "#e4e2e5",
+                    "on-primary": "#ffffff",
+                    "status-rejected": "#EF4444",
+                    "on-surface-variant": "#45464e",
+                    "inverse-primary": "#b8c5f1",
+                    "surface": "#fbf8fc",
+                    "outline-variant": "#c5c6cf",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-background": "#1b1b1e",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dbd9dd",
+                    "secondary-container": "#dfe0e0",
+                    "surface-bright": "#fbf8fc",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "surface-container-highest": "#e4e2e5",
+                    "outline": "#75777f",
+                    "surface-container-high": "#eae7eb",
+                    "surface-tint": "#505d84",
+                    "secondary": "#5d5f5f",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "inverse-surface": "#303033",
+                    "inverse-on-surface": "#f2f0f3",
+                    "border-subtle": "#E2E8F0",
+                    "on-secondary": "#ffffff",
+                    "status-pending": "#F59E0B",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "status-forwarded": "#6366F1",
+                    "secondary-fixed": "#e2e2e2",
+                    "status-resolved": "#10B981",
+                    "on-primary-fixed": "#0b1a3c",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#1e0e00",
+                    "background": "#fbf8fc",
+                    "on-error": "#ffffff",
+                    "surface-gray": "#F8FAFC",
+                    "on-secondary-container": "#616363",
+                    "primary": "#010f32",
+                    "on-tertiary-container": "#b0855a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-loose": "24px",
+                    "base-unit": "4px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+      }
+      body {
+        background-color: #fbf8fc;
+        -webkit-font-smoothing: antialiased;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-primary dark:bg-primary-container shadow-sm flex justify-between items-center px-margin-page h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary dark:text-on-primary-container text-2xl">account_balance</span>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary dark:text-on-primary-container">Academic Operations</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-6">
+<a class="text-on-primary font-bold font-body-md text-body-md" href="#">Dashboard</a>
+<a class="text-on-primary-container/70 hover:bg-primary-fixed-dim/20 px-3 py-1 rounded transition-colors duration-200 font-body-md text-body-md" href="#">Reports</a>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-on-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female university administrator in her late 40s, wearing a dark navy blazer and subtle glasses. The setting is a brightly lit, high-end academic office with blurred bookshelves in the background. The lighting is soft and flattering, reflecting a high-key, modern administrative aesthetic with a palette of whites and deep blues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoWnPw8x9PpPwQckbVuQ8foJUVQPwFEStAI1FhU4miVX6aZnunT-VKX4Y7ZhVGPBqdc9fpXchbjSZKjq50ubjZmA3DN7SXuUZQKvSaqDKubcx1YuAZMfuz99U4PhK3B2yJRsKakTeLryuDEUccIWQWcg9Ym4kxAionQDYjD8mRrR3rr-YVGvwTJASh2sTrVg-JOtG9tPPwwWTu8KKY-Ff-7Oyl2N83EpojWuC8eZcWjbSUnQwlMp9iIPTaoawYgaUkh8uQt65FjM_8"/>
+</div>
+</div>
+</header>
+<!-- Sidebar Navigation (Desktop) -->
+<aside class="hidden md:flex fixed inset-y-0 left-0 z-[60] flex flex-col py-6 h-full w-80 rounded-r-xl bg-surface-container-low dark:bg-surface-container-lowest border-r border-border-subtle shadow-xl mt-16">
+<div class="px-6 mb-8 flex flex-col gap-1">
+<h2 class="text-primary font-black font-headline-md text-headline-md">Dr. Elena Vance</h2>
+<p class="text-on-surface-variant font-body-md text-body-md opacity-80">Dean of Administration</p>
+<span class="text-label-caps font-label-caps text-on-secondary-container bg-secondary-container w-fit px-2 py-0.5 rounded mt-2">FY2024-Q3</span>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="bg-primary text-on-primary rounded-lg mx-2 flex items-center gap-4 px-4 py-3 cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Executive Summary</span>
+</div>
+<div class="text-on-surface-variant hover:bg-surface-variant mx-2 rounded-lg flex items-center gap-4 px-4 py-3 cursor-pointer transition-all">
+<span class="material-symbols-outlined">person_book</span>
+<span class="font-body-md text-body-md">Faculty Portfolios</span>
+</div>
+<div class="text-on-surface-variant hover:bg-surface-variant mx-2 rounded-lg flex items-center gap-4 px-4 py-3 cursor-pointer transition-all">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-body-md text-body-md">Grant Compliance</span>
+</div>
+<div class="text-on-surface-variant hover:bg-surface-variant mx-2 rounded-lg flex items-center gap-4 px-4 py-3 cursor-pointer transition-all">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-body-md text-body-md">Audit Logs</span>
+</div>
+<div class="mt-auto text-on-surface-variant hover:bg-surface-variant mx-2 rounded-lg flex items-center gap-4 px-4 py-3 cursor-pointer transition-all">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</div>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="pt-24 pb-32 md:pb-8 md:pl-80 px-margin-page">
+<div class="max-w-7xl mx-auto space-y-stack-loose">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Resource Allocation Analytics</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg">Real-time oversight of DCMS departmental assets and faculty commitments.</p>
+</div>
+<button class="bg-primary text-on-primary font-button-text text-button-text px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">download</span> Export Report
+                </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-card">
+<!-- 1. Financial Overview Card -->
+<section class="lg:col-span-8 glass-card rounded-xl p-6 shadow-sm border-l-4 border-primary"><div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">query_stats</span><h3 class="font-headline-md text-headline-md text-on-surface">Budget Forecasting &amp; Modeling</h3></div><div class="flex bg-surface-container p-1 rounded-lg gap-1"><button class="px-3 py-1 text-label-caps rounded bg-white shadow-sm text-primary">Expected</button><button class="px-3 py-1 text-label-caps rounded hover:bg-white/50 transition-colors">Conservative</button><button class="px-3 py-1 text-label-caps rounded hover:bg-white/50 transition-colors">Optimistic</button></div></div><div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"><div><p class="text-label-caps text-on-surface-variant mb-1">Q4 PROJECTION</p><p class="text-headline-md font-bold text-primary">$1,240,000</p><p class="text-label-caps text-status-resolved flex items-center gap-1"><span class="material-symbols-outlined text-sm">trending_up</span> +2.4% vs Q3</p></div><div><p class="text-label-caps text-on-surface-variant mb-1">VARIANCE ACCURACY</p><p class="text-headline-md font-bold text-on-surface">98.2%</p><p class="text-label-caps text-on-surface-variant">±1.8% Historical</p></div><div><p class="text-label-caps text-on-surface-variant mb-1">RISK EXPOSURE</p><p class="text-headline-md font-bold text-status-pending">Low</p><p class="text-label-caps text-status-pending">2 Categories @ Ceiling</p></div><div><p class="text-label-caps text-on-surface-variant mb-1">RESERVE BUFFER</p><p class="text-headline-md font-bold text-on-surface">$145,000</p><p class="text-label-caps text-on-surface-variant">Contingency Fund</p></div></div><div class="space-y-4 mb-8"><h4 class="font-label-caps text-on-surface-variant uppercase">Category-Level Forecasts (Q4 2024)</h4><div class="space-y-3"><div class="space-y-1"><div class="flex justify-between text-body-md"><span>Faculty Research</span><div class="flex items-center gap-2"><span class="text-status-rejected font-bold">$450k</span><span class="bg-error-container text-on-error-container text-[10px] px-1.5 rounded">AT CEILING</span></div></div><div class="w-full h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 96%"></div></div></div><div class="space-y-1"><div class="flex justify-between text-body-md"><span>Infrastructure Upgrades</span><div class="flex items-center gap-2"><span>$320k</span><span class="bg-status-resolved/20 text-status-resolved text-[10px] px-1.5 rounded">OPTIMIZED</span></div></div><div class="w-full h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 65%"></div></div></div><div class="space-y-1"><div class="flex justify-between text-body-md"><span>Student Services</span><div class="flex items-center gap-2"><span class="text-status-pending font-bold">$280k</span><span class="bg-status-pending/20 text-status-pending text-[10px] px-1.5 rounded">NEAR LIMIT</span></div></div><div class="w-full h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 92%"></div></div></div><div class="space-y-1"><div class="flex justify-between text-body-md"><span>Administrative Ops</span><span>$190k</span></div><div class="w-full h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 45%"></div></div></div></div></div><div class="pt-6 border-t border-border-subtle"><div class="flex justify-between items-center mb-4"><h4 class="font-label-caps text-on-surface-variant uppercase">Projected Spending Trend</h4><div class="flex gap-4 text-[10px] font-label-caps"><div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> Forecast</div><div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-status-forwarded"></span> Actual (Prev)</div></div></div><div class="h-40 w-full flex items-end justify-between px-2 gap-2"><div class="flex-1 flex flex-col items-center gap-2"><div class="w-full bg-primary/10 rounded-t h-24 relative"><div class="absolute bottom-0 w-full bg-primary rounded-t h-20"></div></div><span class="text-label-caps text-[10px]">OCT</span></div><div class="flex-1 flex flex-col items-center gap-2"><div class="w-full bg-primary/10 rounded-t h-32 relative"><div class="absolute bottom-0 w-full bg-primary rounded-t h-28"></div></div><span class="text-label-caps text-[10px]">NOV</span></div><div class="flex-1 flex flex-col items-center gap-2"><div class="w-full bg-primary/10 rounded-t h-40 relative"><div class="absolute bottom-0 w-full bg-primary rounded-t h-36"></div></div><span class="text-label-caps text-[10px]">DEC</span></div></div></div></section>
+<!-- 2. Workload Distribution (Doughnut Chart Visualization) -->
+<section class="lg:col-span-4 glass-card rounded-xl p-6 shadow-sm flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">pie_chart</span>
+                        Workload Distribution
+                    </h3>
+<div class="relative flex-1 flex flex-col justify-center items-center">
+<!-- Custom CSS Chart Implementation -->
+<div class="w-40 h-40 rounded-full border-[12px] border-surface-container relative flex items-center justify-center">
+<div class="absolute inset-0 rounded-full border-[12px] border-primary" style="clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 30%);"></div>
+<div class="text-center">
+<p class="font-headline-md text-headline-md text-primary">92%</p>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Active</p>
+</div>
+</div>
+<div class="mt-8 w-full space-y-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-body-md font-body-md">Advisory</span>
+</div>
+<span class="font-label-caps font-label-caps">42%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-status-forwarded"></span>
+<span class="text-body-md font-body-md">Administrative</span>
+</div>
+<span class="font-label-caps font-label-caps">33%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-status-pending"></span>
+<span class="text-body-md font-body-md">Academic Support</span>
+</div>
+<span class="font-label-caps font-label-caps">25%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Faculty Capacity Matrix -->
+<section class="lg:col-span-6 glass-card rounded-xl p-6 shadow-sm border-l-4 border-status-pending">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">groups</span>
+                        Faculty Capacity Matrix
+                    </h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="border-b border-border-subtle">
+<tr>
+<th class="py-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Role</th>
+<th class="py-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Utilization</th>
+<th class="py-3 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Available Slots</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr>
+<td class="py-4 font-body-md text-body-md font-semibold">Academic Advisers</td>
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="w-24 h-2 bg-surface-container rounded-full">
+<div class="h-full bg-status-rejected rounded-full" style="width: 94%"></div>
+</div>
+<span class="text-label-caps font-label-caps text-status-rejected">94%</span>
+</div>
+</td>
+<td class="py-4 text-right font-label-caps text-label-caps">02</td>
+</tr>
+<tr>
+<td class="py-4 font-body-md text-body-md font-semibold">Coordinators</td>
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="w-24 h-2 bg-surface-container rounded-full">
+<div class="h-full bg-status-pending rounded-full" style="width: 78%"></div>
+</div>
+<span class="text-label-caps font-label-caps text-status-pending">78%</span>
+</div>
+</td>
+<td class="py-4 text-right font-label-caps text-label-caps">05</td>
+</tr>
+<tr>
+<td class="py-4 font-body-md text-body-md font-semibold">Administrative Staff</td>
+<td class="py-4">
+<div class="flex items-center gap-3">
+<div class="w-24 h-2 bg-surface-container rounded-full">
+<div class="h-full bg-status-resolved rounded-full" style="width: 62%"></div>
+</div>
+<span class="text-label-caps font-label-caps text-status-resolved">62%</span>
+</div>
+</td>
+<td class="py-4 text-right font-label-caps text-label-caps">12</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- 4. Facility & Equipment Utilization -->
+<section class="lg:col-span-6 glass-card rounded-xl p-6 shadow-sm border-l-4 border-status-resolved">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">location_city</span>
+                        Facility Utilization
+                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-gray p-4 rounded-lg border border-border-subtle">
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-bold">Seminar Hall A</span>
+<span class="material-symbols-outlined text-status-resolved">meeting_room</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Live Usage</p>
+<p class="text-headline-md font-headline-md">88%</p>
+</div>
+<span class="text-body-md text-status-resolved">In Use</span>
+</div>
+</div>
+<div class="bg-surface-gray p-4 rounded-lg border border-border-subtle">
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-bold">IT Lab Access</span>
+<span class="material-symbols-outlined text-status-forwarded">terminal</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Live Usage</p>
+<p class="text-headline-md font-headline-md">45%</p>
+</div>
+<span class="text-body-md text-status-pending">Partial</span>
+</div>
+</div>
+<div class="bg-surface-gray p-4 rounded-lg border border-border-subtle">
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-bold">Equipment Pool</span>
+<span class="material-symbols-outlined text-primary">devices</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Reserved</p>
+<p class="text-headline-md font-headline-md">92/100</p>
+</div>
+<span class="text-body-md text-status-rejected">Low Stock</span>
+</div>
+</div>
+<div class="bg-surface-gray p-4 rounded-lg border border-border-subtle">
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-bold">Faculty Lounge</span>
+<span class="material-symbols-outlined text-on-surface-variant">weekend</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Live Usage</p>
+<p class="text-headline-md font-headline-md">15%</p>
+</div>
+<span class="text-body-md text-status-resolved">Available</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Predictive Insights Section (Full Width) -->
+<section class="lg:col-span-12 glass-card rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row">
+<div class="md:w-1/3 bg-primary p-8 text-on-primary flex flex-col justify-center">
+<span class="material-symbols-outlined text-4xl mb-4">analytics</span>
+<h3 class="font-headline-lg text-headline-lg mb-2">Predictive Insights</h3>
+<p class="text-body-lg font-body-lg opacity-80">AI-driven forecasts for the upcoming academic quarter based on historical enrollment and complaint trends.</p>
+</div>
+<div class="md:w-2/3 p-8 bg-white grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-3">
+<div class="flex items-center gap-2 text-status-pending">
+<span class="material-symbols-outlined">warning</span>
+<p class="font-label-caps text-label-caps uppercase">Workload Warning</p>
+</div>
+<p class="text-body-md font-body-md">Predicted <span class="font-bold text-primary">15% increase</span> in Advisory workload for AY 2024-Q1 due to Batch AR-2024 enrollment trends. Additional TA allocation recommended by mid-month.</p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-2 text-status-resolved">
+<span class="material-symbols-outlined">trending_down</span>
+<p class="font-label-caps text-label-caps uppercase">Infrastructure Optimization</p>
+</div>
+<p class="text-body-md font-body-md">Facility data suggests Seminar Hall B is underutilized on Tuesdays. Re-allocating elective lectures can save <span class="font-bold text-status-resolved">~5% on energy overheads</span>.</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 border-t border-border-subtle bg-surface dark:bg-inverse-surface flex justify-around items-center h-20 px-2 pb-safe shadow-lg">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-caps text-label-caps">Workload</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Budget</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">location_city</span>
+<span class="font-label-caps text-label-caps">Facilities</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Forecast</span>
+</a>
+</nav>
+<!-- Floating Action Button Contextual (Only for relevant screens) -->
+<button class="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<script>
+        // Simple micro-interaction for the cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.2s ease-out';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+    </script>
+</body></html>

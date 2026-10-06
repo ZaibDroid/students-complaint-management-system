@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>DCMS Student Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .safe-pb {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#efedf1",
+                    "surface-container-highest": "#e4e2e5",
+                    "surface-bright": "#fbf8fc",
+                    "on-secondary-container": "#616363",
+                    "background": "#fbf8fc",
+                    "surface-container-high": "#eae7eb",
+                    "primary-container": "#172548",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1b1b1e",
+                    "surface-tint": "#505d84",
+                    "surface-variant": "#e4e2e5",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#303033",
+                    "secondary-container": "#dfe0e0",
+                    "border-subtle": "#E2E8F0",
+                    "surface-gray": "#F8FAFC",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#b0855a",
+                    "inverse-on-surface": "#f2f0f3",
+                    "surface-container-low": "#f5f3f6",
+                    "primary": "#010f32",
+                    "outline": "#75777f",
+                    "on-surface-variant": "#45464e",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c5c6cf",
+                    "on-error": "#ffffff",
+                    "status-rejected": "#EF4444",
+                    "on-secondary-fixed-variant": "#454747",
+                    "surface-dim": "#dbd9dd",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-primary-container": "#7f8db6",
+                    "tertiary": "#1e0e00",
+                    "surface": "#fbf8fc",
+                    "primary-fixed": "#dae2ff",
+                    "status-pending": "#F59E0B",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-primary-fixed-variant": "#38466a",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "status-forwarded": "#6366F1",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#3b2000",
+                    "inverse-primary": "#b8c5f1",
+                    "status-resolved": "#10B981",
+                    "secondary": "#5d5f5f",
+                    "on-tertiary-fixed": "#2c1600",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-primary-fixed": "#0b1a3c",
+                    "on-background": "#1b1b1e",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-card": "16px",
+                    "base-unit": "4px",
+                    "stack-loose": "24px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 z-50 w-full bg-surface/80 backdrop-blur-md border-b border-border-subtle flex justify-between items-center px-margin-page py-4">
+<div class="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/10">
+<img class="w-full h-full object-cover" data-alt="A professional close-up studio portrait of a university student with a friendly expression. The lighting is soft and natural, reflecting a clean academic environment. The style is modern minimalist with high-key bright backgrounds and a slight focus on professional institutional identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVRs6BYKVsHTdNK8VbhkDIlczkF-P2-7311WWg2lr_NbJTlNrBbdbPYCcBG436LGUSt-uS7v4Ox1omz5ycEQc23PcH1SYLZJ-d6aj3kSTQ-PcfdT34ElyghgLbyFsofftrsqtoKJhb-5-ThUM81KxV3EZyYr0nupMZnH0j8Hh0B3XnRGaRkucBDXqy_dFBCPVDASOg2ntooD_i9qCyScSrcL_lhQV7If0Za7T-ppDZ7P2650nP9I9wqpJQHYbaUrpfo1GOa8X-iZma"/>
+</div>
+<div>
+<p class="text-on-surface-variant font-body-md text-[12px]">Good morning,</p>
+<h1 class="font-headline-md text-headline-md text-primary font-bold">Alex Rivera</h1>
+</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-margin-page space-y-stack-loose max-w-4xl mx-auto">
+<!-- Search Section -->
+<section class="w-full">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</div>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border border-border-subtle rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-body-md" placeholder="Search your complaints by ID or title..." type="text"/>
+</div>
+</section>
+<!-- Active Complaints Bento -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md text-primary">Active Complaints</h2>
+<button class="text-primary font-button-text text-button-text hover:underline">View all</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-card">
+<!-- Status: Resolved -->
+<div class="bg-surface-container-lowest p-gutter-card rounded-xl border-l-4 border-status-resolved shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 cursor-pointer group">
+<div class="flex justify-between items-start mb-stack-tight">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">#DC-2931</span>
+<span class="px-2 py-1 rounded-full bg-status-resolved/10 text-status-resolved text-[10px] font-bold uppercase">Resolved</span>
+</div>
+<h3 class="font-headline-md text-[16px] text-primary mb-1">Wi-Fi Connectivity Issues</h3>
+<p class="text-on-surface-variant text-[13px] line-clamp-2">The router in Block C, 3rd Floor has been replaced and testing is complete.</p>
+<div class="mt-4 pt-4 border-t border-border-subtle flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="schedule">schedule</span>
+<span class="text-[12px] text-on-surface-variant">2 hours ago</span>
+</div>
+</div>
+<!-- Status: Forwarded -->
+<div class="bg-surface-container-lowest p-gutter-card rounded-xl border-l-4 border-status-forwarded shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="flex justify-between items-start mb-stack-tight">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">#DC-2945</span>
+<span class="px-2 py-1 rounded-full bg-status-forwarded/10 text-status-forwarded text-[10px] font-bold uppercase">Forwarded</span>
+</div>
+<h3 class="font-headline-md text-[16px] text-primary mb-1">Library Cooling System</h3>
+<p class="text-on-surface-variant text-[13px] line-clamp-2">Escalated to Maintenance Department for immediate repair of central unit.</p>
+<div class="mt-4 pt-4 border-t border-border-subtle flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="trending_flat">trending_flat</span>
+<span class="text-[12px] text-on-surface-variant">Dean's Office</span>
+</div>
+</div>
+<!-- Status: Pending -->
+<div class="bg-surface-container-lowest p-gutter-card rounded-xl border-l-4 border-status-pending shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="flex justify-between items-start mb-stack-tight">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">#DC-3001</span>
+<span class="px-2 py-1 rounded-full bg-status-pending/10 text-status-pending text-[10px] font-bold uppercase">Pending</span>
+</div>
+<h3 class="font-headline-md text-[16px] text-primary mb-1">Cafeteria Menu Update</h3>
+<p class="text-on-surface-variant text-[13px] line-clamp-2">Inquiry regarding the implementation of vegan options for the next semester.</p>
+<div class="mt-4 pt-4 border-t border-border-subtle flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="update">update</span>
+<span class="text-[12px] text-on-surface-variant">Awaiting Review</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Notices Horizontal List -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="campaign">campaign</span>
+<h2 class="font-headline-md text-headline-md text-primary">Recent Notices</h2>
+</div>
+<button class="text-primary font-button-text text-button-text hover:underline">See archives</button>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 hide-scrollbar -mx-margin-page px-margin-page snap-x">
+<!-- Notice Card 1 -->
+<div class="snap-start min-w-[280px] md:min-w-[320px] bg-primary text-on-primary p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[80px]" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<span class="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4 inline-block backdrop-blur-md">Academics</span>
+<h3 class="font-headline-md text-[18px] mb-2 leading-tight">System Maintenance: Grade Portal Down</h3>
+<p class="text-on-primary/80 text-[13px] mb-4">The grade portal will be offline this Sunday from 02:00 to 06:00 for security updates.</p>
+<p class="text-[11px] font-label-caps opacity-60">Posted on Oct 24, 2023</p>
+</div>
+<!-- Notice Card 2 -->
+<div class="snap-start min-w-[280px] md:min-w-[320px] bg-surface-container-high p-6 rounded-2xl border border-border-subtle hover:bg-surface-container-highest transition-colors">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4 inline-block">Campus Life</span>
+<h3 class="font-headline-md text-[18px] text-primary mb-2 leading-tight">Annual Sports Fest Registration</h3>
+<p class="text-on-surface-variant text-[13px] mb-4">Registration for the upcoming Sports Fest is now open at the Student Union center.</p>
+<p class="text-[11px] font-label-caps text-on-surface-variant/60">Posted on Oct 22, 2023</p>
+</div>
+<!-- Notice Card 3 -->
+<div class="snap-start min-w-[280px] md:min-w-[320px] bg-surface-container-high p-6 rounded-2xl border border-border-subtle hover:bg-surface-container-highest transition-colors">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4 inline-block">General</span>
+<h3 class="font-headline-md text-[18px] text-primary mb-2 leading-tight">Holiday Notice: Diwali Break</h3>
+<p class="text-on-surface-variant text-[13px] mb-4">The campus will remain closed from Nov 12 to Nov 15 for the Diwali holidays.</p>
+<p class="text-[11px] font-label-caps text-on-surface-variant/60">Posted on Oct 20, 2023</p>
+</div>
+</div>
+</section>
+<!-- Quick Actions / Feature Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter-card">
+<div class="bg-surface-container-low border border-border-subtle rounded-2xl p-6 flex items-center gap-4 group cursor-pointer hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[16px] text-primary">Filing Guide</h4>
+<p class="text-on-surface-variant text-[13px]">Learn how to file effective complaints</p>
+</div>
+</div>
+<div class="bg-surface-container-low border border-border-subtle rounded-2xl p-6 flex items-center gap-4 group cursor-pointer hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded-xl bg-on-tertiary-container flex items-center justify-center text-on-tertiary">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[16px] text-primary">Resolution History</h4>
+<p class="text-on-surface-variant text-[13px]">Check your past closed cases</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-2xl flex items-center justify-center active:scale-90 transition-transform duration-200 z-40 group">
+<span class="material-symbols-outlined text-[32px] group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
+<div class="absolute right-full mr-4 bg-primary text-on-primary px-3 py-2 rounded-lg text-[12px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            New Complaint
+        </div>
+</button>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface dark:bg-on-background pb-safe border-t border-border-subtle z-50">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed dark:text-on-primary-fixed rounded-xl px-4 py-1 transition-transform active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-[10px] mt-1">Home</span>
+</a>
+<!-- Complaints -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high transition-colors transition-transform active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_late">assignment_late</span>
+<span class="font-label-caps text-[10px] mt-1">Complaints</span>
+</a>
+<!-- Notices -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high transition-colors transition-transform active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="font-label-caps text-[10px] mt-1">Notices</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high transition-colors transition-transform active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for active states
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('nav a').forEach(l => {
+                    l.className = "flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high transition-colors transition-transform active:scale-90 duration-200";
+                    const icon = l.querySelector('.material-symbols-outlined');
+                    if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+                });
+                this.className = "flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed dark:text-on-primary-fixed rounded-xl px-4 py-1 transition-transform active:scale-90 duration-200";
+                const icon = this.querySelector('.material-symbols-outlined');
+                if(icon) icon.style.fontVariationSettings = "'FILL' 1";
+            });
+        });
+
+        // Search input subtle animation
+        const searchInput = document.querySelector('input');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+            searchInput.parentElement.classList.add('shadow-lg');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+            searchInput.parentElement.classList.remove('shadow-lg');
+        });
+    </script>
+</body></html>

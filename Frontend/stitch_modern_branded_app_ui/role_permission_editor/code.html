@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Role Permission Editor | DCMS Admin</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary": "#5d5f5f",
+                    "border-subtle": "#E2E8F0",
+                    "primary-container": "#172548",
+                    "surface-tint": "#505d84",
+                    "surface-gray": "#F8FAFC",
+                    "error": "#ba1a1a",
+                    "surface-container": "#efedf1",
+                    "on-primary-container": "#7f8db6",
+                    "outline-variant": "#c5c6cf",
+                    "surface-variant": "#e4e2e5",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b8c5f1",
+                    "primary": "#010f32",
+                    "on-tertiary-fixed": "#2c1600",
+                    "inverse-on-surface": "#f2f0f3",
+                    "tertiary-container": "#3b2000",
+                    "status-rejected": "#EF4444",
+                    "on-surface": "#1b1b1e",
+                    "surface-dim": "#dbd9dd",
+                    "on-primary-fixed": "#0b1a3c",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "surface-bright": "#fbf8fc",
+                    "surface-container-high": "#eae7eb",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#dae2ff",
+                    "on-error": "#ffffff",
+                    "background": "#fbf8fc",
+                    "inverse-surface": "#303033",
+                    "surface": "#fbf8fc",
+                    "on-primary-fixed-variant": "#38466a",
+                    "status-resolved": "#10B981",
+                    "on-surface-variant": "#45464e",
+                    "status-forwarded": "#6366F1",
+                    "on-secondary-container": "#616363",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed": "#ffdcbc",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "outline": "#75777f",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "on-tertiary-container": "#b0855a",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "tertiary": "#1e0e00",
+                    "surface-container-low": "#f5f3f6",
+                    "on-secondary-fixed-variant": "#454747",
+                    "status-pending": "#F59E0B",
+                    "on-background": "#1b1b1e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base-unit": "4px",
+                    "stack-tight": "8px",
+                    "stack-loose": "24px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        
+        body {
+            background-color: #fbf8fc;
+            font-family: 'Inter', sans-serif;
+            color: #1b1b1e;
+            padding-bottom: 80px; /* Spacer for bottom nav */
+        }
+
+        .permission-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .custom-toggle:checked + .toggle-bg {
+            background-color: #010f32;
+        }
+        
+        .custom-toggle:checked + .toggle-bg .toggle-dot {
+            transform: translateX(100%);
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-surface border-b border-border-subtle">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low transition-colors rounded-full active:opacity-80">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Edit Permissions</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container px-3 py-1 rounded-full uppercase">Admin View</span>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a corporate administrator in a modern office environment. The person is wearing a clean navy blue blazer over a crisp white shirt, representing institutional authority. The lighting is bright and even, casting soft shadows, and the background is a blurred high-end academic hall with minimalist architectural details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVZjvgVpu_FrmGe1exgm6HaTDEjbrgFTyr9v_EgL_R4xY4hr5_IEmoeiJNXB7yCPf0eFRMnErkx_5VqIdaJM6a7raAP1XG7K85pQck56B0zFdiF-Hxz6aR3d0tVb4nMdI8gQJce8F0eBoe6BGj-TBecU4S5ZA0iJWR17bDnjZzgDn01jFp8g0zeuzlD_f8AvVzi0PqBTeZ4AMZketUW1tFgL7mtLscpxPPKP_iZ12sZlrtypHRcejhXwOcJ3YBc5J8IRMFswXFcI0w"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-margin-page py-stack-loose">
+<!-- Header Section: Role Identity -->
+<section class="mb-stack-loose animate-fade-in">
+<div class="bg-primary-container p-8 rounded-xl text-white relative overflow-hidden">
+<!-- Decorative element -->
+<div class="absolute right-0 top-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[160px]" style="font-variation-settings: 'wght' 700;">security</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-on-primary-container">shield_person</span>
+<span class="font-label-caps text-label-caps tracking-widest text-on-primary-container">SYSTEM ROLE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg mb-2">Batch Adviser</h2>
+<p class="font-body-lg text-body-lg text-on-primary-container max-w-2xl">
+                        Responsible for overseeing student welfare, initial complaint triage, and monitoring academic progress within a specific batch. Access is primarily focused on operational management and reporting.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Permission Groups Grid -->
+<section class="bento-grid">
+<!-- Complaints Permissions -->
+<div class="permission-card bg-white p-gutter-card rounded-xl border-l-4 border-status-forwarded flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-low rounded-lg text-status-forwarded">
+<span class="material-symbols-outlined">gavel</span>
+</div>
+<h3 class="font-headline-md text-headline-md">Complaints</h3>
+</div>
+</div>
+<div class="space-y-4">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">View</div>
+<div class="font-body-md text-body-md text-outline">Access to view complaint details and status.</div>
+</div>
+<input checked="" class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Forward</div>
+<div class="font-body-md text-body-md text-outline">Escalate complaints to higher authorities.</div>
+</div>
+<input checked="" class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Resolve</div>
+<div class="font-body-md text-body-md text-outline">Mark complaints as completed/resolved.</div>
+</div>
+<input class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Archive</div>
+<div class="font-body-md text-body-md text-outline">Remove resolved issues from active list.</div>
+</div>
+<input class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- Notice Board Permissions -->
+<div class="permission-card bg-white p-gutter-card rounded-xl border-l-4 border-status-pending flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-low rounded-lg text-status-pending">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+<h3 class="font-headline-md text-headline-md">Notice Board</h3>
+</div>
+</div>
+<div class="space-y-4">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Create</div>
+<div class="font-body-md text-body-md text-outline">Post new official departmental notices.</div>
+</div>
+<input checked="" class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Edit</div>
+<div class="font-body-md text-body-md text-outline">Modify existing notices for your batch.</div>
+</div>
+<input checked="" class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Delete</div>
+<div class="font-body-md text-body-md text-outline">Permenantly remove obsolete notices.</div>
+</div>
+<input class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- Staff Management Permissions -->
+<div class="permission-card bg-white p-gutter-card rounded-xl border-l-4 border-status-resolved flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-low rounded-lg text-status-resolved">
+<span class="material-symbols-outlined">group</span>
+</div>
+<h3 class="font-headline-md text-headline-md">Staff Management</h3>
+</div>
+</div>
+<div class="space-y-4">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">View Directory</div>
+<div class="font-body-md text-body-md text-outline">Search and view other faculty members.</div>
+</div>
+<input checked="" class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Manage Profiles</div>
+<div class="font-body-md text-body-md text-outline">Update contact info and department tags.</div>
+</div>
+<input class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- Analytics Permissions -->
+<div class="permission-card bg-white p-gutter-card rounded-xl border-l-4 border-primary flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-low rounded-lg text-primary">
+<span class="material-symbols-outlined">assessment</span>
+</div>
+<h3 class="font-headline-md text-headline-md">Analytics</h3>
+</div>
+</div>
+<div class="space-y-4">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">View Reports</div>
+<div class="font-body-md text-body-md text-outline">Access dashboards for batch performance.</div>
+</div>
+<input checked="" class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex-1 pr-4">
+<div class="font-button-text text-button-text text-primary">Export Data</div>
+<div class="font-body-md text-body-md text-outline">Download CSV/PDF reports for offline use.</div>
+</div>
+<input class="sr-only custom-toggle" type="checkbox"/>
+<div class="toggle-bg relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Fixed Action Bar (Bottom of List) -->
+<div class="mt-stack-loose flex items-center justify-end gap-4 p-6 bg-white rounded-xl shadow-sm border border-border-subtle">
+<button class="px-6 py-3 font-button-text text-button-text text-primary hover:bg-surface-container transition-all rounded-lg active:opacity-80">
+                Discard Changes
+            </button>
+<button class="px-10 py-3 bg-primary text-white font-button-text text-button-text rounded-lg hover:opacity-90 shadow-md active:scale-95 transition-all">
+                Save Changes
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t border-border-subtle bg-surface">
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</div>
+<!-- ACTIVE TAB: Staff -->
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span class="font-label-caps text-label-caps font-bold">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-caps text-label-caps">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:scale-95 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</nav>
+<script>
+        // Simple Interaction logic for toggles
+        document.querySelectorAll('.custom-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const card = this.closest('.permission-card');
+                // Could add visual feedback or analytics here
+            });
+        });
+
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if(btn.innerText.includes('Save')) {
+                    const originalText = btn.innerText;
+                    btn.innerHTML = `<span class="material-symbols-outlined animate-spin mr-2">progress_activity</span> Updating...`;
+                    btn.disabled = true;
+                    setTimeout(() => {
+                        btn.innerHTML = `Saved!`;
+                        btn.classList.replace('bg-primary', 'bg-status-resolved');
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.classList.replace('bg-status-resolved', 'bg-primary');
+                            btn.disabled = false;
+                        }, 2000);
+                    }, 1200);
+                }
+            });
+        });
+    </script>
+</body></html>

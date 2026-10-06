@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>DCMS Notification Center</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Typography: Hanken Grotesk, Inter, JetBrains Mono -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fbf8fc",
+                        "surface": "#fbf8fc",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "primary": "#010f32",
+                        "on-tertiary": "#ffffff",
+                        "status-rejected": "#EF4444",
+                        "surface-variant": "#e4e2e5",
+                        "surface-dim": "#dbd9dd",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#1e0e00",
+                        "on-tertiary-container": "#b0855a",
+                        "surface-container-highest": "#e4e2e5",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#38466a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "secondary-container": "#dfe0e0",
+                        "surface-container-low": "#f5f3f6",
+                        "surface-tint": "#505d84",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "secondary": "#5d5f5f",
+                        "inverse-surface": "#303033",
+                        "on-primary-container": "#7f8db6",
+                        "status-resolved": "#10B981",
+                        "tertiary-container": "#3b2000",
+                        "primary-fixed": "#dae2ff",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-gray": "#F8FAFC",
+                        "on-secondary-container": "#616363",
+                        "on-primary": "#ffffff",
+                        "status-pending": "#F59E0B",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-background": "#1b1b1e",
+                        "background": "#fbf8fc",
+                        "border-subtle": "#E2E8F0",
+                        "status-forwarded": "#6366F1",
+                        "inverse-primary": "#b8c5f1",
+                        "surface-container": "#efedf1",
+                        "surface-container-high": "#eae7eb",
+                        "outline-variant": "#c5c6cf",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-surface": "#1b1b1e",
+                        "primary-container": "#172548",
+                        "on-primary-fixed": "#0b1a3c",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "secondary-fixed": "#e2e2e2",
+                        "outline": "#75777f",
+                        "on-surface-variant": "#45464e",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "20px",
+                        "stack-loose": "24px",
+                        "stack-tight": "8px",
+                        "gutter-card": "16px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fbf8fc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .notification-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .notification-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-surface border-b border-border-subtle shadow-sm flex items-center justify-between px-margin-page h-16">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary p-2 hover:bg-surface-container-low transition-colors rounded-full" onclick="history.back()">
+                arrow_back
+            </button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Notices</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-container-low transition-colors text-primary font-button-text text-button-text" id="mark-all-btn">
+<span class="material-symbols-outlined text-[20px]">done_all</span>
+<span>Mark all as read</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female university administrator wearing a tailored navy blue blazer. She has a warm, confident expression and is framed against a soft-focus academic background with mahogany bookshelves and warm ambient lighting. The style is clean, corporate, and high-fidelity, matching a premium educational software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmtNNQrj2HMDb_6ZNcTUvF2hGdX8063KdTVvAOhJc7iIk4yGD_e2PsQprLLFsdYd2P-JkQY258lfunuXfvgrPSiJ-IPWFuqqX8920hv_jsMJ14CsxZoUbFT9Me7-Z6gQG9FjMWol5htqPb9DaetSap98GdYmvXfIrYlgyLT8XEfLkFsaEyAa3KpTlRVp--yKDM1EgvSZYMQsKucpT-Pc-265D2Gw6eHe0JwHCm7zFyf8dy2ANb4xPxpzZXKEYAhV6BVFPmOx9fFwrS"/>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-margin-page py-stack-loose pb-32">
+<!-- Category Tabs -->
+<div class="flex items-center gap-2 mb-stack-loose overflow-x-auto hide-scrollbar pb-1">
+<button class="category-tab px-6 py-2.5 rounded-full font-button-text text-button-text whitespace-nowrap bg-primary text-on-primary shadow-md transition-all" onclick="filterNotifications('all')">
+                All
+            </button>
+<button class="category-tab px-6 py-2.5 rounded-full font-button-text text-button-text whitespace-nowrap bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-all" onclick="filterNotifications('Complaints')">
+                Complaints
+            </button>
+<button class="category-tab px-6 py-2.5 rounded-full font-button-text text-button-text whitespace-nowrap bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-all" onclick="filterNotifications('Notices')">
+                Notices
+            </button>
+<button class="category-tab px-6 py-2.5 rounded-full font-button-text text-button-text whitespace-nowrap bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-all" onclick="filterNotifications('System')">
+                System
+            </button>
+</div>
+<!-- Notifications Container -->
+<div class="space-y-4" id="notifications-list">
+<!-- Notification Card: Unread Complaint -->
+<div class="notification-card bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:border-primary-container transition-colors cursor-pointer" data-category="Complaints">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-forwarded"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-status-forwarded/10 flex items-center justify-center text-status-forwarded">
+<span class="material-symbols-outlined text-[28px]">assignment_late</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex items-start justify-between">
+<h3 class="font-headline-md text-[16px] text-primary group-hover:text-primary-container transition-colors">Complaint Forwarded</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">2 hours ago</span>
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant line-clamp-2">The complaint #CMP-4029 regarding Department Laboratory ventilation has been forwarded to the Facility Management team for immediate inspection.</p>
+</div>
+</div>
+<!-- Notification Card: Unread Notice -->
+<div class="notification-card bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:border-primary-container transition-colors cursor-pointer" data-category="Notices">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-pending"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-status-pending/10 flex items-center justify-center text-status-pending">
+<span class="material-symbols-outlined text-[28px]">campaign</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex items-start justify-between">
+<h3 class="font-headline-md text-[16px] text-primary group-hover:text-primary-container transition-colors">New Departmental Notice</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">4 hours ago</span>
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Final Semester project submissions have been extended until Friday, Oct 27th. Please ensure all documentation is uploaded to the portal.</p>
+</div>
+</div>
+<!-- Notification Card: Read System Alert -->
+<div class="notification-card bg-surface-gray border border-border-subtle/50 rounded-xl p-4 flex gap-4 transition-colors opacity-80 cursor-pointer" data-category="System">
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-on-surface-variant/5 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">security</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex items-start justify-between">
+<h3 class="font-headline-md text-[16px] text-on-surface-variant">Security Alert: New Login</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Yesterday</span>
+</div>
+</div>
+<p class="font-body-md text-on-secondary-fixed-variant line-clamp-2">A new login was detected from a Chrome browser on Windows 11. If this wasn't you, please reset your password.</p>
+</div>
+</div>
+<!-- Notification Card: Resolved Complaint -->
+<div class="notification-card bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:border-primary-container transition-colors cursor-pointer" data-category="Complaints">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-status-resolved"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-status-resolved/10 flex items-center justify-center text-status-resolved">
+<span class="material-symbols-outlined text-[28px]">check_circle</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex items-start justify-between">
+<h3 class="font-headline-md text-[16px] text-primary group-hover:text-primary-container transition-colors">Complaint Resolved</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">2 days ago</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Your request #CMP-3812 regarding ID card replacement has been processed. You can collect your new card from the Office of Registrar.</p>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500" id="empty-state">
+<div class="w-32 h-32 mb-6 rounded-full bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-[64px] text-outline-variant">notifications_off</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">No alerts here</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xs">We couldn't find any notifications in this category. You're all caught up!</p>
+<button class="mt-8 px-6 py-2 border border-primary text-primary font-button-text text-button-text rounded-lg hover:bg-primary hover:text-white transition-all" onclick="filterNotifications('all')">
+                View all notifications
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface border-t border-border-subtle shadow-[0_-4px_12px_rgba(0,0,0,0.04)] flex justify-around items-center h-20 px-2 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-opacity px-4 py-1" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-opacity px-4 py-1" href="#">
+<span class="material-symbols-outlined">assignment_late</span>
+<span class="font-label-caps text-label-caps mt-1">Complaints</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-label-caps text-label-caps mt-1">Notices</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-opacity px-4 py-1" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        function filterNotifications(category) {
+            const list = document.getElementById('notifications-list');
+            const emptyState = document.getElementById('empty-state');
+            const cards = list.getElementsByClassName('notification-card');
+            const tabs = document.getElementsByClassName('category-tab');
+            
+            // Update Tab Styles
+            for (let tab of tabs) {
+                if (tab.innerText.trim().toLowerCase() === category.toLowerCase() || (category === 'all' && tab.innerText.trim() === 'All')) {
+                    tab.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                    tab.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
+                } else {
+                    tab.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                    tab.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
+                }
+            }
+
+            let visibleCount = 0;
+            for (let card of cards) {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+
+            if (visibleCount === 0) {
+                list.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                list.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('mark-all-btn').addEventListener('click', function() {
+            const dots = document.querySelectorAll('.w-2.h-2.bg-primary');
+            dots.forEach(dot => {
+                dot.classList.remove('bg-primary');
+                dot.classList.add('bg-transparent');
+            });
+            
+            // Change button visual state
+            this.classList.add('opacity-50');
+            this.querySelector('span:last-child').innerText = 'All Read';
+            this.disabled = true;
+        });
+
+        // Small interaction for cards
+        document.querySelectorAll('.notification-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const dot = card.querySelector('.w-2.h-2.bg-primary');
+                if (dot) {
+                    dot.classList.remove('bg-primary');
+                    dot.classList.add('bg-transparent');
+                }
+                card.classList.add('opacity-80');
+            });
+        });
+    </script>
+</body></html>

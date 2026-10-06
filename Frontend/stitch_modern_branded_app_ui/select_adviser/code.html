@@ -1,0 +1,438 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Staff Directory | DCMS Admin</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-secondary-fixed-variant": "#454747",
+                    "secondary-container": "#dfe0e0",
+                    "on-error": "#ffffff",
+                    "status-pending": "#F59E0B",
+                    "secondary-fixed": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#505d84",
+                    "inverse-surface": "#303033",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-tertiary-container": "#b0855a",
+                    "status-resolved": "#10B981",
+                    "surface-bright": "#fbf8fc",
+                    "surface-container": "#efedf1",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b8c5f1",
+                    "outline": "#75777f",
+                    "status-forwarded": "#6366F1",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fbf8fc",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-primary-container": "#7f8db6",
+                    "tertiary-container": "#3b2000",
+                    "secondary": "#5d5f5f",
+                    "on-surface-variant": "#45464e",
+                    "on-surface": "#1b1b1e",
+                    "on-background": "#1b1b1e",
+                    "surface-container-high": "#eae7eb",
+                    "status-rejected": "#EF4444",
+                    "background": "#fbf8fc",
+                    "surface-dim": "#dbd9dd",
+                    "primary-fixed": "#dae2ff",
+                    "primary-container": "#172548",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "border-subtle": "#E2E8F0",
+                    "tertiary": "#1e0e00",
+                    "surface-gray": "#F8FAFC",
+                    "surface-variant": "#e4e2e5",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "inverse-on-surface": "#f2f0f3",
+                    "on-secondary-container": "#616363",
+                    "on-primary-fixed-variant": "#38466a",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container-highest": "#e4e2e5",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#0b1a3c",
+                    "primary": "#010f32",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "outline-variant": "#c5c6cf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-tight": "8px",
+                    "base-unit": "4px",
+                    "stack-loose": "24px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px"
+            },
+            "fontFamily": {
+                    "label-caps": ["JetBrains Mono"],
+                    "button-text": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .staff-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen">
+<!-- Top Navigation -->
+<header class="bg-surface dark:bg-inverse-surface w-full top-0 sticky z-40 border-b border-border-subtle dark:border-outline-variant">
+<div class="flex items-center justify-between px-margin-page h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="cursor-pointer active:opacity-80 hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary dark:text-primary-fixed">Staff Management</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-6 items-center mr-6">
+<a class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-colors px-3 py-1 rounded-lg font-label-caps text-label-caps" href="#">DASHBOARD</a>
+<a class="text-primary dark:text-primary-fixed font-bold px-3 py-1 rounded-lg font-label-caps text-label-caps" href="#">STAFF</a>
+<a class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-colors px-3 py-1 rounded-lg font-label-caps text-label-caps" href="#">REPORTS</a>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="Professional studio headshot of a senior academic administrator with a neutral expression, wearing formal navy blue attire. The lighting is soft and corporate, set against a clean, off-white minimalist background that reflects a high-stakes institutional environment. The overall aesthetic is professional, sharp, and authoritative." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk3mqS5JY_3gSyo5LpMWWD7cqBCz3I4mlKngmYsAEURn_hcNzFKqII60d1oxKll9_8RRj7aNodsDh2jrwtmIjWoYZHYW5nAsxaoB-j2yCkLm8ffYbQBaiSXpCwdHw88NXUlp_DtwxNN7K5ZAYXnS7RJRcuts1aVP29g5q3bSWMbcxjNGNAXCeIIqdGfBLOxin7zTB3lZW21AhmGzaL60V3uxOKqRd6uBFHQ0zknkAT0G0wvsM7ALIdDA4TVMLTDSRkTRz5WLWzY3If">
+</div>
+</div>
+</div>
+</header>
+<!-- Sidebar (Desktop) -->
+<aside class="hidden lg:flex flex-col py-stack-loose h-full w-72 fixed left-0 top-16 bg-surface border-r border-border-subtle z-30">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 p-3 bg-surface-container rounded-xl">
+<div class="bg-primary-container p-2 rounded-lg text-on-primary-container">
+<span class="material-symbols-outlined">shield_person</span>
+</div>
+<div>
+<p class="font-headline-md text-headline-md text-primary leading-tight">Admin Portal</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">Department Management</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 py-3 text-on-surface-variant dark:text-outline mx-2 px-4 hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant dark:text-outline mx-2 px-4 hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-body-md text-body-md">Complaints</span>
+</a>
+<a class="flex items-center gap-4 py-3 bg-primary-container text-on-primary-container font-bold rounded-lg mx-2 px-4 shadow-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant dark:text-outline mx-2 px-4 hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant dark:text-outline mx-2 px-4 hover:bg-surface-container-high transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 py-4 border-t border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[18px]">help</span>
+</div>
+<span class="text-body-md text-on-surface-variant">Support Hub</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-72 pt-4 pb-24 lg:pb-8 px-margin-page">
+<div class="max-w-6xl mx-auto">
+<!-- Header & Selection Context -->
+<div class="mb-stack-loose flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<nav class="flex items-center gap-2 text-on-surface-variant mb-2">
+<span class="font-label-caps text-[10px]">SECTION ASSIGNMENT</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="font-label-caps text-[10px] text-primary">SELECT ADVISER</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-primary">Assign Section Adviser</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Currently selecting for: <span class="font-bold text-on-surface">Computer Science Section A-1</span></p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface border border-border-subtle text-primary font-button-text text-button-text px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">close</span>
+                        Cancel
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-stack-loose">
+<!-- Filter Panel -->
+<div class="col-span-12 lg:col-span-3 space-y-stack-loose">
+<div class="bg-white p-6 rounded-xl staff-card-shadow border border-border-subtle">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-4 uppercase tracking-widest">Advanced Filters</h3>
+<!-- Search -->
+<div class="mb-6">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-2 uppercase">Search Faculty</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-gray border border-border-subtle rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-body-md" placeholder="Name or ID..." type="text">
+</div>
+</div>
+<!-- Department Filter -->
+<div class="mb-6">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-2 uppercase">Department</label>
+<select class="w-full p-2.5 bg-surface-gray border border-border-subtle rounded-lg focus:ring-1 focus:ring-primary outline-none text-body-md appearance-none cursor-pointer">
+<option>All Departments</option>
+<option>Computer Science</option>
+<option>Information Technology</option>
+<option>Mathematics</option>
+<option>Physics</option>
+</select>
+</div>
+<!-- Expertise Chips -->
+<div class="mb-6">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-2 uppercase">Expertise</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1 rounded-full bg-primary-container text-on-primary-container text-[11px] font-bold">AI &amp; ML</button>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-medium hover:bg-surface-container-high transition-colors">Security</button>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-medium hover:bg-surface-container-high transition-colors">Web Dev</button>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-medium hover:bg-surface-container-high transition-colors">Data Science</button>
+</div>
+</div>
+<!-- Workload Threshold -->
+<div>
+<label class="block text-[11px] font-bold text-on-surface-variant mb-2 uppercase">Max Workload</label>
+<input class="w-full h-1.5 bg-secondary-container rounded-lg appearance-none cursor-pointer accent-primary" type="range">
+<div class="flex justify-between mt-2 text-[10px] font-bold text-outline">
+<span class="">0 SECT</span>
+<span class="">4 SECT</span>
+</div>
+</div>
+</div>
+<!-- Selected Preview (Sticky/Floating) -->
+<div class="hidden lg:block bg-primary p-6 rounded-xl text-white shadow-xl">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-caps text-[10px] opacity-70">CURRENT CHOICE</span>
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div class="space-y-4" id="selection-preview">
+<p class="text-body-md opacity-80 italic">Select a staff member from the list to assign them.</p>
+</div>
+<button class="w-full mt-6 bg-white text-primary font-button-text text-button-text py-3 rounded-lg hover:bg-primary-fixed transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+                            Confirm Selection
+                        </button>
+</div>
+</div>
+<!-- Staff List Area -->
+<div class="col-span-12 lg:col-span-9">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">Available Faculty <span class="font-normal text-on-surface-variant ml-2">(24 Candidates)</span></h3>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="text-body-md">Sort by:</span>
+<button class="font-bold text-primary flex items-center gap-1">
+                                Workload
+                                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-tight">
+<!-- Staff Card 1 (Active/Recommended) -->
+<div class="group relative bg-white rounded-xl border border-border-subtle p-5 staff-card-shadow transition-all duration-300 hover:border-primary cursor-pointer ring-offset-2 hover:ring-2 hover:ring-primary-container" onclick="selectStaff('Dr. Sarah Jenkins', 'Senior Faculty Specialist', 'AI Research', '1 Section', '{{DATA:IMAGE:IMG_1}}')">
+<div class="absolute top-4 right-4 bg-status-resolved/10 text-status-resolved px-2 py-0.5 rounded text-[10px] font-bold">RECOMMENDED</div>
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden border border-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A focused close-up of a middle-aged female professor with a professional demeanor. She has short, styled hair and wears modern glasses and a charcoal blazer. The background is a soft-focus academic library with hints of dark wood and organized bookshelves, conveying intelligence and deep expertise in a minimalist light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmSSi4qt7l-vrzHxlHuX-a0xppndnc9IlSdsaTb5D1dmqQEzFuQIKXyEkN696VvcdXunpOGaXOJA4AXZQ9OH6S2AZDrt1Rm2YST4_ZXD8fmukQju8OMQKRTYvnAEa0ZU0gnS5TGku8yg1ylaxdCbgUALIUb2Nryxmds2Yx9MkC0xx6DH0E2hZBraXuxj03hUDa0WDird2nnRAg1bBBo9kuOsKRrLwp1HMSIAhe8AA-9ORdonxPl65cMIo1ctg1j0sG7dN02jIE8CbP">
+</div>
+<div class="flex-1">
+<span class="font-label-caps text-[10px] text-outline">ID: CS-FAC-992</span>
+<h4 class="font-headline-md text-headline-md text-primary leading-tight">Dr. Sarah Jenkins</h4>
+<p class="text-body-md text-on-surface-variant font-medium">Senior Faculty Specialist</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between pt-4 border-t border-border-subtle">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Expertise</span>
+<span class="text-body-md font-semibold text-primary">AI &amp; Machine Learning</span>
+</div>
+<div class="text-right"><span class="text-[10px] font-bold text-outline uppercase tracking-wider">Workload Capacity</span><div class="flex items-center gap-2 justify-end mt-1"><div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-status-resolved" style="width: 25%"></div></div><span class="text-body-md font-bold text-on-surface">1/4</span></div></div>
+</div>
+</div>
+<!-- Staff Card 2 -->
+<div class="group relative bg-white rounded-xl border border-border-subtle p-5 staff-card-shadow transition-all duration-300 hover:border-primary cursor-pointer" onclick="selectStaff('Prof. Michael Chen', 'Lead Academic Researcher', 'Cryptography', '2 Sections', '{{DATA:IMAGE:IMG_2}}')">
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden border border-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a younger male academic professional with a friendly, approachable smile. He wears a casual blue shirt and stands against a modern architectural background with clean lines and natural daylight. The image is bright, professional, and crisp, aligning with a modern corporate UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7oeyvhJFz0TkLQ4Xpv9UftL6mnnxbJvg_v_Z7aI3EmfnGvm40mb_2OXgAKDALHAAKtqaYWfgPEFQoYvB9GNm7aPyN1Ik0MapFs9ehkB7i2Mqf_EJ-FDasIkLyBLmzGHTApVkINYtYCAJE5yLJCeoTn-jwBzda5mZ6WOMfEyNl6RZkwqEXqP1I80HMaKwHzdGNgcqf-PWxG9OXYmPkKumBP4KGZ52rjJ9zubMhnsKfhUUSv0XDSHfqajomFJU3km74OCkpdJQy_Obl">
+</div>
+<div class="flex-1">
+<span class="font-label-caps text-[10px] text-outline">ID: CS-FAC-415</span>
+<h4 class="font-headline-md text-headline-md text-primary leading-tight">Prof. Michael Chen</h4>
+<p class="text-body-md text-on-surface-variant font-medium">Lead Academic Researcher</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between pt-4 border-t border-border-subtle">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Expertise</span>
+<span class="text-body-md font-semibold text-primary">Cybersecurity</span>
+</div>
+<div class="text-right"><span class="text-[10px] font-bold text-outline uppercase tracking-wider">Workload Capacity</span><div class="flex items-center gap-2 justify-end mt-1"><div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-status-pending" style="width: 50%"></div></div><span class="text-body-md font-bold text-on-surface">2/4</span></div></div>
+</div>
+</div>
+<!-- Staff Card 3 -->
+<div class="group relative bg-white rounded-xl border border-border-subtle p-5 staff-card-shadow transition-all duration-300 hover:border-primary cursor-pointer" onclick="selectStaff('Dr. Elena Rodriguez', 'Department Head', 'Soft. Engineering', '0 Sections', '{{DATA:IMAGE:IMG_3}}')">
+<div class="absolute top-4 right-4 bg-primary-container text-on-primary-container px-2 py-0.5 rounded text-[10px] font-bold">DEPARTMENT HEAD</div>
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden border border-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A portrait of a confident woman in her 50s, an experienced academic department head. She is wearing an elegant navy dress and a silver necklace. The setting is a bright, minimalist office space with large windows and a clean, high-contrast light mode aesthetic. Her expression is warm yet professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcdpZ36k19jT7SsJDcJQaR66HahVgNv4B6UBTSu5rTDw00DEtyWSkMBkpS4o0yPeIQ-a6ySsniR3yAKRcBtHpesdLxTSZgj10VYDa_XdzTNW_7uDZ5ICprZuxDL_7xo4qMubtwltDc5W3uh65brBQ3KGNdbQPmcXJzX7SMauNSMjMqkk3O60sxZANQItP6E_FZnkekCUVxgb3DQJKlkw1wt6tfVpusr3nwa6oc8umCBNvzVLY6pmT4ZKdy-m_hNtEMB2k9phKvPQ1P">
+</div>
+<div class="flex-1">
+<span class="font-label-caps text-[10px] text-outline">ID: CS-FAC-102</span>
+<h4 class="font-headline-md text-headline-md text-primary leading-tight">Dr. Elena Rodriguez</h4>
+<p class="text-body-md text-on-surface-variant font-medium">Department Head</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between pt-4 border-t border-border-subtle">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Expertise</span>
+<span class="text-body-md font-semibold text-primary">Software Engineering</span>
+</div>
+<div class="text-right"><span class="text-[10px] font-bold text-outline uppercase tracking-wider">Workload Capacity</span><div class="flex items-center gap-2 justify-end mt-1"><div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-status-resolved" style="width: 0%"></div></div><span class="text-body-md font-bold text-on-surface">0/4</span></div></div>
+</div>
+</div>
+<!-- Staff Card 4 -->
+<div class="group relative bg-white rounded-xl border border-border-subtle p-5 staff-card-shadow transition-all duration-300 hover:border-primary cursor-pointer" onclick="selectStaff('James Wilson, PhD', 'Associate Professor', 'Data Ethics', '3 Sections', '{{DATA:IMAGE:IMG_4}}')"><div class="absolute top-4 right-4 bg-status-rejected/10 text-status-rejected px-2 py-0.5 rounded text-[10px] font-bold">HIGH WORKLOAD</div>
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden border border-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-quality studio portrait of a male professor in his early 40s. He is wearing a minimalist beige sweater and has a calm, intelligent gaze. The background is a flat, neutral grey with soft lighting, reflecting institutional rigor and a modern professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdC5ApLgk3xTvr8X2-jUPQ4UnJjSo_oRpy9fl2gD779jCZdD-SudKheUAVHTsAHHMJAFyZniwfV0jOzbi_094QqptsNERiSs_qkOa_QYqtxamVRD-RHRKayWA2M-64YmKK1R6xBD8dQuicZY_c5P3zHHhtnw2Nv0q53qUY_Rfdui3JskFllf1GNh8qPfb-tyxteyQQ8g5C7rB-9g7Sps3RxH35W2aHV0iKtcMoR4CEQboYyBucB83NmKB04RlGE93d3Sf9526KfPZW">
+</div>
+<div class="flex-1">
+<span class="font-label-caps text-[10px] text-outline">ID: CS-FAC-287</span>
+<h4 class="font-headline-md text-headline-md text-primary leading-tight">James Wilson, PhD</h4>
+<p class="text-body-md text-on-surface-variant font-medium">Associate Professor</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between pt-4 border-t border-border-subtle">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Expertise</span>
+<span class="text-body-md font-semibold text-primary">Data Ethics &amp; Privacy</span>
+</div>
+<div class="text-right"><span class="text-[10px] font-bold text-outline uppercase tracking-wider">Workload Capacity</span><div class="flex items-center gap-2 justify-end mt-1"><div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-status-rejected" style="width: 75%"></div></div><span class="text-body-md font-bold text-on-surface">3/4</span></div></div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-8 flex items-center justify-center gap-2">
+<button class="p-2 border border-border-subtle rounded-lg text-outline hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-10 h-10 bg-primary text-white rounded-lg font-bold">1</button>
+<button class="w-10 h-10 hover:bg-surface-container-low rounded-lg font-bold text-on-surface-variant">2</button>
+<button class="w-10 h-10 hover:bg-surface-container-low rounded-lg font-bold text-on-surface-variant">3</button>
+<span class="px-2 text-outline">...</span>
+<button class="p-2 border border-border-subtle rounded-lg text-outline hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-border-subtle shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">HOME</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-caps text-label-caps mt-1">STAFF</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-caps text-label-caps mt-1">ALERTS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps mt-1">PROFILE</span>
+</a>
+</nav>
+<script>
+        function selectStaff(name, title, expertise, workload, imgPlaceholder) {
+            const preview = document.getElementById('selection-preview');
+            const confirmBtn = preview.nextElementSibling;
+            
+            preview.innerHTML = `
+                <div class="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div class="w-12 h-12 rounded-lg bg-white overflow-hidden">
+                        <img src="${imgPlaceholder}" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-white text-body-lg leading-tight">${name}</h5>
+                        <p class="text-[11px] text-primary-fixed opacity-90">${title}</p>
+                    </div>
+                </div>
+                <div class="space-y-2 mt-4 text-[12px]">
+                    <div class="flex justify-between border-b border-white/10 pb-1">
+                        <span class="opacity-70">Focus</span>
+                        <span class="font-bold">${expertise}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-white/10 pb-1">
+                        <span class="opacity-70">New Workload</span>
+                        <span class="font-bold">${parseInt(workload) + 1} Sections</span>
+                    </div>
+                </div>
+            `;
+            
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            // Highlight card (visually handle selection state)
+            const cards = document.querySelectorAll('.staff-card-shadow');
+            cards.forEach(card => card.classList.remove('ring-2', 'ring-primary', 'border-primary'));
+            event.currentTarget.classList.add('ring-2', 'ring-primary', 'border-primary');
+        }
+    </script>
+
+
+</body></html>

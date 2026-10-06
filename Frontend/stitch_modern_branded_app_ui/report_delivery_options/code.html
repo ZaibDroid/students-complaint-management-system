@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Delivery - Department Complaint Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "surface-variant": "#e4e2e5",
+                    "border-subtle": "#E2E8F0",
+                    "on-primary-container": "#7f8db6",
+                    "on-background": "#1b1b1e",
+                    "surface-container": "#efedf1",
+                    "surface-container-low": "#f5f3f6",
+                    "outline-variant": "#c5c6cf",
+                    "inverse-surface": "#303033",
+                    "on-tertiary-fixed": "#2c1600",
+                    "tertiary-container": "#3b2000",
+                    "primary-container": "#172548",
+                    "on-tertiary": "#ffffff",
+                    "background": "#fbf8fc",
+                    "surface-tint": "#505d84",
+                    "inverse-primary": "#b8c5f1",
+                    "secondary": "#5d5f5f",
+                    "tertiary-fixed": "#ffdcbc",
+                    "surface-container-lowest": "#ffffff",
+                    "status-pending": "#F59E0B",
+                    "on-surface-variant": "#45464e",
+                    "secondary-fixed": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#dae2ff",
+                    "on-surface": "#1b1b1e",
+                    "outline": "#75777f",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#f2f0f3",
+                    "on-primary-fixed": "#0b1a3c",
+                    "status-rejected": "#EF4444",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed-variant": "#38466a",
+                    "surface-bright": "#fbf8fc",
+                    "on-secondary-fixed-variant": "#454747",
+                    "tertiary": "#1e0e00",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dbd9dd",
+                    "status-forwarded": "#6366F1",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "primary": "#010f32",
+                    "on-secondary": "#ffffff",
+                    "status-resolved": "#10B981",
+                    "on-error": "#ffffff",
+                    "surface": "#fbf8fc",
+                    "on-secondary-container": "#616363",
+                    "surface-container-highest": "#e4e2e5",
+                    "secondary-container": "#dfe0e0",
+                    "on-tertiary-container": "#b0855a",
+                    "surface-container-high": "#eae7eb",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "surface-gray": "#F8FAFC",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-loose": "24px",
+                    "margin-page": "20px",
+                    "gutter-card": "16px",
+                    "stack-tight": "8px",
+                    "base-unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #fbf8fc;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-card {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .status-bar-left {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 4px 0 0 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="bg-surface sticky top-0 z-50 border-b border-border-subtle flex items-center justify-between px-margin-page h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container transition-colors p-2 rounded-full active:opacity-70">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Report Delivery</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container transition-colors p-2 rounded-full active:opacity-70">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</button>
+</div>
+</header>
+<main class="flex-1 max-w-4xl mx-auto w-full px-margin-page py-stack-loose pb-32">
+<div class="space-y-stack-loose">
+<!-- Delivery Methods Section -->
+<section class="space-y-stack-tight">
+<h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest px-1">Distribution Channels</h2>
+<div class="tonal-card rounded-xl p-base-unit overflow-hidden border border-border-subtle">
+<div class="divide-y divide-border-subtle">
+<!-- Channel 1 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-gray transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">mail</span>
+</div>
+<div>
+<p class="font-headline-md text-body-lg text-primary">Direct Email</p>
+<p class="text-body-md text-on-surface-variant">Send PDF report directly to inbox</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Channel 2 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-gray transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</div>
+<div>
+<p class="font-headline-md text-body-lg text-primary">System Notification</p>
+<p class="text-body-md text-on-surface-variant">Alert recipients within the portal</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Channel 3 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-gray transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">archive</span>
+</div>
+<div>
+<p class="font-headline-md text-body-lg text-primary">Upload to Archive</p>
+<p class="text-body-md text-on-surface-variant">Store a copy in departmental records</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Recipient Management -->
+<section class="space-y-stack-tight">
+<h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest px-1">Recipient Management</h2>
+<div class="tonal-card rounded-xl p-gutter-card space-y-4 border border-border-subtle">
+<div class="space-y-2">
+<label class="font-button-text text-body-md text-primary">Select Internal Roles</label>
+<div class="flex flex-wrap gap-2">
+<button class="bg-primary-container text-on-primary-container font-button-text text-button-text px-4 py-2 rounded-full flex items-center gap-2 transition-all active:scale-95">
+<span>Dean of Faculty</span>
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+<button class="bg-surface-container text-on-surface-variant font-button-text text-button-text px-4 py-2 rounded-full hover:bg-surface-container-high transition-all active:scale-95">
+<span>+ Department Chairman</span>
+</button>
+<button class="bg-surface-container text-on-surface-variant font-button-text text-button-text px-4 py-2 rounded-full hover:bg-surface-container-high transition-all active:scale-95">
+<span>+ Batch Advisers</span>
+</button>
+<button class="bg-surface-container text-on-surface-variant font-button-text text-button-text px-4 py-2 rounded-full hover:bg-surface-container-high transition-all active:scale-95">
+<span>+ Registrar</span>
+</button>
+</div>
+</div>
+<div class="space-y-2 pt-2">
+<label class="font-button-text text-body-md text-primary">Add External Email</label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md outline-none" placeholder="e.g., audit@university.edu" type="email"/>
+</div>
+<button class="bg-primary text-on-primary font-button-text text-button-text px-6 py-2.5 rounded-lg hover:opacity-90 active:scale-95 transition-all">Add</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Scheduling Options -->
+<section class="space-y-stack-tight">
+<h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest px-1">Scheduling Strategy</h2>
+<div class="tonal-card rounded-xl p-gutter-card border border-border-subtle">
+<div class="grid grid-cols-2 gap-4 mb-6">
+<button class="flex items-center justify-center gap-2 border-2 border-primary bg-primary-fixed text-primary p-4 rounded-xl font-button-text transition-all">
+<span class="material-symbols-outlined">send</span>
+                            Send Now
+                        </button>
+<button class="flex items-center justify-center gap-2 border border-border-subtle bg-surface-gray text-on-surface-variant p-4 rounded-xl font-button-text hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">calendar_month</span>
+                            Schedule
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-50 pointer-events-none" id="schedule-controls">
+<div class="space-y-2">
+<label class="font-button-text text-body-md text-primary">Frequency</label>
+<select class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 text-body-md outline-none">
+<option>Once</option>
+<option>Weekly (Mondays)</option>
+<option>Monthly (1st of month)</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-button-text text-body-md text-primary">Time & Date</label>
+<div class="relative">
+<input class="w-full bg-surface-gray border border-border-subtle rounded-lg px-4 py-2.5 text-body-md outline-none" type="datetime-local"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Security & Privacy -->
+<section class="space-y-stack-tight">
+<h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest px-1">Security & Privacy</h2>
+<div class="tonal-card rounded-xl p-gutter-card border border-border-subtle space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">lock</span>
+<span class="font-headline-md text-body-lg text-primary">Password Protected PDF</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<hr class="border-border-subtle"/>
+<div class="flex items-center gap-3 py-1">
+<input class="w-5 h-5 rounded border-border-subtle text-primary focus:ring-primary" id="watermark" type="checkbox"/>
+<label class="text-body-md text-on-surface-variant select-none" for="watermark">Include Confidential Watermark on all pages</label>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Confirmation Footer -->
+<footer class="fixed bottom-0 left-0 right-0 bg-surface/80 backdrop-blur-md border-t border-border-subtle p-margin-page z-50">
+<div class="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 items-center justify-end">
+<button class="w-full sm:w-auto px-8 py-3 rounded-lg border border-primary text-primary font-button-text hover:bg-primary-fixed transition-colors active:scale-95">
+                Save as Draft
+            </button>
+<button class="w-full sm:w-auto px-12 py-3 rounded-lg bg-primary text-on-primary font-button-text shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
+                Confirm & Deliver
+                <span class="material-symbols-outlined text-[20px]">verified</span>
+</button>
+</div>
+</footer>
+<!-- Sidebar (Suppressed based on Task Flow focus) -->
+<!-- NavigationDrawer logic for internal screens -->
+<div class="fixed inset-0 z-[60] bg-black/50 hidden opacity-0 transition-opacity duration-300" id="drawer">
+<div class="bg-surface-container-low h-full w-80 rounded-r-xl shadow-md transform -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto">
+<div class="p-6 flex items-center gap-4 border-b border-border-subtle">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">AD</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-primary">Admin Portal</h3>
+<p class="text-label-caps text-outline">Department Management</p>
+</div>
+</div>
+<nav class="flex-1 py-4">
+<div class="bg-primary-container text-on-primary-container font-bold rounded-lg m-2 p-3 flex items-center gap-4">
+<span class="material-symbols-outlined">insights</span> Overview
+                </div>
+<div class="text-on-surface-variant m-2 p-3 hover:bg-surface-container-highest rounded-lg flex items-center gap-4 transition-colors">
+<span class="material-symbols-outlined">badge</span> Staff Performance
+                </div>
+<div class="text-on-surface-variant m-2 p-3 hover:bg-surface-container-highest rounded-lg flex items-center gap-4 transition-colors">
+<span class="material-symbols-outlined">trending_up</span> Complaint Trends
+                </div>
+<div class="text-on-surface-variant m-2 p-3 hover:bg-surface-container-highest rounded-lg flex items-center gap-4 transition-colors">
+<span class="material-symbols-outlined">history_edu</span> Activity Logs
+                </div>
+<div class="text-on-surface-variant m-2 p-3 hover:bg-surface-container-highest rounded-lg flex items-center gap-4 transition-colors">
+<span class="material-symbols-outlined">folder_zip</span> Export History
+                </div>
+</nav>
+<div class="p-6 border-t border-border-subtle text-label-caps text-outline text-center">
+                v2.4.0
+            </div>
+</div>
+</div>
+<script>
+        // Simple Interaction logic
+        const scheduleBtn = document.querySelectorAll('button')[6]; // Simple selector for demo
+        const scheduleControls = document.getElementById('schedule-controls');
+        
+        // This is a simplified listener for the 'Schedule' button in the grid
+        document.querySelectorAll('button').forEach((btn, idx) => {
+            if(btn.textContent.includes('Schedule')) {
+                btn.addEventListener('click', () => {
+                    scheduleControls.classList.toggle('opacity-50');
+                    scheduleControls.classList.toggle('pointer-events-none');
+                    btn.classList.toggle('border-primary');
+                    btn.classList.toggle('text-primary');
+                    btn.classList.toggle('bg-primary-fixed');
+                });
+            }
+        });
+
+        // Toggle Drawer logic (usually triggered by a hamburger, but using the back icon for demo or context)
+        const backBtn = document.querySelector('button');
+        const drawer = document.getElementById('drawer');
+        const drawerContent = drawer.querySelector('div');
+
+        function toggleDrawer() {
+            drawer.classList.toggle('hidden');
+            setTimeout(() => {
+                drawer.classList.toggle('opacity-0');
+                drawerContent.classList.toggle('-translate-x-full');
+            }, 10);
+        }
+
+        drawer.addEventListener('click', (e) => {
+            if(e.target === drawer) toggleDrawer();
+        });
+    </script>
+</body></html>

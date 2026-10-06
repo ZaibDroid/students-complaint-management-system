@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Complaint Archive | DCMS</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fbf8fc",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "tertiary-container": "#3b2000",
+                        "border-subtle": "#E2E8F0",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1b1b1e",
+                        "on-surface-variant": "#45464e",
+                        "surface-dim": "#dbd9dd",
+                        "background": "#fbf8fc",
+                        "surface-container": "#efedf1",
+                        "tertiary-fixed": "#ffdcbc",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#454747",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "surface-gray": "#F8FAFC",
+                        "surface": "#fbf8fc",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#b0855a",
+                        "on-primary-fixed": "#0b1a3c",
+                        "surface-container-low": "#f5f3f6",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "tertiary": "#1e0e00",
+                        "primary": "#010f32",
+                        "secondary-container": "#dfe0e0",
+                        "primary-container": "#172548",
+                        "on-tertiary-fixed": "#2c1600",
+                        "status-resolved": "#10B981",
+                        "status-forwarded": "#6366F1",
+                        "status-rejected": "#EF4444",
+                        "on-primary-container": "#7f8db6",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#505d84",
+                        "surface-container-high": "#eae7eb",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f2f0f3",
+                        "status-pending": "#F59E0B",
+                        "surface-variant": "#e4e2e5",
+                        "on-secondary-container": "#616363",
+                        "inverse-primary": "#b8c5f1",
+                        "outline-variant": "#c5c6cf",
+                        "primary-fixed": "#dae2ff",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1b1e",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#303033",
+                        "secondary": "#5d5f5f",
+                        "outline": "#75777f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-primary-fixed-variant": "#38466a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "8px",
+                        "margin-page": "20px",
+                        "stack-loose": "24px",
+                        "base-unit": "4px",
+                        "gutter-card": "16px"
+                    },
+                    "fontFamily": {
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .archive-card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scroll-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b border-border-subtle shadow-sm flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of a university staff member in business attire, clean lighting, soft bokeh background of a modern academic office, high quality corporate headshot with a friendly and authoritative expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGviqQRQHq9TEDWO7970ojNdvcX5X_m2oOvWhO3tS4ydmhYS9Evao8If8cYNm1mg-SRdrrGO9obNOnda8nh5CobUgPn1nCTRc3rtNLcQfrLah8M206PIoMSzftdWx4pzQLjj7RFbueTgCAB-0hB0aoRnz1qS3GQ6xQw2rar1PG-6egxEjDhc0UaCbQ_zPzdZviOgij20t1JNhiJpHygwFY3rlR5U41Xt713w1AGsiaOizmMvcatCb4uRQnWveGN3irJnoGiVYCAUHw"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary">Staff Dashboard</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</header>
+<main class="mt-16 px-margin-page">
+<!-- Search & Header Section -->
+<div class="py-stack-loose space-y-6">
+<div class="flex flex-col gap-2">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary">Complaint Archive</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Access and review all historical resolution records.</p>
+</div>
+<!-- Search Bar -->
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-12 pl-12 pr-4 rounded-xl border border-border-subtle bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md transition-all" placeholder="Search by ID, keyword, or student name..." type="text"/>
+</div>
+<!-- Filter Section -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ADVANCED FILTERS</span>
+<button class="font-button-text text-button-text text-primary hover:underline">Clear all</button>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-2 scroll-hide">
+<!-- Category Chips -->
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-border-subtle bg-primary-container text-on-primary-container font-button-text whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">category</span>
+                        All Categories
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-border-subtle bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-colors font-button-text whitespace-nowrap">
+                        Academic
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-border-subtle bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-colors font-button-text whitespace-nowrap">
+                        Maintenance
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-border-subtle bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-colors font-button-text whitespace-nowrap">
+                        IT Services
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-border-subtle bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-colors font-button-text whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                        Year: 2024
+                    </button>
+</div>
+</div>
+</div>
+<!-- Archive List -->
+<div class="space-y-4">
+<!-- Card 1 -->
+<div class="archive-card-hover bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 transition-all duration-300 relative overflow-hidden group">
+<div class="w-1 bg-status-resolved h-full absolute left-0 top-0"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">school</span>
+</div>
+<div class="flex-grow space-y-1">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-on-surface-variant">COMP-2024-0891</span>
+<div class="px-3 py-1 rounded-full bg-green-50 text-status-resolved border border-green-100 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[11px] font-bold tracking-wider uppercase">RESOLVED</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Late Grade Submission: CS301</h3>
+<div class="flex items-center gap-4 text-on-surface-variant font-body-md text-[13px]">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                            Resolved: Oct 12, 2023
+                        </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">archive</span>
+                            Archived
+                        </div>
+</div>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="archive-card-hover bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 transition-all duration-300 relative overflow-hidden group opacity-90">
+<div class="w-1 bg-status-rejected h-full absolute left-0 top-0"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">apartment</span>
+</div>
+<div class="flex-grow space-y-1">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-on-surface-variant">COMP-2023-1142</span>
+<div class="px-3 py-1 rounded-full bg-red-50 text-status-rejected border border-red-100 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">cancel</span>
+<span class="text-[11px] font-bold tracking-wider uppercase">REJECTED</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Hostel AC Maintenance Request</h3>
+<div class="flex items-center gap-4 text-on-surface-variant font-body-md text-[13px]">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                            Closed: Sep 28, 2023
+                        </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">archive</span>
+                            Archived
+                        </div>
+</div>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="archive-card-hover bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 transition-all duration-300 relative overflow-hidden group">
+<div class="w-1 bg-status-resolved h-full absolute left-0 top-0"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">wifi</span>
+</div>
+<div class="flex-grow space-y-1">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-on-surface-variant">COMP-2023-0421</span>
+<div class="px-3 py-1 rounded-full bg-green-50 text-status-resolved border border-green-100 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[11px] font-bold tracking-wider uppercase">RESOLVED</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Library WiFi Connectivity Issues</h3>
+<div class="flex items-center gap-4 text-on-surface-variant font-body-md text-[13px]">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                            Resolved: Aug 15, 2023
+                        </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">archive</span>
+                            Archived
+                        </div>
+</div>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="archive-card-hover bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex gap-4 transition-all duration-300 relative overflow-hidden group">
+<div class="w-1 bg-status-resolved h-full absolute left-0 top-0"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">payments</span>
+</div>
+<div class="flex-grow space-y-1">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-on-surface-variant">COMP-2023-0105</span>
+<div class="px-3 py-1 rounded-full bg-green-50 text-status-resolved border border-green-100 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[11px] font-bold tracking-wider uppercase">RESOLVED</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Scholarship Disbursement Delay</h3>
+<div class="flex items-center gap-4 text-on-surface-variant font-body-md text-[13px]">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                            Resolved: Jul 02, 2023
+                        </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">archive</span>
+                            Archived
+                        </div>
+</div>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Load More / Empty State Spacer -->
+<div class="py-12 flex flex-col items-center justify-center text-on-surface-variant gap-4">
+<p class="font-body-md">Showing 4 of 128 archived complaints</p>
+<button class="px-6 py-2 rounded-full border border-primary text-primary font-button-text hover:bg-primary hover:text-white transition-all active:scale-95">
+                Load More Records
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-2 pb-safe bg-surface border-t border-border-subtle shadow-[0_-4px_12px_0_rgba(0,0,0,0.04)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant group transition-all" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps">Assigned</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant group transition-all" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant group transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Account</span>
+</a>
+</nav>
+<!-- Micro-interactions Script -->
+<script>
+        document.querySelectorAll('.archive-card-hover').forEach(card => {
+            card.addEventListener('click', () => {
+                // Mimic navigation ripple/feedback
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 100);
+            });
+        });
+
+        // Filter chip selection toggle
+        const chips = document.querySelectorAll('.flex.gap-2 button');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const isActive = chip.classList.contains('bg-primary-container');
+                if (!isActive) {
+                    // Reset others in a real app logic
+                    chip.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+                    chip.classList.add('bg-primary-container', 'text-on-primary-container');
+                } else {
+                    chip.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+                    chip.classList.remove('bg-primary-container', 'text-on-primary-container');
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Section Details - Administrative Precision</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#eae7eb",
+                        "surface-dim": "#dbd9dd",
+                        "on-error": "#ffffff",
+                        "surface-container": "#efedf1",
+                        "on-primary-container": "#7f8db6",
+                        "status-rejected": "#EF4444",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e4e2e5",
+                        "secondary-fixed": "#e2e2e2",
+                        "secondary-container": "#dfe0e0",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "primary-fixed": "#dae2ff",
+                        "on-background": "#1b1b1e",
+                        "tertiary": "#1e0e00",
+                        "primary": "#010f32",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "background": "#fbf8fc",
+                        "status-forwarded": "#6366F1",
+                        "surface-bright": "#fbf8fc",
+                        "inverse-surface": "#303033",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#45464e",
+                        "outline": "#75777f",
+                        "on-tertiary-fixed-variant": "#61401a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "border-subtle": "#E2E8F0",
+                        "on-primary-fixed-variant": "#38466a",
+                        "on-tertiary-container": "#b0855a",
+                        "surface-container-highest": "#e4e2e5",
+                        "tertiary-fixed": "#ffdcbc",
+                        "surface-gray": "#F8FAFC",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "on-secondary-container": "#616363",
+                        "inverse-primary": "#b8c5f1",
+                        "secondary": "#5d5f5f",
+                        "error-container": "#ffdad6",
+                        "status-resolved": "#10B981",
+                        "outline-variant": "#c5c6cf",
+                        "on-surface": "#1b1b1e",
+                        "surface-tint": "#505d84",
+                        "on-primary-fixed": "#0b1a3c",
+                        "tertiary-container": "#3b2000",
+                        "surface-container-low": "#f5f3f6",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-tertiary": "#ffffff",
+                        "status-pending": "#F59E0B",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fbf8fc",
+                        "primary-container": "#172548",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-secondary-fixed-variant": "#454747"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "8px",
+                        "stack-loose": "24px",
+                        "gutter-card": "16px",
+                        "margin-page": "20px",
+                        "base-unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fbf8fc;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e2e2;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-on-background w-full top-0 sticky z-50 border-b border-border-subtle dark:border-outline-variant flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Section Details</h1>
+</div>
+<button class="hover:bg-surface-container transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant">more_vert</span>
+</button>
+</header>
+<main class="max-w-5xl mx-auto px-margin-page py-stack-loose pb-24">
+<!-- Section Summary Card -->
+<section class="mb-stack-loose">
+<div class="bg-surface-container-lowest card-shadow rounded-xl p-6 border-l-4 border-primary">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1 block">ACADEMIC YEAR 2023-2024</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">2024 CS - Section A</h2>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">groups</span>
+<span class="font-body-md text-body-md">45 Students</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+<span class="font-body-md text-body-md">Computer Science Dept.</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-gray p-4 rounded-lg border border-border-subtle">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged female professor with a kind smile, wearing a navy blue blazer and glasses. She is set against a clean, softly lit academic office background with books. The lighting is natural and sophisticated, maintaining a high-contrast yet minimal professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3JfCyJwCUGO_96rIVI8QgZceMUzZPb7Zpoeg5H3TgzC6kWjt1cE4rzeT-ZUR0R4LVR7watkGSDHAyzU8GOVkLxe8kBFeOemFpSdtFgEDy6tP-taH3XSrJeGUwGynLlSKUWSX1d9hQiBG_fBSWCkMUu_5VQ1X-O_-q5ZzBvS7CvUyt5xbz1iwwskiQiyAi-pvseRCWzbJHQ3r8ui0K5TeRlcm63CN_RjTSu4y9lT7BKH0BxV1CnJd6szzW8baKda34_MnQbxT_FrnI">
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block">BATCH ADVISER</span>
+<p class="font-body-lg text-body-lg font-semibold text-primary">Dr. Sarah Ahmed</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Senior Faculty Specialist</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Stats Bento -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter-card mb-stack-loose">
+<div class="bg-surface-container-lowest card-shadow rounded-xl p-5 flex items-center gap-4 border border-border-subtle hover:border-primary-fixed-dim transition-all cursor-default">
+<div class="w-12 h-12 rounded-xl bg-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-error">assignment_late</span>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">Active Complaints</h3>
+<p class="font-headline-md text-headline-md text-primary">03 <span class="text-body-md font-normal text-on-surface-variant">Pending</span></p>
+</div>
+</div>
+<div class="bg-surface-container-lowest card-shadow rounded-xl p-5 flex items-center gap-4 border border-border-subtle hover:border-primary-fixed-dim transition-all cursor-default">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed">timer</span>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">Avg. Resolution Time</h3>
+<p class="font-headline-md text-headline-md text-primary">1.8 <span class="text-body-md font-normal text-on-surface-variant">Days</span></p>
+</div>
+</div>
+</section>
+<!-- Tabbed Interface Area -->
+<section class="bg-surface-container-lowest card-shadow rounded-xl border border-border-subtle overflow-hidden">
+<div class="border-b border-border-subtle flex px-6">
+<button class="py-4 px-6 border-b-2 border-primary text-primary font-semibold transition-all" id="tab-students" onclick="switchTab('students')">Students</button>
+<button class="py-4 px-6 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all" id="tab-faculty" onclick="switchTab('faculty')">Faculty &amp; Advisers</button>
+</div>
+<!-- Students Section -->
+<div class="p-6" id="content-students">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-gray border border-border-subtle rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-body-md" placeholder="Search student by name or ID..." type="text">
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-white font-button-text text-button-text px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">person_add</span>
+                            Add Student
+                        </button>
+<button class="bg-white border border-primary text-primary font-button-text text-button-text px-4 py-2 rounded-lg hover:bg-surface-gray active:scale-95 transition-all">
+                            Export List
+                        </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<div class="flex flex-col divide-y divide-border-subtle">
+  <!-- Student Item 1 -->
+  <div class="py-4 flex items-center justify-between hover:bg-surface-gray transition-colors cursor-pointer group">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-full overflow-hidden border border-border-subtle">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3JfCyJwCUGO_96rIVI8QgZceMUzZPb7Zpoeg5H3TgzC6kWjt1cE4rzeT-ZUR0R4LVR7watkGSDHAyzU8GOVkLxe8kBFeOemFpSdtFgEDy6tP-taH3XSrJeGUwGynLlSKUWSX1d9hQiBG_fBSWCkMUu_5VQ1X-O_-q5ZzBvS7CvUyt5xbz1iwwskiQiyAi-pvseRCWzbJHQ3r8ui0K5TeRlcm63CN_RjTSu4y9lT7BKH0BxV1CnJd6szzW8baKda34_MnQbxT_FrnI" class="w-full h-full object-cover" alt="Ahmed Al-Farsi">
+      </div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2">
+          <span class="font-body-lg font-bold text-primary">Ahmed Al-Farsi</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-status-resolved/10 text-status-resolved uppercase">Active</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant">
+          <span class="font-label-caps text-[10px] text-primary">#CS24-001</span>
+          <span class="text-xs">•</span>
+          <span class="font-body-md">ahmed.f@university.edu</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <p class="font-label-caps text-[10px] text-on-surface-variant">YEAR</p>
+        <p class="font-body-md font-medium text-primary">Junior</p>
+      </div>
+      <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+    </div>
+  </div>
+
+  <!-- Student Item 2 -->
+  <div class="py-4 flex items-center justify-between hover:bg-surface-gray transition-colors cursor-pointer group">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-full overflow-hidden border border-border-subtle">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPCYd2CyDv0USDUBcRx-lRIf2sy4dm78W95H3DwXkkKrRaWur_yss8X8RTIZrDIzjmsZ92TtC_t-8JdoFD_TLZ7kZDHf3R89Z6YW6qjIybapWqnIUTSc7CR2VPSjStOP7Y0R0R6StOqLdTLDTHBGYiY5AKJdCSMbal6lcWLY5UdKik2cQ9GJRAS1_xGEV7Zwuvd7_DRKoSU2gdL_7SJ3kvLbGkXGz4rhMtjqQYhs_gUAtbSajiA3PDF6lf1s_ZVzPo5Nu3BmDaqwBY" class="w-full h-full object-cover" alt="Beatrice Liao">
+      </div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2">
+          <span class="font-body-lg font-bold text-primary">Beatrice Liao</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-status-resolved/10 text-status-resolved uppercase">Active</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant">
+          <span class="font-label-caps text-[10px] text-primary">#CS24-002</span>
+          <span class="text-xs">•</span>
+          <span class="font-body-md">b.liao@university.edu</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <p class="font-label-caps text-[10px] text-on-surface-variant">YEAR</p>
+        <p class="font-body-md font-medium text-primary">Junior</p>
+      </div>
+      <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+    </div>
+  </div>
+
+  <!-- Student Item 3 -->
+  <div class="py-4 flex items-center justify-between hover:bg-surface-gray transition-colors cursor-pointer group">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-full overflow-hidden border border-border-subtle">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2V5hTSo1YJ5OeOgKpB9cb2fpMFCUw5SGWQi21qFW5FsZOy3FvMN7m1VVA3PW8vWgYUyLyIEFpzAf4PmN2Ca1Sb_hG78IrjQVdcf_AtFZFF6cz-yIT5fbpZSV_UVznBQqa8Pf_kq67piD0D_bv5p7N-yVgjhTrCehUakFsCLu9slnFhq5wLNZtr30S5LmZ5tdzdhcfgDKj3FpS6MByvPfZrqAMrfJUrxz59uQLsUoykbaZknaRDPfnnoVkVnj7wMxZY25lNviCkoaR" class="w-full h-full object-cover" alt="Caleb Knight">
+      </div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2">
+          <span class="font-body-lg font-bold text-primary">Caleb Knight</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-status-pending/10 text-status-pending uppercase">Probation</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant">
+          <span class="font-label-caps text-[10px] text-primary">#CS24-003</span>
+          <span class="text-xs">•</span>
+          <span class="font-body-md">knight.c@university.edu</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <p class="font-label-caps text-[10px] text-on-surface-variant">YEAR</p>
+        <p class="font-body-md font-medium text-primary">Junior</p>
+      </div>
+      <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<!-- Faculty Section (Hidden by default) -->
+<div class="p-6 hidden" id="content-faculty">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Departmental Assignments</h3>
+<button class="text-primary font-button-text text-button-text flex items-center gap-1 border border-primary px-3 py-1.5 rounded-lg hover:bg-surface-gray transition-colors">
+<span class="material-symbols-outlined text-sm">edit</span>
+                        Edit Assignments
+                    </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-card">
+<div class="p-4 bg-surface-gray border border-border-subtle rounded-xl flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-3 border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A detailed portrait of an elderly male professor with salt and pepper hair, wearing a charcoal grey sweater and a white collared shirt. He is sitting in a minimalist university study environment with soft, ambient lighting. The aesthetic is clean, professional, and trustworthy, with a restricted color palette of grey, white, and navy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2V5hTSo1YJ5OeOgKpB9cb2fpMFCUw5SGWQi21qFW5FsZOy3FvMN7m1VVA3PW8vWgYUyLyIEFpzAf4PmN2Ca1Sb_hG78IrjQVdcf_AtFZFF6cz-yIT5fbpZSV_UVznBQqa8Pf_kq67piD0D_bv5p7N-yVgjhTrCehUakFsCLu9slnFhq5wLNZtr30S5LmZ5tdzdhcfgDKj3FpS6MByvPfZrqAMrfJUrxz59uQLsUoykbaZknaRDPfnnoVkVnj7wMxZY25lNviCkoaR">
+</div>
+<h4 class="font-body-lg font-bold text-primary">Prof. Robert Chen</h4>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">HEAD OF SECTION</p>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Lead Investigator for Academic Affairs</p>
+<button class="w-full py-2 bg-white border border-border-subtle text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-container-low transition-colors">Contact</button>
+</div>
+<div class="p-4 bg-surface-gray border border-border-subtle rounded-xl flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-3 border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A portrait of a young professional woman with dark hair tied in a bun, wearing a light blue formal shirt. She has a focused and efficient expression, captured in a bright, modern office with soft daylight. The image follows a high-stakes corporate minimalist style, using clean lines and a professional, academic tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPCYd2CyDv0USDUBcRx-lRIf2sy4dm78W95H3DwXkkKrRaWur_yss8X8RTIZrDIzjmsZ92TtC_t-8JdoFD_TLZ7kZDHf3R89Z6YW6qjIybapWqnIUTSc7CR2VPSjStOP7Y0R0R6StOqLdTLDTHBGYiY5AKJdCSMbal6lcWLY5UdKik2cQ9GJRAS1_xGEV7Zwuvd7_DRKoSU2gdL_7SJ3kvLbGkXGz4rhMtjqQYhs_gUAtbSajiA3PDF6lf1s_ZVzPo5Nu3BmDaqwBY">
+</div>
+<h4 class="font-body-lg font-bold text-primary">Ms. Elena Vance</h4>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">COORDINATOR</p>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Operations &amp; Resource Management</p>
+<button class="w-full py-2 bg-white border border-border-subtle text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-container-low transition-colors">Contact</button>
+</div>
+<div class="p-4 bg-white border-2 border-dashed border-border-subtle rounded-xl flex flex-col items-center justify-center text-center opacity-60 hover:opacity-100 transition-opacity cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2 group-hover:scale-110 transition-transform">add_circle</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Assign Additional<br>Faculty Member</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface dark:bg-on-background border-t border-border-subtle dark:border-outline-variant shadow-lg dark:shadow-none flex justify-around items-center h-16 px-4">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-3 py-1" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px] uppercase">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-3 py-1" href="#">
+<span class="material-symbols-outlined">assignment_late</span>
+<span class="font-label-caps text-[10px] uppercase">Complaints</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed bg-primary-fixed-dim/20 rounded-xl px-3 py-1 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-label-caps text-[10px] uppercase">Sections</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-3 py-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[10px] uppercase">Settings</span>
+</a>
+</nav>
+<script>
+        function switchTab(tab) {
+            const studentsBtn = document.getElementById('tab-students');
+            const facultyBtn = document.getElementById('tab-faculty');
+            const studentsContent = document.getElementById('content-students');
+            const facultyContent = document.getElementById('content-faculty');
+
+            if (tab === 'students') {
+                studentsBtn.classList.add('border-primary', 'text-primary');
+                studentsBtn.classList.remove('border-transparent', 'text-on-surface-variant');
+                facultyBtn.classList.remove('border-primary', 'text-primary');
+                facultyBtn.classList.add('border-transparent', 'text-on-surface-variant');
+                
+                studentsContent.classList.remove('hidden');
+                facultyContent.classList.add('hidden');
+            } else {
+                facultyBtn.classList.add('border-primary', 'text-primary');
+                facultyBtn.classList.remove('border-transparent', 'text-on-surface-variant');
+                studentsBtn.classList.remove('border-primary', 'text-primary');
+                studentsBtn.classList.add('border-transparent', 'text-on-surface-variant');
+                
+                facultyContent.classList.remove('hidden');
+                studentsContent.classList.add('hidden');
+            }
+        }
+
+        // Simple interaction for the "Add Student" button ripple-like effect
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.classList.add('opacity-80');
+            });
+            button.addEventListener('mouseup', function() {
+                this.classList.remove('opacity-80');
+            });
+            button.addEventListener('mouseleave', function() {
+                this.classList.remove('opacity-80');
+            });
+        });
+    </script>
+
+
+</body></html>

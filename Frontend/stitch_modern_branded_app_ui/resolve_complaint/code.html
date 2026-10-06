@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Resolve Complaint - DCMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e4e2e5",
+                    "outline": "#75777f",
+                    "surface-bright": "#fbf8fc",
+                    "tertiary-fixed-dim": "#eebd8e",
+                    "surface-dim": "#dbd9dd",
+                    "secondary-container": "#dfe0e0",
+                    "on-background": "#1b1b1e",
+                    "on-error-container": "#93000a",
+                    "surface": "#fbf8fc",
+                    "outline-variant": "#c5c6cf",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-surface-variant": "#45464e",
+                    "inverse-primary": "#b8c5f1",
+                    "status-rejected": "#EF4444",
+                    "tertiary-fixed": "#ffdcbc",
+                    "on-tertiary-fixed-variant": "#61401a",
+                    "surface-variant": "#e4e2e5",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#dae2ff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#172548",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed-variant": "#38466a",
+                    "on-primary-container": "#7f8db6",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#3b2000",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-surface": "#1b1b1e",
+                    "surface-container-low": "#f5f3f6",
+                    "surface-container": "#efedf1",
+                    "primary": "#010f32",
+                    "on-tertiary-container": "#b0855a",
+                    "surface-gray": "#F8FAFC",
+                    "on-secondary-container": "#616363",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#1e0e00",
+                    "background": "#fbf8fc",
+                    "on-primary-fixed": "#0b1a3c",
+                    "status-resolved": "#10B981",
+                    "status-forwarded": "#6366F1",
+                    "secondary-fixed": "#e2e2e2",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-secondary": "#ffffff",
+                    "status-pending": "#F59E0B",
+                    "inverse-surface": "#303033",
+                    "inverse-on-surface": "#f2f0f3",
+                    "border-subtle": "#E2E8F0",
+                    "surface-tint": "#505d84",
+                    "secondary": "#5d5f5f",
+                    "primary-fixed-dim": "#b8c5f1",
+                    "surface-container-high": "#eae7eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-card": "16px",
+                    "stack-tight": "8px",
+                    "margin-page": "20px",
+                    "stack-loose": "24px",
+                    "base-unit": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "button-text": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "button-text": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-indicator {
+            box-shadow: inset 4px 0 0 0 currentColor;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b border-border-subtle shadow-sm flex justify-between items-center px-margin-page h-16">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary">Resolve Complaint</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden md:block text-right">
+<p class="font-button-text text-button-text text-on-surface">Admin Staff</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Registrar Office</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a university staff member in administrative attire, clean studio lighting, high resolution, soft corporate blue background, minimalist professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoFClwIU1yErbLs5gJqktDyn3enuSXH6kkDQot9O5uSvF_K6PFTvuzH38hJpXBfVCdoj2FtM2iRyOW6EiJw4O7g74A9BF2xe8vuDe0b6NY41VjEBVuNib2x6Aw0D0WdFCcOBuppbLrXNLJuazhVGYSToKzwq-zS5xi0GlYkq2GwFYxVJ-Q1ylNbqrz4IhIoLksdaTaiZANTDR1z6-I9_fKWSqRqIcnO9q9x1buacWGywH7NaQTNOpUlP4G6YHhOZCa4dwL2ehN7y4b"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-margin-page max-w-4xl mx-auto space-y-stack-loose">
+<!-- Summary Card -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_0_rgba(0,0,0,0.04)] border border-border-subtle relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-status-pending"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">#DC-2945</span>
+<h2 class="font-headline-md text-headline-md text-primary">Library Cooling System</h2>
+<div class="flex items-center gap-2 mt-2">
+<span class="flex items-center gap-1 bg-amber-50 text-status-pending px-3 py-0.5 rounded-full text-xs font-bold border border-amber-200">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">pending</span>
+                            Pending Review
+                        </span>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container p-3 rounded-lg">
+<div class="w-10 h-10 rounded-full bg-outline-variant flex items-center justify-center text-white">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<p class="font-button-text text-button-text text-primary">Alex Rivera</p>
+<p class="text-xs text-on-surface-variant">Student ID: 2024-9102</p>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-loose">
+<!-- Left Column: Details & Narrative -->
+<div class="lg:col-span-2 space-y-stack-loose">
+<!-- Complaint Details -->
+<section class="bg-surface-container-lowest rounded-xl p-6 border border-border-subtle space-y-4">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<h3 class="font-headline-md text-headline-md text-primary">Complaint Details</h3>
+<span class="text-xs font-label-caps text-on-tertiary-container bg-tertiary-fixed px-2 py-1 rounded">MAINTENANCE</span>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-gray p-4 rounded-lg border border-border-subtle italic text-on-surface-variant leading-relaxed">
+                            "The air conditioning in the South Wing of the Main Library has been non-functional for the past three days. It is extremely difficult to study there during the afternoon peak hours. Several students have mentioned this to the desk staff but no action has been taken yet."
+                        </div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="text-[10px] text-on-surface-variant font-label-caps mb-1">LOCATION</p>
+<p class="text-sm font-semibold text-primary">Main Library, South Wing</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="text-[10px] text-on-surface-variant font-label-caps mb-1">DATE SUBMITTED</p>
+<p class="text-sm font-semibold text-primary">Oct 24, 2023 • 09:15 AM</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Feedback Area -->
+<section class="bg-surface-container-lowest rounded-xl p-6 border border-border-subtle space-y-4">
+<h3 class="font-headline-md text-headline-md text-primary">Remarks &amp; Internal Notes</h3>
+<div class="space-y-3">
+<textarea class="w-full min-h-[160px] bg-surface-gray border border-border-subtle rounded-lg p-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-body-md" placeholder="Type decision notes or internal feedback here..."></textarea>
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-status-rejected">report</span>
+<div>
+<p class="text-sm font-semibold text-primary">Mark as Urgent</p>
+<p class="text-xs text-on-surface-variant">Prioritize this for immediate technical action</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Administrative Actions -->
+<div class="lg:col-span-1 space-y-stack-loose">
+<section class="bg-surface-container-lowest rounded-xl p-6 border border-border-subtle h-fit sticky top-24">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Actions</h3>
+<div class="space-y-3">
+<!-- Resolve -->
+<button class="w-full flex items-center justify-center gap-2 bg-status-resolved text-white font-button-text py-3 rounded-lg hover:brightness-95 transition-all active:scale-95 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Resolve
+                        </button>
+<!-- Forward -->
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white font-button-text py-3 rounded-lg hover:opacity-90 transition-all active:scale-95 shadow-sm">
+<span class="material-symbols-outlined">forward</span>
+                            Forward to Dept
+                        </button>
+<!-- Return to Student -->
+<button class="w-full flex items-center justify-center gap-2 bg-white border border-primary text-primary font-button-text py-3 rounded-lg hover:bg-surface-container transition-all active:scale-95">
+<span class="material-symbols-outlined">undo</span>
+                            Return to Student
+                        </button>
+<div class="pt-4 border-t border-border-subtle mt-4">
+<!-- Reject -->
+<button class="w-full flex items-center justify-center gap-2 text-status-rejected font-button-text py-3 rounded-lg hover:bg-red-50 transition-all active:scale-95">
+<span class="material-symbols-outlined">cancel</span>
+                                Reject Complaint
+                            </button>
+</div>
+</div>
+<div class="mt-8 p-4 bg-surface-container-low rounded-lg border border-dashed border-outline-variant">
+<p class="text-xs text-on-surface-variant leading-tight">
+                            By clicking any action, a notification will be automatically triggered to <span class="font-bold">Alex Rivera</span> and the relevant department heads.
+                        </p>
+</div>
+</section>
+<!-- Timeline/History Snippet -->
+<section class="bg-surface-container-lowest rounded-xl p-6 border border-border-subtle">
+<h4 class="font-button-text text-button-text text-primary mb-4">Activity Log</h4>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-px h-full bg-border-subtle"></div>
+</div>
+<div>
+<p class="text-xs font-semibold">Submitted</p>
+<p class="text-[10px] text-on-surface-variant">Oct 24 • 09:15 AM</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-px h-full bg-border-subtle"></div>
+</div>
+<div>
+<p class="text-xs font-semibold">Assigned to Me</p>
+<p class="text-[10px] text-on-surface-variant">Oct 24 • 11:30 AM</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<div>
+<p class="text-xs font-semibold text-on-surface-variant">Under Review</p>
+<p class="text-[10px] text-on-surface-variant">Awaiting Resolution</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on desktop as per Shell Visibility Rules, shown on mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-surface border-t border-border-subtle flex justify-around items-center px-2 pb-safe z-50">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-label-caps text-[10px]">Assigned</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-[10px]">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-caps text-[10px]">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-[10px]">Account</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for feedback area
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('focus', () => {
+            textarea.parentElement.parentElement.classList.add('ring-1', 'ring-primary/10');
+        });
+        textarea.addEventListener('blur', () => {
+            textarea.parentElement.parentElement.classList.remove('ring-1', 'ring-primary/10');
+        });
+
+        // Simple confirmation simulation for primary buttons
+        const actionButtons = document.querySelectorAll('button[class*="w-full"]');
+        actionButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.innerText.trim();
+                console.log(`Executing Administrative Action: ${action}`);
+                // In a real app, this would trigger a submission flow
+            });
+        });
+    </script>
+</body></html>

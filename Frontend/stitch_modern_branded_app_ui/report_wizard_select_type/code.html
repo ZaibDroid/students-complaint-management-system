@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Generation Wizard - Step 1</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#efedf1",
+                        "status-forwarded": "#6366F1",
+                        "inverse-primary": "#b8c5f1",
+                        "border-subtle": "#E2E8F0",
+                        "outline-variant": "#c5c6cf",
+                        "surface-container-high": "#eae7eb",
+                        "status-pending": "#F59E0B",
+                        "inverse-on-surface": "#f2f0f3",
+                        "on-secondary-container": "#616363",
+                        "on-primary": "#ffffff",
+                        "surface-gray": "#F8FAFC",
+                        "background": "#fbf8fc",
+                        "on-background": "#1b1b1e",
+                        "primary-fixed-dim": "#b8c5f1",
+                        "secondary-fixed": "#e2e2e2",
+                        "outline": "#75777f",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#45464e",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdcbc",
+                        "on-primary-fixed": "#0b1a3c",
+                        "primary-container": "#172548",
+                        "on-surface": "#1b1b1e",
+                        "surface-container-highest": "#e4e2e5",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#1e0e00",
+                        "on-tertiary-container": "#b0855a",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#38466a",
+                        "tertiary-fixed-dim": "#eebd8e",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e4e2e5",
+                        "surface-dim": "#dbd9dd",
+                        "status-rejected": "#EF4444",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fbf8fc",
+                        "surface": "#fbf8fc",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "primary": "#010f32",
+                        "on-tertiary-fixed": "#2c1600",
+                        "status-resolved": "#10B981",
+                        "on-primary-container": "#7f8db6",
+                        "on-secondary-fixed-variant": "#454747",
+                        "tertiary-container": "#3b2000",
+                        "primary-fixed": "#dae2ff",
+                        "surface-tint": "#505d84",
+                        "secondary-container": "#dfe0e0",
+                        "surface-container-low": "#f5f3f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "secondary": "#5d5f5f",
+                        "inverse-surface": "#303033",
+                        "on-tertiary-fixed-variant": "#61401a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base-unit": "4px",
+                        "gutter-card": "16px",
+                        "stack-tight": "8px",
+                        "margin-page": "20px",
+                        "stack-loose": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button-text": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fbf8fc;
+            color: #1b1b1e;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .step-active {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .report-option {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .report-option:hover {
+            transform: translateX(4px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md bg-background">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky flex items-center justify-between px-margin-page h-16 w-full bg-surface dark:bg-surface-dim border-b border-border-subtle dark:border-outline-variant z-40">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">Report Generator</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Progress Indicator Container -->
+<nav class="bg-surface-container-lowest px-margin-page py-6 border-b border-border-subtle">
+<div class="max-w-3xl mx-auto">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Step 1 of 3</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Selection</span>
+</div>
+<div class="w-full h-1 bg-surface-container rounded-full overflow-hidden flex">
+<div class="h-full bg-primary transition-all duration-500 ease-out" style="width: 33.33%;"></div>
+<div class="h-full bg-transparent" style="width: 66.66%;"></div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col px-margin-page py-stack-loose max-w-3xl mx-auto w-full">
+<div class="mb-stack-loose">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Select Report Type</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg">Choose the specific dataset you wish to analyze. Your selection will determine the filters available in the next step.</p>
+</div>
+<!-- Options Grid/List -->
+<div class="space-y-4" id="report-options-container">
+<!-- Option 1: Staff Performance -->
+<label class="report-option block relative cursor-pointer group">
+<input checked="" class="peer sr-only" name="report_type" type="radio" value="staff_performance"/>
+<div class="flex items-center p-5 bg-surface-container-lowest border border-border-subtle rounded-xl peer-checked:border-primary peer-checked:bg-white shadow-sm transition-all duration-200">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container group-hover:bg-primary-fixed transition-colors mr-5">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="badge">badge</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Staff Performance</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Analyze resolution rates, average response times, and student satisfaction scores per department staff member.</p>
+</div>
+<div class="ml-4 opacity-0 peer-checked:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Option 2: Complaint Resolution Trends -->
+<label class="report-option block relative cursor-pointer group">
+<input class="peer sr-only" name="report_type" type="radio" value="complaint_trends"/>
+<div class="flex items-center p-5 bg-surface-container-lowest border border-border-subtle rounded-xl peer-checked:border-primary peer-checked:bg-white shadow-sm transition-all duration-200">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container group-hover:bg-primary-fixed transition-colors mr-5">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="trending_up">trending_up</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Complaint Resolution Trends</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Identify seasonal patterns in complaint volume and visualize the speed of resolution over the past academic year.</p>
+</div>
+<div class="ml-4 opacity-0 peer-checked:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Option 3: Audit Logs -->
+<label class="report-option block relative cursor-pointer group">
+<input class="peer sr-only" name="report_type" type="radio" value="audit_logs"/>
+<div class="flex items-center p-5 bg-surface-container-lowest border border-border-subtle rounded-xl peer-checked:border-primary peer-checked:bg-white shadow-sm transition-all duration-200">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container group-hover:bg-primary-fixed transition-colors mr-5">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="history_edu">history_edu</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Audit Logs</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Comprehensive tracking of all system interactions, status changes, and data modifications for administrative accountability.</p>
+</div>
+<div class="ml-4 opacity-0 peer-checked:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Option 4: Departmental Overview -->
+<label class="report-option block relative cursor-pointer group">
+<input class="peer sr-only" name="report_type" type="radio" value="departmental_overview"/>
+<div class="flex items-center p-5 bg-surface-container-lowest border border-border-subtle rounded-xl peer-checked:border-primary peer-checked:bg-white shadow-sm transition-all duration-200">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-surface-container group-hover:bg-primary-fixed transition-colors mr-5">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="insights">insights</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Departmental Overview</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">A high-level summary of all active departments, resource allocation, and current outstanding workloads.</p>
+</div>
+<div class="ml-4 opacity-0 peer-checked:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Spacer for FAB/Fixed Footer on mobile -->
+<div class="h-24"></div>
+</main>
+<!-- Footer Actions (Bento-style Fixed Bottom) -->
+<footer class="fixed bottom-0 left-0 right-0 p-margin-page bg-surface/80 backdrop-blur-md border-t border-border-subtle z-30">
+<div class="max-w-3xl mx-auto flex items-center justify-between">
+<button class="px-6 py-3 rounded-lg font-button-text text-button-text text-primary hover:bg-surface-container transition-all active:opacity-70">
+                Cancel
+            </button>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-8 py-3 bg-primary text-on-primary rounded-lg font-button-text text-button-text shadow-md hover:opacity-90 active:scale-95 transition-all" onclick="window.location.reload()">
+                    Next
+                    <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Hidden in Wizard context as per Shell Visibility rules for Linear/Transactional screens) -->
+<!-- However, providing a template if required for other views -->
+<div class="hidden md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center w-full h-16 px-4 pb-safe bg-surface dark:bg-surface-dim border-t border-border-subtle dark:border-outline-variant">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-xl px-3 py-1">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-caps text-label-caps">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</div>
+</div>
+<script>
+        // Simple Interaction logic for report selection
+        const options = document.querySelectorAll('input[name="report_type"]');
+        options.forEach(option => {
+            option.addEventListener('change', (e) => {
+                // Visual feedback is handled by Tailwind peer classes
+                console.log(`Report type selected: ${e.target.value}`);
+            });
+        });
+
+        // Add subtle hover sound or haptic feedback mock
+        const buttons = document.querySelectorAll('button, label');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                // Mock micro-interaction feedback
+            });
+        });
+    </script>
+</body></html>
