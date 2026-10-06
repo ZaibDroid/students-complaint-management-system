@@ -59,3 +59,7 @@ Frontend/windows/flutter/ephemeral
 Frontend/linux/flutter/ephemeral
 Frontend/app.*.symbols
 Frontend/app.*.map.json
+
+*.sqlite
+*.sqlite-journal
+*.sqlite3
