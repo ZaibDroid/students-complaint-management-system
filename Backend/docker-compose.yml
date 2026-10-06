@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dcms-backend
+    container_name: dcms-app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    volumes:
+      - .:/var/www
+    networks:
+      - dcms-network
+
+  db:
+    image: mysql:8.0
+    container_name: dcms-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dcms_db
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - dcms-network
+
+networks:
+  dcms-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
