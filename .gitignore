@@ -1,95 +1,61 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+# ==========================================
+# Student Complaint Management System .gitignore
+# ==========================================
 
-# IntelliJ related
+# OS & IDEs
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+*.tmp
+.idea/
+.vscode/
 *.iml
 *.ipr
 *.iws
-.idea/
 
-# Visual Studio Code
-.vscode/
+# Backend / PHP / Laravel
+Backend/.env
+Backend/.env.backup
+Backend/.env.production
+Backend/vendor/
+Backend/.phpunit.result.cache
+Backend/storage/*.key
+Backend/storage/framework/cache/data/*
+Backend/storage/framework/sessions/*
+Backend/storage/framework/testing/*
+Backend/storage/framework/views/*
+Backend/storage/logs/*
+Backend/bootstrap/cache/*
+!Backend/storage/framework/cache/data/.gitignore
+!Backend/storage/framework/sessions/.gitignore
+!Backend/storage/framework/testing/.gitignore
+!Backend/storage/framework/views/.gitignore
+!Backend/storage/logs/.gitignore
+!Backend/bootstrap/cache/.gitignore
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-/coverage/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio & Gradle
-/android/app/debug
-/android/app/profile
-/android/app/release
-.gradle/
-local.properties
-**/android/**/gradle-wrapper.jar
-
-# ==============================================================================
-# SECRETS, ENVIRONMENT FILES & CREDENTIALS
-# ==============================================================================
-*.env
-*.env.*
-.env
-.env.*
-**/.env
-**/.env.*
-**/.env.example
-.env.example
-
-# Firebase & Cloud API Keys
-**/google-services.json
-**/GoogleService-Info.plist
-**/firebase_options.dart
-**/firebase-service-account*.json
-**/service-account*.json
-**/*credentials*.json
-**/*secret*.json
-
-# Keystores, Certificates & Private Keys
-*.jks
-*.keystore
-*.p12
-*.key
-*.pem
-*.crt
-*.p8
-*.mobileprovision
-**/key.properties
-
-# Laravel Backend Specific
-backend_laravel/vendor/
-backend_laravel/node_modules/
-backend_laravel/public/storage
-backend_laravel/public/hot
-backend_laravel/storage/*.key
-backend_laravel/storage/oauth-*.key
-backend_laravel/storage/app/*
-backend_laravel/storage/framework/cache/*
-backend_laravel/storage/framework/sessions/*
-backend_laravel/storage/framework/views/*
-backend_laravel/storage/logs/*
-backend_laravel/.phpunit.result.cache
-
-# Widget Preview related
-.widget_preview/
+# Frontend / Flutter / Dart
+Frontend/.dart_tool/
+Frontend/.flutter-plugins
+Frontend/.flutter-plugins-dependencies
+Frontend/.packages
+Frontend/.pub-cache/
+Frontend/.pub/
+Frontend/build/
+Frontend/coverage/
+Frontend/android/app/debug
+Frontend/android/app/profile
+Frontend/android/app/release
+Frontend/android/.gradle
+Frontend/android/local.properties
+Frontend/ios/Flutter/.last_build_id
+Frontend/ios/Flutter/Flutter.podspec
+Frontend/ios/Flutter/Generated.xcconfig
+Frontend/ios/Flutter/app.framework
+Frontend/ios/Pods/
+Frontend/ios/.symlinks/
+Frontend/macos/Flutter/ephemeral
+Frontend/windows/flutter/ephemeral
+Frontend/linux/flutter/ephemeral
+Frontend/app.*.symbols
+Frontend/app.*.map.json
