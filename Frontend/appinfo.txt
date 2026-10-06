@@ -1,0 +1,953 @@
+This is actually a very good **Final Year Project (FYP)** because it solves a real problem in your department instead of being just another CRUD application.
+
+Based on your requirements, I would recommend designing it like a production-level application instead of a simple Flutter + Firebase project.
+
+---
+
+# Project Title
+
+**Department Complaint Management & Communication System (DCMCS)**
+
+or
+
+**Smart Department Management System for UET Mardan**
+
+---
+
+# Main Objective
+
+The system digitizes the entire complaint process of the Computer Science Department.
+
+Instead of students visiting offices manually, every complaint follows a predefined workflow and can be tracked in real time.
+
+---
+
+# Main Modules
+
+## 1. Authentication
+
+* Login
+* Registration
+* Forgot Password
+* Email Verification
+
+Only university email addresses should be accepted.
+
+Example
+
+```
+2022cs01@uetmardan.edu.pk
+```
+
+Normal Gmail should not register.
+
+Validation
+
+```
+*@uetmardan.edu.pk
+```
+
+---
+
+## 2. User Roles
+
+Use Firebase Authentication + Firestore.
+
+```
+Student
+
+CR (Class Representative)
+
+Batch Adviser
+
+Coordinator
+
+Chairman
+
+Office Staff
+
+Dean
+
+Admin (optional)
+```
+
+Don't rely on what the user selects during registration. Instead:
+
+* Students may indicate they are a CR, but the role should only become active after approval by the department.
+* Staff roles (Batch Adviser, Coordinator, Chairman, Office, Dean) should be assigned by an administrator or seeded into the database. Never let users self-register into privileged roles.
+
+---
+
+# Complaint Workflow
+
+This is the heart of the system.
+
+```
+Student
+      │
+      ▼
+Batch Adviser
+      │
+      ▼
+Coordinator (optional)
+      │
+      ▼
+Chairman
+      │
+      ├──────────► Resolve
+      │
+      ├──────────► Reject
+      │
+      ▼
+Office
+      │
+      ▼
+Chairman
+      │
+      ▼
+Resolved
+```
+
+If necessary
+
+```
+Chairman
+
+↓
+
+Dean
+
+↓
+
+Chairman
+
+↓
+
+Resolved
+```
+
+---
+
+# Every Complaint Contains
+
+```
+Complaint ID
+
+Title
+
+Description
+
+Category
+
+Priority
+
+Image (optional)
+
+Current Status
+
+Created Date
+
+Updated Date
+
+Remarks
+
+Forward History
+
+Student ID
+
+Current Handler
+
+Department
+
+Batch
+
+Section
+
+Year
+```
+
+---
+
+# Complaint Status
+
+```
+Submitted
+
+Under Review
+
+Forwarded
+
+Pending
+
+Waiting for Office
+
+Waiting for Dean
+
+Resolved
+
+Rejected
+
+Closed
+```
+
+---
+
+# Complaint Timeline
+
+Student should always see
+
+```
+Complaint Submitted
+
+↓
+
+Received by Adviser
+
+↓
+
+Remark Added
+
+↓
+
+Forwarded to Coordinator
+
+↓
+
+Forwarded to Chairman
+
+↓
+
+Sent to Office
+
+↓
+
+Resolved
+```
+
+Like parcel tracking.
+
+---
+
+# Complaint Categories
+
+```
+Academic
+
+Attendance
+
+Lab
+
+Result
+
+Faculty
+
+Hostel
+
+Internet
+
+Classroom
+
+Examination
+
+Other
+```
+
+---
+
+# Batch Adviser Module
+
+Batch Adviser Dashboard
+
+* Pending Complaints
+* Forwarded Complaints
+* Resolved Complaints
+
+Actions
+
+Approve
+
+Reject
+
+Forward
+
+Add Remarks
+
+View Student Profile
+
+---
+
+# Coordinator
+
+Same as adviser.
+
+Can
+
+Forward
+
+Reject
+
+Remark
+
+Return Back
+
+---
+
+# Chairman Dashboard
+
+Can
+
+Resolve
+
+Reject
+
+Delete Complaint
+
+Forward to Office
+
+Forward to Dean
+
+Send Back
+
+Add Remarks
+
+View Analytics
+
+---
+
+# Office Dashboard
+
+Receive Complaint
+
+Print
+
+Post Notice
+
+Mark Action Completed
+
+Return to Chairman
+
+---
+
+# Dean Dashboard
+
+View Complaint
+
+Add Decision
+
+Forward to Chairman
+
+---
+
+# Notice Board
+
+Only Chairman (or authorized staff) can publish notices.
+
+Target audience:
+
+* Whole department
+* Specific year
+* Specific batch
+* Specific section
+
+Example
+
+```
+BSCS 2024
+
+Section A only
+```
+
+or
+
+```
+All Students
+```
+
+---
+
+# Student Dashboard
+
+Student can
+
+Submit Complaint
+
+Track Complaint
+
+View Notices
+
+Edit Profile
+
+Contact Adviser
+
+View Complaint History
+
+---
+
+# CR Directory
+
+Students can filter CRs.
+
+Example
+
+```
+Year
+
+↓
+
+Batch
+
+↓
+
+Section
+
+↓
+
+CR Details
+```
+
+Display
+
+Name
+
+Phone
+
+Email
+
+Section
+
+Photo
+
+---
+
+# Registration Flow
+
+```
+Open App
+
+↓
+
+Onboarding
+
+↓
+
+Create Account
+
+↓
+
+Email Verification
+
+↓
+
+Complete Profile
+
+↓
+
+Select
+
+Year
+
+Batch
+
+Section
+
+↓
+
+Choose Batch Adviser
+
+↓
+
+Request Sent
+
+↓
+
+Adviser Approves
+
+↓
+
+Student Activated
+```
+
+This prevents students from joining the wrong section.
+
+---
+
+# Batch Adviser Approval
+
+Student sends request.
+
+Adviser receives
+
+```
+Student Name
+
+Registration Number
+
+Section
+
+Batch
+```
+
+Accept
+
+Reject
+
+Remark
+
+---
+
+# Batch Graduation
+
+Every year one batch graduates.
+
+Instead of deleting data:
+
+```
+Export Firestore
+
+↓
+
+Save JSON
+
+↓
+
+Store Offline
+
+↓
+
+Delete Active Batch
+
+↓
+
+Keep Archive
+```
+
+Or mark the batch as archived (`isArchived = true`) so it stays searchable without affecting active operations.
+
+---
+
+# Notifications
+
+Use
+
+Firebase Cloud Messaging (FCM)
+
+Student submits complaint
+
+↓
+
+Adviser Notification
+
+```
+New Complaint Received
+```
+
+Student receives
+
+```
+Complaint Submitted Successfully
+```
+
+Forward to Chairman
+
+↓
+
+Chairman Notification
+
+```
+New Complaint Waiting
+```
+
+Student receives
+
+```
+Your complaint has been forwarded.
+```
+
+Resolve
+
+↓
+
+Student
+
+```
+Complaint Resolved
+```
+
+Reject
+
+↓
+
+Student
+
+```
+Complaint Rejected
+```
+
+Office
+
+↓
+
+Notification
+
+Dean
+
+↓
+
+Notification
+
+Every action generates notifications.
+
+---
+
+# Image Upload
+
+Student can upload
+
+Maximum
+
+```
+3 Images
+```
+
+Compress automatically before upload.
+
+Flutter packages
+
+```
+flutter_image_compress
+
+image_picker
+```
+
+Store in Firebase Storage.
+
+---
+
+# Firebase Structure
+
+```
+users
+
+complaints
+
+remarks
+
+notifications
+
+notice_board
+
+batches
+
+sections
+
+advisers
+
+complaint_history
+
+archives
+```
+
+---
+
+# Firestore Example
+
+```
+complaints
+
+ complaintId
+
+     title
+
+     description
+
+     category
+
+     status
+
+     currentHandler
+
+     createdBy
+
+     createdAt
+
+     imageUrls
+
+     remarks
+
+     timeline
+```
+
+---
+
+# State Management
+
+I recommend **Riverpod**.
+
+Why?
+
+✔ Scalable
+
+✔ Testable
+
+✔ Clean Architecture friendly
+
+✔ Less boilerplate than BLoC
+
+✔ Better than Provider for large apps
+
+✔ Compile-time safety
+
+Avoid `setState()` except for small, local UI interactions.
+
+---
+
+# Architecture
+
+Use **Clean Architecture + Feature-First**.
+
+```
+lib/
+
+core/
+
+features/
+
+authentication/
+
+complaints/
+
+notice_board/
+
+profile/
+
+notifications/
+
+batch/
+
+admin/
+
+shared/
+
+```
+
+Each feature
+
+```
+data/
+
+domain/
+
+presentation/
+```
+
+Inside presentation
+
+```
+pages/
+
+widgets/
+
+providers/
+
+```
+
+---
+
+# Folder Structure
+
+```
+lib
+
+core
+
+config
+
+theme
+
+routes
+
+constants
+
+utils
+
+services
+
+shared
+
+features
+
+authentication
+
+complaints
+
+notifications
+
+profile
+
+notice_board
+
+dashboard
+
+admin
+
+main.dart
+```
+
+---
+
+# Reusable Components
+
+Create reusable widgets.
+
+```
+Primary Button
+
+TextField
+
+Loading Indicator
+
+Search Bar
+
+Complaint Card
+
+Remark Card
+
+Status Badge
+
+Notification Tile
+
+Empty Widget
+
+Image Picker
+
+Confirmation Dialog
+```
+
+Mostly use `StatelessWidget`. Reserve `StatefulWidget` only where local mutable UI state is unavoidable (for example, a text controller or animation). Business state should come from Riverpod providers.
+
+---
+
+# Firebase Services
+
+```
+Firebase Auth
+
+Cloud Firestore
+
+Firebase Storage
+
+Firebase Cloud Messaging
+
+Firebase Analytics
+
+Firebase Crashlytics
+```
+
+---
+
+# Security Rules
+
+Students
+
+Can only
+
+```
+Read Own Complaints
+
+Create Complaint
+
+Edit Profile
+```
+
+Batch Adviser
+
+Can only access
+
+His Sections
+
+Chairman
+
+Can access
+
+Entire Department
+
+Office
+
+Only Office Collection
+
+Dean
+
+Department Level
+
+---
+
+# Future Features
+
+Because of Clean Architecture you can easily add
+
+* AI complaint categorization
+* Complaint priority prediction
+* QR attendance
+* Appointment booking
+* Chat between student and adviser
+* PDF generation
+* Department announcements
+* Email notifications
+* SMS notifications
+* Complaint statistics
+* Admin web dashboard
+* Multi-department support
+
+---
+
+# Suggested Tech Stack
+
+| Layer                | Technology                                             |
+| -------------------- | ------------------------------------------------------ |
+| Frontend             | Flutter                                                |
+| Language             | Dart                                                   |
+| Backend              | Firebase                                               |
+| Authentication       | Firebase Auth                                          |
+| Database             | Cloud Firestore                                        |
+| Storage              | Firebase Storage                                       |
+| Notifications        | Firebase Cloud Messaging                               |
+| State Management     | Riverpod                                               |
+| Architecture         | Clean Architecture + Feature-First                     |
+| Dependency Injection | Riverpod Providers                                     |
+| Routing              | GoRouter                                               |
+| Local Storage        | Hive or SharedPreferences (Hive preferred for caching) |
+| Image Compression    | flutter_image_compress                                 |
+
+## Suggested Packages
+
+* `flutter_riverpod`
+* `go_router`
+* `freezed`
+* `json_serializable`
+* `firebase_auth`
+* `cloud_firestore`
+* `firebase_storage`
+* `firebase_messaging`
+* `flutter_image_compress`
+* `image_picker`
+* `cached_network_image`
+* `flutter_local_notifications`
+* `intl`
+* `uuid`
+* `hive`
+* `connectivity_plus`
+
+## Development Roadmap
+
+1. Design the database (Firestore collections and security rules).
+2. Write the Software Requirements Specification (SRS).
+3. Create UML diagrams (Use Case, Activity, Sequence, Class).
+4. Design the UI in Figma.
+5. Set up the Flutter project with Clean Architecture and Riverpod.
+6. Implement authentication and role management.
+7. Build the complaint workflow and notifications.
+8. Add notice board, CR directory, and batch adviser approval.
+9. Test the complete workflow with different user roles.
+10. Prepare deployment, documentation, and presentation.
+
+This architecture is scalable enough for thousands of students and multiple user roles, and it will also make it much easier to extend the application with new features in the future without major refactoring.
