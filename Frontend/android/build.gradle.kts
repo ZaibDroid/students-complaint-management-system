@@ -1,5 +1,4 @@
 plugins {
-    id("com.google.gms.google-services") version "4.5.0" apply false
 }
 
 allprojects {
@@ -21,6 +20,18 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+subprojects {
+    val configureAndroid = {
+        project.extensions.findByType(com.android.build.gradle.BaseExtension::class.java)?.apply {
+            compileSdkVersion(36)
+        }
+    }
+    if (project.state.executed) {
+        configureAndroid()
+    } else {
+        project.afterEvaluate { configureAndroid() }
+    }
 }
 
 tasks.register<Delete>("clean") {

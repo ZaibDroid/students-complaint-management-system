@@ -7,7 +7,9 @@ class ApiConfig {
       return 'http://localhost:8000/api/v1';
     }
     if (Platform.isAndroid) {
-      return 'http://192.168.1.2:8000/api/v1';
+      // Use 127.0.0.1 when running via USB with `adb reverse tcp:8000 tcp:8000`
+      // Or change to your PC Wi-Fi IP (e.g. 'http://172.16.152.181:8000/api/v1')
+      return 'http://127.0.0.1:8000/api/v1';
     }
     return 'http://127.0.0.1:8000/api/v1';
   }

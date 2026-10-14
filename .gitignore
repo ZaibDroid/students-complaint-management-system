@@ -19,6 +19,8 @@ Backend/.env
 Backend/.env.backup
 Backend/.env.production
 Backend/vendor/
+Backend/composer.phar
+Backend/public/storage
 Backend/.phpunit.result.cache
 Backend/storage/*.key
 Backend/storage/framework/cache/data/*
@@ -43,6 +45,7 @@ Frontend/.pub-cache/
 Frontend/.pub/
 Frontend/build/
 Frontend/coverage/
+Frontend/android/build/
 Frontend/android/app/debug
 Frontend/android/app/profile
 Frontend/android/app/release

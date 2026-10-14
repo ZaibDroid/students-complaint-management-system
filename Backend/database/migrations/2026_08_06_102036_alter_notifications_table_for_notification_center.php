@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
+            $table->index('user_id');
             $table->dropIndex(['user_id', 'is_read']);
             
             $table->renameColumn('body', 'message');

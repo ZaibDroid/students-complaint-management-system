@@ -31,7 +31,7 @@ class _CreateAnnouncementPageState extends ConsumerState<CreateAnnouncementPage>
   final List<PlatformFile> _selectedFiles = [];
 
   Future<void> _pickImages() async {
-    final result = await FilePicker.pickFiles(
+    final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
       allowMultiple: true,
