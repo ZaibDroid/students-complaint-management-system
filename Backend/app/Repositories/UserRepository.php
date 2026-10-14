@@ -57,6 +57,14 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function assignSectionsToUser(User $user, array $sectionIds): void
     {
-        $user->assignedSections()->sync($sectionIds);
+        $cleanIds = [];
+        foreach ($sectionIds as $id) {
+            if (is_numeric($id)) {
+                $cleanIds[] = (int)$id;
+            } elseif (is_array($id) && isset($id['id']) && is_numeric($id['id'])) {
+                $cleanIds[] = (int)$id['id'];
+            }
+        }
+        $user->assignedSections()->sync($cleanIds);
     }
 }

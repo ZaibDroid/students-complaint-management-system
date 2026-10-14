@@ -27,22 +27,22 @@ class UserPolicy
 
     public function createStaff(User $authenticatedUser): bool
     {
-        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator']);
+        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator', 'Dean', 'Vice Chancellor']);
     }
 
     public function updateStaff(User $authenticatedUser, User $targetUser): bool
     {
-        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator']);
+        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator', 'Dean', 'Vice Chancellor']);
     }
 
     public function deleteStaff(User $authenticatedUser, User $targetUser): bool
     {
-        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator']);
+        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator', 'Dean', 'Vice Chancellor']);
     }
 
     public function assignRole(User $authenticatedUser): bool
     {
-        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator']);
+        return $authenticatedUser->hasAnyRole(['Admin', 'Chairman', 'Coordinator', 'Dean', 'Vice Chancellor']);
     }
 
     public function assignAdviser(User $authenticatedUser): bool
