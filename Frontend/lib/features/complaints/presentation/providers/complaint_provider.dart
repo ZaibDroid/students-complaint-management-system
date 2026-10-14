@@ -12,46 +12,88 @@ final apiComplaintRepositoryProvider = Provider<ApiComplaintRepository>((ref) {
 final complaintRepositoryProvider = apiComplaintRepositoryProvider;
 
 // Provides the list of complaints submitted by the currently logged-in student.
-final studentComplaintsProvider = StreamProvider<List<ComplaintModel>>((ref) {
-  final authState = ref.watch(authStateProvider);
-  final user = authState.value;
-  
-  if (user == null || user.role.toLowerCase() != 'student') {
-    return Stream.value([]);
+class StudentComplaintsNotifier extends AsyncNotifier<List<ComplaintModel>> {
+  @override
+  FutureOr<List<ComplaintModel>> build() async {
+    final authState = ref.watch(authStateProvider);
+    final user = authState.value;
+    
+    if (user == null || user.role.toLowerCase() != 'student') {
+      return [];
+    }
+    
+    final repository = ref.watch(apiComplaintRepositoryProvider);
+    return repository.getComplaints();
   }
-  
-  final repository = ref.watch(apiComplaintRepositoryProvider);
-  return repository.streamStudentComplaints(user.id);
-});
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(apiComplaintRepositoryProvider);
+      return repository.getComplaints();
+    });
+  }
+}
+
+final studentComplaintsProvider = AsyncNotifierProvider<StudentComplaintsNotifier, List<ComplaintModel>>(StudentComplaintsNotifier.new);
 
 // Provides the list of complaints assigned to the logged-in staff's department.
-final departmentComplaintsProvider = StreamProvider<List<ComplaintModel>>((ref) {
-  final authState = ref.watch(authStateProvider);
-  final user = authState.value;
-  
-  if (user == null || user.role.toLowerCase() == 'student') {
-    return Stream.value([]);
+class DepartmentComplaintsNotifier extends AsyncNotifier<List<ComplaintModel>> {
+  @override
+  FutureOr<List<ComplaintModel>> build() async {
+    final authState = ref.watch(authStateProvider);
+    final user = authState.value;
+    
+    if (user == null || user.role.toLowerCase() == 'student') {
+      return [];
+    }
+    
+    final repository = ref.watch(apiComplaintRepositoryProvider);
+    return repository.getComplaints(
+      category: user.role.toLowerCase() != 'office' ? user.department : null,
+    );
   }
-  
-  final repository = ref.watch(apiComplaintRepositoryProvider);
-  return repository.streamDepartmentComplaints(
-    adviserName: user.name,
-    isOffice: user.role.toLowerCase() == 'office'
-  );
-});
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final authState = ref.read(authStateProvider);
+      final user = authState.value;
+      final repository = ref.read(apiComplaintRepositoryProvider);
+      return repository.getComplaints(
+        category: (user != null && user.role.toLowerCase() != 'office') ? user.department : null,
+      );
+    });
+  }
+}
+
+final departmentComplaintsProvider = AsyncNotifierProvider<DepartmentComplaintsNotifier, List<ComplaintModel>>(DepartmentComplaintsNotifier.new);
 
 // Provides the list of all complaints in the system (typically for Admins)
-final allComplaintsProvider = StreamProvider<List<ComplaintModel>>((ref) {
-  final authState = ref.watch(authStateProvider);
-  final user = authState.value;
-  
-  if (user == null || user.role.toLowerCase() != 'admin') {
-    return Stream.value([]);
+class AllComplaintsNotifier extends AsyncNotifier<List<ComplaintModel>> {
+  @override
+  FutureOr<List<ComplaintModel>> build() async {
+    final authState = ref.watch(authStateProvider);
+    final user = authState.value;
+    
+    if (user == null || user.role.toLowerCase() != 'admin') {
+      return [];
+    }
+    
+    final repository = ref.watch(apiComplaintRepositoryProvider);
+    return repository.getComplaints();
   }
-  
-  final repository = ref.watch(apiComplaintRepositoryProvider);
-  return repository.streamAllComplaints();
-});
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(apiComplaintRepositoryProvider);
+      return repository.getComplaints();
+    });
+  }
+}
+
+final allComplaintsProvider = AsyncNotifierProvider<AllComplaintsNotifier, List<ComplaintModel>>(AllComplaintsNotifier.new);
 
 // AsyncNotifier for submitting a complaint to handle loading state from UI
 class SubmitComplaintNotifier extends AsyncNotifier<void> {
@@ -67,6 +109,10 @@ class SubmitComplaintNotifier extends AsyncNotifier<void> {
     try {
       await _repository.submitComplaint(complaint, attachment: attachment);
       state = const AsyncValue.data(null);
+      // Automatically refresh complaints lists so UI is instantly updated
+      await ref.read(studentComplaintsProvider.notifier).refresh();
+      ref.invalidate(allComplaintsProvider);
+      ref.invalidate(departmentComplaintsProvider);
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -79,6 +125,9 @@ class SubmitComplaintNotifier extends AsyncNotifier<void> {
     try {
       await _repository.updateComplaintStatus(complaintId, status, adminRemarks: remarks, assignedTo: assignedTo, newInvolvedStaff: newInvolvedStaff);
       state = const AsyncValue.data(null);
+      await ref.read(studentComplaintsProvider.notifier).refresh();
+      await ref.read(departmentComplaintsProvider.notifier).refresh();
+      await ref.read(allComplaintsProvider.notifier).refresh();
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -87,6 +136,4 @@ class SubmitComplaintNotifier extends AsyncNotifier<void> {
   }
 }
 
-final submitComplaintProvider = AsyncNotifierProvider<SubmitComplaintNotifier, void>(() {
-  return SubmitComplaintNotifier();
-});
+final submitComplaintProvider = AsyncNotifierProvider<SubmitComplaintNotifier, void>(SubmitComplaintNotifier.new);

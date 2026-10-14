@@ -79,8 +79,20 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
   Widget _buildDropdown(String label, List<String> items, String? value, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
+      isExpanded: true,
       initialValue: value,
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items: items
+          .map(
+            (e) => DropdownMenuItem(
+              value: e,
+              child: Text(
+                e,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          )
+          .toList(),
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
@@ -172,16 +184,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(child: _buildDropdown('Section', _sections, _selectedSection, (val) => setState(() => _selectedSection = val))),
-                    const SizedBox(width: 16),
-                    Expanded(child: SizedBox()), // Placeholder to keep alignment
-                  ],
-                ),
+                _buildDropdown('Section', _sections, _selectedSection, (val) => setState(() => _selectedSection = val)),
                 const SizedBox(height: 32),
-                
-                const SizedBox(height: 48),
                 PrimaryButton(
                   text: "Register",
                   isLoading: isLoading,

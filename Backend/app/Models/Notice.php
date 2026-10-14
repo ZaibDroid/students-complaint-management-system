@@ -63,12 +63,29 @@ class Notice extends Model
 
     public function getTargetValue(string $type): ?string
     {
-        return $this->targets->firstWhere('target_type', $type)?->target_value;
+        $alias = match ($type) {
+            'batch' => 'batch_id',
+            'section' => 'section_id',
+            default => null,
+        };
+
+        return $this->targets->first(function ($t) use ($type, $alias) {
+            return $t->target_type === $type || ($alias && $t->target_type === $alias);
+        })?->target_value;
     }
 
     public function getTargetValues(string $type): ?array
     {
-        $values = $this->targets->where('target_type', $type)->pluck('target_value')->filter()->values()->toArray();
+        $alias = match ($type) {
+            'batch' => 'batch_id',
+            'section' => 'section_id',
+            default => null,
+        };
+
+        $values = $this->targets->filter(function ($t) use ($type, $alias) {
+            return $t->target_type === $type || ($alias && $t->target_type === $alias);
+        })->pluck('target_value')->filter()->values()->toArray();
+
         return !empty($values) ? $values : null;
     }
 

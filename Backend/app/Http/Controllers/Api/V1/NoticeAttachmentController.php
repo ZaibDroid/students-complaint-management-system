@@ -28,6 +28,8 @@ class NoticeAttachmentController extends BaseApiController
             if (!is_array($attachments)) {
                 $attachments = [$attachments];
             }
+        } elseif ($request->hasFile('attachment')) {
+            $attachments = [$request->file('attachment')];
         }
 
         $updatedNotice = $this->noticeService->updateNotice(

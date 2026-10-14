@@ -189,75 +189,81 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFFBF8FC),
       appBar: const DashboardAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref.read(studentComplaintsProvider.notifier).refresh();
+          ref.invalidate(noticesStreamProvider);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
 
-            // Active Complaints
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Active Complaints',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: theme.primaryColor,
+              // Active Complaints
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Active Complaints',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: theme.primaryColor,
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.push('/complaint_archive');
-                  },
-                  child: Text('View all', style: TextStyle(color: theme.primaryColor)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ref.watch(studentComplaintsProvider).when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, st) => Center(child: Text('Error loading complaints: $e')),
-              data: (complaints) {
-                final activeComplaints = complaints.where((c) {
-                  final status = c.status.toLowerCase();
-                  return status != 'resolved' && status != 'rejected';
-                }).toList();
+                  TextButton(
+                    onPressed: () {
+                      context.push('/complaint_archive');
+                    },
+                    child: Text('View all', style: TextStyle(color: theme.primaryColor)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ref.watch(studentComplaintsProvider).when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, st) => Center(child: Text('Error loading complaints: $e')),
+                data: (complaints) {
+                  final activeComplaints = complaints.where((c) {
+                    final status = c.status.toLowerCase();
+                    return status != 'resolved' && status != 'rejected';
+                  }).toList();
 
-                if (activeComplaints.isEmpty) {
-                  return const Center(child: Text('No active complaints.'));
-                }
-                return Column(
-                  children: activeComplaints.take(3).map((c) {
-                    ComplaintStatus status;
-                    switch (c.status.toLowerCase()) {
-                      case 'resolved': status = ComplaintStatus.resolved; break;
-                      case 'rejected': status = ComplaintStatus.rejected; break;
-                      case 'forwarded': status = ComplaintStatus.forwarded; break;
-                      default: status = ComplaintStatus.pending;
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: InkWell(
-                        onTap: () => context.push('/complaint_details', extra: c),
-                        borderRadius: BorderRadius.circular(12),
-                        child: ComplaintStatusCard(
-                          id: c.id.length > 6 ? c.id.substring(0, 6).toUpperCase() : c.id,
-                          title: c.title,
-                          description: c.description,
-                          category: c.category,
-                          assignedTo: c.assignedTo ?? 'Unassigned',
-                          timeAgo: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
-                          status: status,
+                  if (activeComplaints.isEmpty) {
+                    return const Center(child: Text('No active complaints.'));
+                  }
+                  return Column(
+                    children: activeComplaints.take(3).map((c) {
+                      ComplaintStatus status;
+                      switch (c.status.toLowerCase()) {
+                        case 'resolved': status = ComplaintStatus.resolved; break;
+                        case 'rejected': status = ComplaintStatus.rejected; break;
+                        case 'forwarded': status = ComplaintStatus.forwarded; break;
+                        default: status = ComplaintStatus.pending;
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                          onTap: () => context.push('/complaint_details', extra: c),
+                          borderRadius: BorderRadius.circular(12),
+                          child: ComplaintStatusCard(
+                            id: c.ticketNumber ?? (c.id.length > 6 ? c.id.substring(0, 6).toUpperCase() : c.id),
+                            title: c.title,
+                            description: c.description,
+                            category: c.category,
+                            assignedTo: c.assignedTo ?? 'Unassigned',
+                            timeAgo: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
+                            status: status,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            ),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
             const SizedBox(height: 32),
 
             // Recent Notices
@@ -375,13 +381,14 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/submit_complaint');
-        },
-        backgroundColor: theme.primaryColor,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-    );
-  }
+    ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        context.push('/submit_complaint');
+      },
+      backgroundColor: theme.primaryColor,
+      child: const Icon(Icons.add, color: Colors.white),
+    ),
+  );
+}
 }

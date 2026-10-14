@@ -158,6 +158,27 @@ Route::prefix('v1')->group(function () {
             Route::get('/{application}/timeline', [ApplicationTimelineController::class, 'index']);
         });
 
+        // Complaints (Alias for Applications)
+        Route::prefix('complaints')->group(function () {
+            Route::get('/', [ApplicationController::class, 'index']);
+            Route::post('/', [ApplicationController::class, 'store']);
+            Route::get('/{application}', [ApplicationController::class, 'show']);
+            Route::put('/{application}', [ApplicationController::class, 'update']);
+            Route::put('/{application}/status', [ApplicationController::class, 'updateStatus']);
+            Route::delete('/{application}', [ApplicationController::class, 'destroy']);
+
+            // Attachments
+            Route::post('/{application}/attachments', [ApplicationAttachmentController::class, 'store']);
+            Route::delete('/attachments/{application}', [ApplicationAttachmentController::class, 'destroy']);
+
+            // Remarks
+            Route::get('/{application}/remarks', [ApplicationRemarkController::class, 'index']);
+            Route::post('/{application}/remarks', [ApplicationRemarkController::class, 'store']);
+
+            // Timeline History
+            Route::get('/{application}/timeline', [ApplicationTimelineController::class, 'index']);
+        });
+
         // Departments Admin CRUD
         Route::prefix('departments')->group(function () {
             Route::post('/', [DepartmentController::class, 'store']);

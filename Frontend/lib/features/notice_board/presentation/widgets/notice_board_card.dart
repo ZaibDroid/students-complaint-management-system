@@ -25,6 +25,94 @@ class NoticeBoardCard extends StatelessWidget {
     required this.onTap,
   });
 
+  Widget _buildAttachmentItem(BuildContext context, String attachment) {
+    final trimmed = attachment.trim();
+    final lower = trimmed.toLowerCase();
+    final isNetworkUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://');
+    final isImage = lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.gif') ||
+        lower.contains('/storage/notices/');
+
+    if (isNetworkUrl) {
+      if (isImage) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            trimmed,
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => _buildFileBadge(trimmed),
+            loadingBuilder: (context, child, progress) {
+              if (progress == null) return child;
+              return Container(
+                width: 120,
+                height: 120,
+                color: Colors.grey.shade100,
+                child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            },
+          ),
+        );
+      } else {
+        return _buildFileBadge(trimmed);
+      }
+    }
+
+    // Try Base64 fallback if not a network URL
+    try {
+      final b64 = trimmed.contains(',') ? trimmed.split(',').last : trimmed;
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.memory(
+          base64Decode(b64),
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _buildFileBadge(trimmed),
+        ),
+      );
+    } catch (_) {
+      return _buildFileBadge(trimmed);
+    }
+  }
+
+  Widget _buildFileBadge(String attachment) {
+    final fileName = attachment.split('/').last.split('?').first;
+    final isPdf = fileName.toLowerCase().endsWith('.pdf');
+    return Container(
+      width: 120,
+      height: 120,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isPdf ? Icons.picture_as_pdf : Icons.insert_drive_file,
+            color: isPdf ? Colors.red : Colors.blueGrey,
+            size: 32,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            fileName.isNotEmpty ? fileName : 'Attachment',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -121,11 +209,7 @@ class NoticeBoardCard extends StatelessWidget {
                   itemCount: attachments!.length,
                   separatorBuilder: (context, index) => const SizedBox(width: 8),
                   itemBuilder: (context, attachIdx) {
-                    final b64 = attachments![attachIdx].split(',').last;
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.memory(base64Decode(b64), width: 120, height: 120, fit: BoxFit.cover),
-                    );
+                    return _buildAttachmentItem(context, attachments![attachIdx]);
                   },
                 ),
               ),

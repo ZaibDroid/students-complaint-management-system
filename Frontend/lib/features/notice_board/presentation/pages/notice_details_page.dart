@@ -7,6 +7,154 @@ class NoticeDetailsPage extends StatelessWidget {
 
   const NoticeDetailsPage({super.key, this.notice});
 
+  Widget _buildAttachmentItem(BuildContext context, String attach) {
+    final trimmed = attach.trim();
+    final lower = trimmed.toLowerCase();
+    final isNetworkUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://');
+    final isImage = lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.gif') ||
+        lower.contains('/storage/notices/');
+    final fileName = trimmed.split('/').last.split('?').first;
+    final isPdf = fileName.toLowerCase().endsWith('.pdf');
+
+    if (isNetworkUrl) {
+      if (isImage) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  trimmed,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => _buildFileCard(context, trimmed, fileName, isPdf),
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      height: 180,
+                      color: Colors.grey.shade50,
+                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    );
+                  },
+                ),
+              ),
+              if (fileName.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  fileName,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ],
+            ],
+          ),
+        );
+      } else {
+        return _buildFileCard(context, trimmed, fileName, isPdf);
+      }
+    }
+
+    // Try Base64
+    try {
+      final b64 = trimmed.contains(',') ? trimmed.split(',').last : trimmed;
+      final bytes = base64Decode(b64);
+      return Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            errorBuilder: (context, error, stackTrace) => _buildFileCard(context, trimmed, fileName, isPdf),
+          ),
+        ),
+      );
+    } catch (_) {
+      return _buildFileCard(context, trimmed, fileName, isPdf);
+    }
+  }
+
+  Widget _buildFileCard(BuildContext context, String attach, String fileName, bool isPdf) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: (isPdf ? Colors.red : Colors.blue).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              isPdf ? Icons.picture_as_pdf : Icons.insert_drive_file,
+              color: isPdf ? Colors.red : Colors.blue,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  fileName.isNotEmpty ? fileName : 'Attachment File',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  attach.startsWith('http') ? 'Online Attachment' : 'Attachment',
+                  style: const TextStyle(color: Colors.black54, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.info_outline, color: Colors.black54),
+            tooltip: 'Details',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(fileName.isNotEmpty ? fileName : 'Attachment Details'),
+                  content: SelectableText(attach),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (notice == null) {
@@ -111,16 +259,7 @@ class NoticeDetailsPage extends StatelessWidget {
             Text('Attachments', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: theme.primaryColor)),
             const SizedBox(height: 16),
             ...notice!.attachments!.map((attach) {
-              final b64 = attach.split(',').last;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.memory(base64Decode(b64), fit: BoxFit.cover),
-                ),
-              );
+              return _buildAttachmentItem(context, attach);
             }),
           ],
           

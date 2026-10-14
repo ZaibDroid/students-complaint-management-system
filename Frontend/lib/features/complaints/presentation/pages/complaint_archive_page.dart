@@ -110,10 +110,11 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
                     return false;
                   }
 
-                  // Filter by search (ID, Title, Student Name)
+                  // Filter by search (ID, Ticket Number, Title, Student Name)
                   final query = _searchController.text.toLowerCase();
                   if (query.isNotEmpty) {
                     if (!c.id.toLowerCase().contains(query) && 
+                        !(c.ticketNumber?.toLowerCase().contains(query) ?? false) &&
                         !c.title.toLowerCase().contains(query) &&
                         !c.studentName.toLowerCase().contains(query)) {
                       return false;
@@ -124,41 +125,59 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
                 }).toList();
 
                 if (archived.isEmpty) {
-                  return const Center(child: Text('No archived records found.'));
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      await ref.read(studentComplaintsProvider.notifier).refresh();
+                      await ref.read(allComplaintsProvider.notifier).refresh();
+                      await ref.read(departmentComplaintsProvider.notifier).refresh();
+                    },
+                    child: ListView(
+                      children: const [
+                        SizedBox(height: 100),
+                        Center(child: Text('No archived records found.')),
+                      ],
+                    ),
+                  );
                 }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: archived.length,
-                  itemBuilder: (context, index) {
-                    final c = archived[index];
-                    
-                    if (isStudent) {
-                      ComplaintStatus status;
-                      switch (c.status.toLowerCase()) {
-                        case 'resolved': status = ComplaintStatus.resolved; break;
-                        case 'rejected': status = ComplaintStatus.rejected; break;
-                        case 'forwarded': status = ComplaintStatus.forwarded; break;
-                        default: status = ComplaintStatus.pending;
-                      }
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await ref.read(studentComplaintsProvider.notifier).refresh();
+                    await ref.read(allComplaintsProvider.notifier).refresh();
+                    await ref.read(departmentComplaintsProvider.notifier).refresh();
+                  },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: archived.length,
+                    itemBuilder: (context, index) {
+                      final c = archived[index];
                       
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: InkWell(
-                          onTap: () => context.push('/complaint_details', extra: c),
-                          borderRadius: BorderRadius.circular(12),
-                          child: ComplaintStatusCard(
-                            id: c.id.length > 6 ? c.id.substring(0, 6).toUpperCase() : c.id,
-                            title: c.title,
-                            description: c.description,
-                            category: c.category,
-                            assignedTo: c.assignedTo ?? 'Unassigned',
-                            timeAgo: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
-                            status: status,
+                      if (isStudent) {
+                        ComplaintStatus status;
+                        switch (c.status.toLowerCase()) {
+                          case 'resolved': status = ComplaintStatus.resolved; break;
+                          case 'rejected': status = ComplaintStatus.rejected; break;
+                          case 'forwarded': status = ComplaintStatus.forwarded; break;
+                          default: status = ComplaintStatus.pending;
+                        }
+                        
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: InkWell(
+                            onTap: () => context.push('/complaint_details', extra: c),
+                            borderRadius: BorderRadius.circular(12),
+                            child: ComplaintStatusCard(
+                              id: c.ticketNumber ?? (c.id.length > 6 ? c.id.substring(0, 6).toUpperCase() : c.id),
+                              title: c.title,
+                              description: c.description,
+                              category: c.category,
+                              assignedTo: c.assignedTo ?? 'Unassigned',
+                              timeAgo: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
+                              status: status,
+                            ),
                           ),
-                        ),
-                      );
-                    }
+                        );
+                      }
                     
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
@@ -178,10 +197,11 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
                       ),
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
+        ),
         ],
       ),
     );

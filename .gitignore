@@ -28,6 +28,8 @@ Backend/storage/framework/sessions/*
 Backend/storage/framework/testing/*
 Backend/storage/framework/views/*
 Backend/storage/logs/*
+Backend/storage/app/public/*
+!Backend/storage/app/public/.gitignore
 Backend/bootstrap/cache/*
 !Backend/storage/framework/cache/data/.gitignore
 !Backend/storage/framework/sessions/.gitignore

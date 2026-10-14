@@ -25,7 +25,7 @@ class SendApplicationNotification implements ShouldQueue
 
     public function handle($event): void
     {
-        $application = $event->Application;
+        $application = $event->application ?? ($event->Application ?? null);
         $actor = $event->actor;
         $targetUser = $event->targetUser;
 

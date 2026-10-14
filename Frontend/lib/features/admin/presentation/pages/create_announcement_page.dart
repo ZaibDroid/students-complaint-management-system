@@ -68,7 +68,17 @@ class _CreateAnnouncementPageState extends ConsumerState<CreateAnnouncementPage>
 
     List<String>? targetRoles;
     if (!_broadcastToAll && _selectedRoles.isNotEmpty) {
-      targetRoles = _selectedRoles.toList();
+      final roleSet = <String>{};
+      for (final r in _selectedRoles) {
+        roleSet.add(r);
+        if (r == 'Teacher') roleSet.add('Batch Adviser');
+        if (r == 'Batch Adviser') roleSet.add('Teacher');
+        if (r == 'Office' || r == 'Office Staff') {
+          roleSet.add('Office Staff');
+          roleSet.add('Office');
+        }
+      }
+      targetRoles = roleSet.toList();
     }
 
     final notice = NoticeModel(
@@ -292,7 +302,7 @@ class _CreateAnnouncementPageState extends ConsumerState<CreateAnnouncementPage>
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: ['Student', 'Batch Adviser', 'Coordinator', 'Office', 'Dean'].map((role) {
+                      children: ['Student', 'Teacher', 'Batch Adviser', 'Coordinator', 'Office Staff', 'Dean'].map((role) {
                         final isSelected = _selectedRoles.contains(role);
                         return FilterChip(
                           label: Text(role),

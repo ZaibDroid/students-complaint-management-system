@@ -25,6 +25,7 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
   String? _selectedCategory;
 
   File? _selectedFile;
+  bool _isSubmitting = false;
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -62,6 +63,8 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
   }
 
   Future<void> _submit() async {
+    if (_isSubmitting) return;
+
     final user = ref.read(authStateProvider).value;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User not found. Please log in again.')));
@@ -79,14 +82,30 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
       return;
     }
 
-    if (_formKey.currentState!.validate() && _selectedCategory != null) {
+    if (!_formKey.currentState!.validate() || _selectedCategory == null) {
+      if (_selectedCategory == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select a category'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
       final complaint = ComplaintModel(
         id: '',
         studentId: user.id,
         studentName: user.name,
         studentBatch: user.batch ?? 'N/A',
-        title: _subjectController.text,
-        description: _descriptionController.text,
+        title: _subjectController.text.trim(),
+        description: _descriptionController.text.trim(),
         category: _selectedCategory!,
         status: 'pending',
         priority: 'medium',
@@ -116,6 +135,12 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
             duration: const Duration(seconds: 5),
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
       }
     }
   }
@@ -326,13 +351,13 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                         Expanded(
                           child: PrimaryButton(
                             text: 'Submit Complaint',
-                            isLoading: ref.watch(submitComplaintProvider).isLoading,
-                            onPressed: _submit,
+                            isLoading: _isSubmitting || ref.watch(submitComplaintProvider).isLoading,
+                            onPressed: _isSubmitting ? null : _submit,
                           ),
                         ),
                         const SizedBox(width: 16),
                         OutlinedButton(
-                          onPressed: () => context.pop(),
+                          onPressed: _isSubmitting ? null : () => context.pop(),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
                             shape: RoundedRectangleBorder(

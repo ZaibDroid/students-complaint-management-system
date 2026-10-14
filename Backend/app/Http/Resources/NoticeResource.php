@@ -46,6 +46,11 @@ class NoticeResource extends JsonResource
                     ];
                 });
             }),
+            'attachment_urls' => $this->whenLoaded('attachments', function () {
+                return $this->attachments->map(function ($attachment) {
+                    return asset('storage/' . $attachment->file_path);
+                });
+            }),
             'targets' => NoticeTargetResource::collection($this->whenLoaded('targets')),
             'created_at' => $this->created_at?->toIso8601String(),
             'createdAt' => $this->created_at?->toIso8601String(),

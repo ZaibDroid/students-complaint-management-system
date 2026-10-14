@@ -59,8 +59,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             context.go('/dashboard/student');
           }
         } else if (authState.hasError) {
+          final errorMsg = authState.error.toString().replaceFirst(RegExp(r'^(Exception:\s*|ApiException:\s*)'), '');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login failed: ${authState.error}')),
+            SnackBar(
+              content: Text(errorMsg),
+              backgroundColor: Colors.red.shade700,
+            ),
           );
         }
       }

@@ -65,6 +65,16 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
         }
 
         if (!$adviserId) {
+            $defaultAdviser = User::whereHas('roles', function($q) {
+                $q->where('name', 'Batch Adviser');
+            })->first();
+            if ($defaultAdviser) {
+                $adviserId = $defaultAdviser->id;
+                $student->update(['adviser_id' => $adviserId]);
+            }
+        }
+
+        if (!$adviserId) {
             throw new \App\Exceptions\ApiException('No Batch Adviser is assigned to your batch and section yet. Please contact your Department Coordinator.', 422);
         }
 

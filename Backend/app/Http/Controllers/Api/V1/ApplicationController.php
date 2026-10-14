@@ -15,9 +15,11 @@ use Illuminate\Http\Request;
 class ApplicationController extends BaseApiController
 {
     protected ApplicationServiceInterface $applicationService;
+    protected ApplicationServiceInterface $ApplicationService;
 
     public function __construct(ApplicationServiceInterface $applicationService)
     {
+        $this->applicationService = $applicationService;
         $this->ApplicationService = $applicationService;
     }
 
@@ -49,8 +51,8 @@ class ApplicationController extends BaseApiController
     {
         $this->authorize('create', Application::class);
 
-        $data = $request->only(['title', 'description', 'category', 'priority']);
-        $files = $request->file('attachments', []);
+        $data = $request->only(['title', 'description', 'category_id', 'priority']);
+        $files = $request->allFiles();
 
         $application = $this->ApplicationService->createApplication($request->user(), $data, $files);
 

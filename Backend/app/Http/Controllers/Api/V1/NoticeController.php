@@ -49,7 +49,17 @@ class NoticeController extends BaseApiController
         $this->authorize('create', Notice::class);
 
         $data = $request->only(['title', 'description', 'tag', 'status', 'scheduled_at']);
+        if (empty($data['status'])) {
+            $data['status'] = \App\Enums\NoticeStatus::Published->value;
+        }
+
         $targets = $request->get('targets', []);
+        if (is_string($targets)) {
+            $decoded = json_decode($targets, true);
+            if (is_array($decoded)) {
+                $targets = $decoded;
+            }
+        }
         
         $attachments = [];
         if ($request->hasFile('attachments')) {
@@ -57,11 +67,13 @@ class NoticeController extends BaseApiController
             if (!is_array($attachments)) {
                 $attachments = [$attachments];
             }
+        } elseif ($request->hasFile('attachment')) {
+            $attachments = [$request->file('attachment')];
         }
 
         $notice = $this->noticeService->createNotice($request->user(), $data, $targets, $attachments);
 
-        return $this->createdResponse(new NoticeResource($notice), 'Notice created successfully');
+        return $this->createdResponse(new NoticeResource($notice->loadMissing(['sender', 'targets', 'attachments'])), 'Notice created successfully');
     }
 
     public function show(Notice $notice): JsonResponse
@@ -80,6 +92,12 @@ class NoticeController extends BaseApiController
 
         $data = $request->only(['title', 'description', 'tag', 'status', 'scheduled_at']);
         $targets = $request->get('targets');
+        if (is_string($targets)) {
+            $decoded = json_decode($targets, true);
+            if (is_array($decoded)) {
+                $targets = $decoded;
+            }
+        }
         
         $attachments = [];
         if ($request->hasFile('attachments')) {
@@ -87,11 +105,13 @@ class NoticeController extends BaseApiController
             if (!is_array($attachments)) {
                 $attachments = [$attachments];
             }
+        } elseif ($request->hasFile('attachment')) {
+            $attachments = [$request->file('attachment')];
         }
 
         $updatedNotice = $this->noticeService->updateNotice($notice, $data, $targets, $attachments);
 
-        return $this->successResponse(new NoticeResource($updatedNotice), 'Notice updated successfully');
+        return $this->successResponse(new NoticeResource($updatedNotice->loadMissing(['sender', 'targets', 'attachments'])), 'Notice updated successfully');
     }
 
     public function destroy(Notice $notice): JsonResponse

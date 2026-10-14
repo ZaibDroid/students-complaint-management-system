@@ -93,20 +93,33 @@ class _StudentNoticeBoardPageState extends ConsumerState<StudentNoticeBoardPage>
                 if (user == null) return const Center(child: Text('Not authenticated'));
 
                 final filteredNotices = notices.where((n) {
-                  // 1. Check Role target
+                  // 1. Check Role target: If specific roles are targeted, user must have 'Student' role
                   if (n.targetRoles != null && n.targetRoles!.isNotEmpty) {
                     if (!n.targetRoles!.contains('Student')) return false;
                   }
 
-                  // 2. Check Student specific constraints
-                  if (n.targetRoles != null && n.targetRoles!.contains('Student')) {
+                  // 2. Check Student specific constraints (batch, section, CR)
+                  if (n.targetRoles == null || n.targetRoles!.isEmpty || n.targetRoles!.contains('Student')) {
                     if (n.targetCRsOnly == true && user.isCR == false) return false;
                     
                     if (n.targetBatches != null && n.targetBatches!.isNotEmpty) {
-                      if (!n.targetBatches!.contains(user.batch)) return false;
+                      final matches = n.targetBatches!.any((tb) {
+                        if (user.batch == null || user.batch!.isEmpty) return false;
+                        final u = user.batch!.toLowerCase().trim();
+                        final t = tb.toLowerCase().trim();
+                        return u == t || u.contains(t) || t.contains(u);
+                      });
+                      if (!matches) return false;
                     }
+
                     if (n.targetSections != null && n.targetSections!.isNotEmpty) {
-                      if (!n.targetSections!.contains(user.section)) return false;
+                      final matches = n.targetSections!.any((ts) {
+                        if (user.section == null || user.section!.isEmpty) return false;
+                        final u = user.section!.toLowerCase().trim();
+                        final t = ts.toLowerCase().trim();
+                        return u == t || u.contains(t) || t.contains(u);
+                      });
+                      if (!matches) return false;
                     }
                   }
 

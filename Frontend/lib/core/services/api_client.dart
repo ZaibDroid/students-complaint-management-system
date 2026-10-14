@@ -87,44 +87,79 @@ class ApiClient {
     throw ApiException(errorMessage, statusCode: response.statusCode, errors: errors);
   }
 
-  Future<dynamic> get(String endpoint, {Map<String, String>? queryParams}) async {
-    Uri uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
-    if (queryParams != null && queryParams.isNotEmpty) {
-      uri = uri.replace(queryParameters: queryParams);
+  Never _handleNetworkError(dynamic error) {
+    if (error is SocketException ||
+        error.toString().contains('SocketException') ||
+        error.toString().contains('Connection refused') ||
+        error.toString().contains('Network is unreachable')) {
+      throw ApiException(
+        'Unable to connect to the server. Please verify your connection or ensure the backend is running.',
+      );
     }
+    if (error.toString().contains('TimeoutException') ||
+        error.toString().contains('timed out')) {
+      throw ApiException('Connection timed out. Please check your network connection.');
+    }
+    if (error is ApiException) {
+      throw error;
+    }
+    throw ApiException('Network error occurred: ${error.toString()}');
+  }
 
-    final headers = await _getHeaders();
-    final response = await http.get(uri, headers: headers);
-    return _processResponse(response);
+  Future<dynamic> get(String endpoint, {Map<String, String>? queryParams}) async {
+    try {
+      Uri uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
+
+      final headers = await _getHeaders();
+      final response = await http.get(uri, headers: headers);
+      return _processResponse(response);
+    } catch (e) {
+      _handleNetworkError(e);
+    }
   }
 
   Future<dynamic> post(String endpoint, {dynamic body}) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
-    final headers = await _getHeaders();
-    final response = await http.post(
-      uri,
-      headers: headers,
-      body: body != null ? jsonEncode(body) : null,
-    );
-    return _processResponse(response);
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
+      final headers = await _getHeaders();
+      final response = await http.post(
+        uri,
+        headers: headers,
+        body: body != null ? jsonEncode(body) : null,
+      );
+      return _processResponse(response);
+    } catch (e) {
+      _handleNetworkError(e);
+    }
   }
 
   Future<dynamic> put(String endpoint, {dynamic body}) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
-    final headers = await _getHeaders();
-    final response = await http.put(
-      uri,
-      headers: headers,
-      body: body != null ? jsonEncode(body) : null,
-    );
-    return _processResponse(response);
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
+      final headers = await _getHeaders();
+      final response = await http.put(
+        uri,
+        headers: headers,
+        body: body != null ? jsonEncode(body) : null,
+      );
+      return _processResponse(response);
+    } catch (e) {
+      _handleNetworkError(e);
+    }
   }
 
   Future<dynamic> delete(String endpoint) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
-    final headers = await _getHeaders();
-    final response = await http.delete(uri, headers: headers);
-    return _processResponse(response);
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
+      final headers = await _getHeaders();
+      final response = await http.delete(uri, headers: headers);
+      return _processResponse(response);
+    } catch (e) {
+      _handleNetworkError(e);
+    }
   }
 
   Future<dynamic> postMultipart(
@@ -133,32 +168,36 @@ class ApiClient {
     List<File>? files,
     String fileFieldName = 'attachments',
   }) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
-    final request = http.MultipartRequest('POST', uri);
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
+      final request = http.MultipartRequest('POST', uri);
 
-    final headers = await _getHeaders(isJson: false);
-    request.headers.addAll(headers);
+      final headers = await _getHeaders(isJson: false);
+      request.headers.addAll(headers);
 
-    if (fields != null) {
-      request.fields.addAll(fields);
-    }
-
-    if (files != null && files.isNotEmpty) {
-      for (final file in files) {
-        final stream = http.ByteStream(file.openRead());
-        final length = await file.length();
-        final multipartFile = http.MultipartFile(
-          fileFieldName,
-          stream,
-          length,
-          filename: file.path.split('/').last,
-        );
-        request.files.add(multipartFile);
+      if (fields != null) {
+        request.fields.addAll(fields);
       }
-    }
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-    return _processResponse(response);
+      if (files != null && files.isNotEmpty) {
+        for (final file in files) {
+          final stream = http.ByteStream(file.openRead());
+          final length = await file.length();
+          final multipartFile = http.MultipartFile(
+            fileFieldName,
+            stream,
+            length,
+            filename: file.path.split('/').last,
+          );
+          request.files.add(multipartFile);
+        }
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      return _processResponse(response);
+    } catch (e) {
+      _handleNetworkError(e);
+    }
   }
 }

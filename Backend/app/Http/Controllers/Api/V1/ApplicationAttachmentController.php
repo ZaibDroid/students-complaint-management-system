@@ -13,9 +13,11 @@ use Illuminate\Http\JsonResponse;
 class ApplicationAttachmentController extends BaseApiController
 {
     protected ApplicationServiceInterface $applicationService;
+    protected ApplicationServiceInterface $ApplicationService;
 
     public function __construct(ApplicationServiceInterface $applicationService)
     {
+        $this->applicationService = $applicationService;
         $this->ApplicationService = $applicationService;
     }
 

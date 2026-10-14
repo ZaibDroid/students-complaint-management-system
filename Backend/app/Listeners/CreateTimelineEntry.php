@@ -23,7 +23,7 @@ class CreateTimelineEntry implements ShouldQueue
 
     public function handle($event): void
     {
-        $application = $event->Application;
+        $application = $event->application ?? ($event->Application ?? null);
         $actor = $event->actor;
         $targetUser = $event->targetUser;
         $notes = $event->notes;
@@ -43,8 +43,7 @@ class CreateTimelineEntry implements ShouldQueue
         }
 
         // Idempotency check: prevent duplicate timeline entries
-        $exists = $this->timelineRepository->model()
-            ->where('application_id', $application->id)
+        $exists = \App\Models\ApplicationTimeline::where('application_id', $application->id)
             ->where('action', $action)
             ->where('from_user_id', $actor->id)
             ->where('created_at', '>=', now()->subSeconds(10))

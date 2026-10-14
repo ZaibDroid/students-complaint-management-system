@@ -33,9 +33,9 @@ class ClearDashboardCache implements ShouldQueue
                 $event instanceof ApplicationRejected ||
                 $event instanceof ApplicationReturned
             ) {
-                $application = $event->Application;
+                $application = $event->application ?? ($event->Application ?? null);
                 
-                if ($application->student_id) {
+                if ($application && $application->student_id) {
                     $this->cacheService->forgetStudent($application->student_id);
                 }
                 
