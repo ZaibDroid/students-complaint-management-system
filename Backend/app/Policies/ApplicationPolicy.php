@@ -23,11 +23,23 @@ class ApplicationPolicy
 
     public function view(User $user, Application $application): bool
     {
-        if ($user->hasAnyRole(['Chairman', 'Dean', 'Vice Chancellor'])) {
+        if ($user->hasAnyRole(['Chairman', 'Dean', 'Vice Chancellor', 'Admin', 'Coordinator'])) {
             return true;
         }
 
-        return $application->student_id === $user->id || $application->assigned_to_id === $user->id;
+        if ($application->student_id === $user->id || $application->assigned_to_id === $user->id) {
+            return true;
+        }
+
+        if ($user->hasRole('Batch Adviser')) {
+            if ($application->student && ($application->student->adviser_id === $user->id || ($application->student->section_id && $user->assignedSections()->where('sections.id', $application->student->section_id)->exists()))) {
+                return true;
+            }
+        }
+
+        return $application->timeline()->where(function ($q) use ($user) {
+            $q->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
+        })->exists();
     }
 
     public function create(User $user): bool
@@ -41,16 +53,30 @@ class ApplicationPolicy
             return true;
         }
 
-        return $user->hasAnyRole(['Batch Adviser', 'Coordinator', 'Chairman', 'Office Staff']);
+        return !$user->hasRole('Student');
     }
 
     public function updateStatus(User $user, Application $application): bool
     {
-        if ($user->hasAnyRole(['Chairman', 'Dean'])) {
+        if ($user->hasAnyRole(['Chairman', 'Dean', 'Vice Chancellor', 'Coordinator'])) {
             return true;
         }
 
-        return $application->assigned_to_id === $user->id || ($application->student_id === $user->id && $application->status === Application::STATUS_RESOLVED);
+        if ($application->assigned_to_id === $user->id) {
+            return true;
+        }
+
+        if ($user->hasRole('Batch Adviser')) {
+            if ($application->student && ($application->student->adviser_id === $user->id || ($application->student->section_id && $user->assignedSections()->where('sections.id', $application->student->section_id)->exists()))) {
+                return true;
+            }
+        }
+
+        if (!$user->hasRole('Student') && $application->assigned_to_id === $user->id) {
+            return true;
+        }
+
+        return ($application->student_id === $user->id && $application->status === Application::STATUS_RESOLVED);
     }
 
     public function forward(User $user, Application $application): bool

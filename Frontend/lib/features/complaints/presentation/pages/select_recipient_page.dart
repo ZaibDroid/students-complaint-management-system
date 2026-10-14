@@ -11,7 +11,7 @@ import '../../../../core/services/api_client.dart';
 final availableStaffProvider = StreamProvider.autoDispose<List<Map<String, dynamic>>>((ref) async* {
   try {
     final apiClient = ApiClient();
-    final data = await apiClient.get('/users/staff');
+    final data = await apiClient.get('/users/staff', queryParams: {'per_page': '100'});
     if (data is List) {
       final staffList = data.map((item) {
         final map = item as Map<String, dynamic>;
@@ -20,22 +20,7 @@ final availableStaffProvider = StreamProvider.autoDispose<List<Map<String, dynam
           'name': map['name'] ?? 'Unknown',
           'role': map['role']?.toString() ?? 'Staff',
         };
-      }).toList();
-
-      final rolesStr = staffList.map((s) => (s['role'] as String).toLowerCase()).toList();
-      
-      if (!rolesStr.any((r) => r.contains('chairman'))) {
-        staffList.add({'id': 'mock_chairman_id', 'name': 'Chairman (Pending Setup)', 'role': 'Chairman'});
-      }
-      if (!rolesStr.any((r) => r.contains('dean'))) {
-        staffList.add({'id': 'mock_dean_id', 'name': 'Dean (Pending Setup)', 'role': 'Dean'});
-      }
-      if (!rolesStr.any((r) => r.contains('department office'))) {
-        staffList.add({'id': 'mock_dept_office_id', 'name': 'Department Office (Pending Setup)', 'role': 'Department Office'});
-      }
-      if (!rolesStr.any((r) => r.contains('vice chancellor'))) {
-        staffList.add({'id': 'mock_vc_id', 'name': 'Vice Chancellor (Pending Setup)', 'role': 'Vice Chancellor'});
-      }
+      }).where((staff) => staff['id']!.isNotEmpty && !staff['id']!.startsWith('mock_')).toList();
 
       yield staffList;
     } else {
@@ -83,6 +68,7 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
       widget.complaint.id,
       'forwarded',
       remarks,
+      assignedToId: _selectedStaffId,
       assignedTo: _selectedStaffName, // Save raw name for involvedStaff logic
       newInvolvedStaff: [_selectedStaffName!], // Add new recipient to tracking array
     );
@@ -105,7 +91,6 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currentUserRole = ref.watch(authStateProvider).value?.role ?? '';
     final staffAsync = ref.watch(availableStaffProvider);
 
     return Scaffold(
@@ -149,7 +134,25 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                 
                 staffAsync.when(
                   data: (staffList) {
-                    if (staffList.isEmpty) {
+                    final currentUserId = ref.watch(authStateProvider).value?.id.toString() ?? '';
+                    final filteredStaff = staffList.where((staff) {
+                      final staffId = staff['id'];
+                      final roleStr = (staff['role'] as String).toLowerCase();
+
+                      // Prevent users from forwarding to their own user account
+                      if (staffId == currentUserId) {
+                        return false;
+                      }
+
+                      // Students cannot be recipients of forwarded complaints
+                      if (roleStr.contains('student')) {
+                        return false;
+                      }
+
+                      return true;
+                    }).toList();
+
+                    if (filteredStaff.isEmpty) {
                       return const Padding(
                         padding: EdgeInsets.all(16.0),
                         child: Text('No staff members available for forwarding.'),
@@ -157,37 +160,7 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                     }
                     
                     return Column(
-                      children: staffList.where((staff) {
-                        final roleStr = (staff['role'] as String).toLowerCase();
-                        final currentUserRoleLower = currentUserRole.toLowerCase();
-                        
-                        // Prevent users from forwarding to their own role
-                        if (currentUserRoleLower == roleStr) {
-                          return false;
-                        }
-                        
-                        // Dean: Show Chairman and Vice Chancellor
-                        if (currentUserRoleLower.contains('dean')) {
-                          if (roleStr.contains('chairman') || roleStr.contains('vice chancellor')) {
-                            return true;
-                          }
-                          return false;
-                        }
-                        // Chairman: Only show Dean and Department Office
-                        else if (currentUserRoleLower.contains('chairman')) {
-                          if (roleStr.contains('dean') || roleStr.contains('department office')) {
-                            return true;
-                          }
-                          return false;
-                        } 
-                        // Others (Coordinator, Adviser): Only show Coordinator and Chairman
-                        else {
-                          if (roleStr.contains('coordinator') || roleStr.contains('chairman')) {
-                            return true;
-                          }
-                          return false;
-                        }
-                      }).map((staff) {
+                      children: filteredStaff.map((staff) {
 
 
                         final isSelected = _selectedStaffId == staff['id'];

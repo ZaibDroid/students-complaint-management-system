@@ -29,15 +29,16 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
     final userName = user?.name ?? '';
     final myNameLower = userName.toLowerCase().replaceAll('dr.', '').trim();
     
-    bool isAssignedToMe(String? assignedTo) {
+    bool isAssignedToMe(String? assignedTo, [String? assignedToId]) {
+      if (user != null && assignedToId != null && assignedToId == user.id) return true;
       if (assignedTo == null || assignedTo.isEmpty) return false;
       final assignedToLower = assignedTo.toLowerCase().replaceAll('dr.', '').trim();
       return assignedToLower == myNameLower;
     }
     
-    final pendingCount = complaints.where((c) => isAssignedToMe(c.assignedTo) && c.status != 'resolved' && c.status != 'rejected').length;
+    final pendingCount = complaints.where((c) => isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected').length;
     final processedCount = complaints.where((c) => c.status == 'resolved' || c.status == 'rejected').length;
-    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo) && c.involvedStaffNames.any((name) {
+    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
       final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
       return involvedLower == myNameLower;
     })).length;
@@ -116,17 +117,18 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
     final userName = user?.name ?? '';
     final myNameLower = userName.toLowerCase().replaceAll('dr.', '').trim();
     
-    bool isAssignedToMe(String? assignedTo) {
+    bool isAssignedToMe(String? assignedTo, [String? assignedToId]) {
+      if (user != null && assignedToId != null && assignedToId == user.id) return true;
       if (assignedTo == null || assignedTo.isEmpty) return false;
       final assignedToLower = assignedTo.toLowerCase().replaceAll('dr.', '').trim();
       return assignedToLower == myNameLower;
     }
 
     var filtered = complaints.where((c) {
-      if (_selectedFilter == 'pending') return isAssignedToMe(c.assignedTo) && c.status != 'resolved' && c.status != 'rejected';
+      if (_selectedFilter == 'pending') return isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected';
       if (_selectedFilter == 'processed') return c.status == 'resolved' || c.status == 'rejected';
       if (_selectedFilter == 'forwarded') {
-        return !isAssignedToMe(c.assignedTo) && c.involvedStaffNames.any((name) {
+        return !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
           final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
           return involvedLower == myNameLower;
         });

@@ -127,7 +127,7 @@ class ComplaintModel {
           : (map['updated_at'] != null ? DateTime.tryParse(map['updated_at'].toString()) : null),
       attachments: List<String>.from(map['attachments'] ?? []),
       remarks: List<Map<String, dynamic>>.from(map['remarks'] ?? []),
-      involvedStaffNames: List<String>.from(map['involvedStaffNames'] ?? []),
+      involvedStaffNames: List<String>.from(map['involvedStaffNames'] ?? map['involved_staff_names'] ?? []),
     );
   }
 }

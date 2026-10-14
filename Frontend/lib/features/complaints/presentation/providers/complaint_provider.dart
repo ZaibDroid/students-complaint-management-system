@@ -49,20 +49,14 @@ class DepartmentComplaintsNotifier extends AsyncNotifier<List<ComplaintModel>> {
     }
     
     final repository = ref.watch(apiComplaintRepositoryProvider);
-    return repository.getComplaints(
-      category: user.role.toLowerCase() != 'office' ? user.department : null,
-    );
+    return repository.getComplaints();
   }
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final authState = ref.read(authStateProvider);
-      final user = authState.value;
       final repository = ref.read(apiComplaintRepositoryProvider);
-      return repository.getComplaints(
-        category: (user != null && user.role.toLowerCase() != 'office') ? user.department : null,
-      );
+      return repository.getComplaints();
     });
   }
 }
@@ -120,10 +114,24 @@ class SubmitComplaintNotifier extends AsyncNotifier<void> {
     }
   }
   
-  Future<bool> updateStatus(String complaintId, String status, String remarks, {String? assignedTo, List<String>? newInvolvedStaff}) async {
+  Future<bool> updateStatus(
+    String complaintId,
+    String status,
+    String remarks, {
+    String? assignedToId,
+    String? assignedTo,
+    List<String>? newInvolvedStaff,
+  }) async {
     state = const AsyncValue.loading();
     try {
-      await _repository.updateComplaintStatus(complaintId, status, adminRemarks: remarks, assignedTo: assignedTo, newInvolvedStaff: newInvolvedStaff);
+      await _repository.updateComplaintStatus(
+        complaintId,
+        status,
+        adminRemarks: remarks,
+        assignedToId: assignedToId,
+        assignedTo: assignedTo,
+        newInvolvedStaff: newInvolvedStaff,
+      );
       state = const AsyncValue.data(null);
       await ref.read(studentComplaintsProvider.notifier).refresh();
       await ref.read(departmentComplaintsProvider.notifier).refresh();

@@ -121,11 +121,11 @@ class Application extends Model
             self::STATUS_PENDING => [self::STATUS_FORWARDED, self::STATUS_RESOLVED, self::STATUS_REJECTED, self::STATUS_RETURNED],
             self::STATUS_FORWARDED => [self::STATUS_FORWARDED, self::STATUS_RESOLVED, self::STATUS_REJECTED, self::STATUS_RETURNED],
             self::STATUS_RETURNED => [self::STATUS_PENDING], // Once returned, student can submit again (goes to pending)
-            self::STATUS_RESOLVED => [], // Terminal state (usually)
+            self::STATUS_RESOLVED => [self::STATUS_FORWARDED, self::STATUS_RESOLVED],
             self::STATUS_REJECTED => [], // Terminal state
         ];
 
-        $allowed = $validTransitions[$this->status] ?? [];
+        $allowed = $validTransitions[$this->status] ?? [self::STATUS_FORWARDED, self::STATUS_RESOLVED, self::STATUS_REJECTED];
         return in_array($newStatus, $allowed);
     }
 }

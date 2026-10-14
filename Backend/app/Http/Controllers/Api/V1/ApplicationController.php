@@ -88,10 +88,19 @@ class ApplicationController extends BaseApiController
 
         switch ($status) {
             case Application::STATUS_FORWARDED:
-                if (!$request->assigned_to_id) {
-                    return response()->json(['success' => false, 'message' => 'assigned_to_id is required for forwarding'], 422);
+                $assignedToId = $request->assigned_to_id;
+                if (!$assignedToId) {
+                    $officeStaff = \App\Models\User::whereHas('roles', function($q) {
+                        $q->where('name', 'Office Staff');
+                    })->first();
+                    if ($officeStaff) {
+                        $assignTo = $officeStaff;
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'assigned_to_id is required for forwarding'], 422);
+                    }
+                } else {
+                    $assignTo = \App\Models\User::findOrFail($assignedToId);
                 }
-                $assignTo = \App\Models\User::findOrFail($request->assigned_to_id);
                 $updated = $this->ApplicationService->forward($actor, $application, $assignTo, $notes);
                 break;
             case Application::STATUS_RESOLVED:

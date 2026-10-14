@@ -17,13 +17,12 @@ class UserPolicy
 
     public function viewAny(User $authenticatedUser): bool
     {
-        return $authenticatedUser->hasAnyRole(['Chairman', 'Dean', 'Vice Chancellor', 'Admin', 'Coordinator', 'Batch Adviser', 'Student']);
+        return true;
     }
 
     public function view(User $authenticatedUser, User $targetUser): bool
     {
-        return $authenticatedUser->id === $targetUser->id ||
-               $authenticatedUser->hasAnyRole(['Chairman', 'Batch Adviser', 'Coordinator', 'Admin']);
+        return true;
     }
 
     public function createStaff(User $authenticatedUser): bool

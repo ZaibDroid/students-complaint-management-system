@@ -21,6 +21,21 @@ class ApplicationResource extends JsonResource
         $studentName = $this->student?->name ?? 'Unknown';
         $assignedToName = $this->assignedTo?->name;
 
+        $involvedStaffNames = [];
+        if ($this->relationLoaded('timeline') && $this->timeline) {
+            foreach ($this->timeline as $t) {
+                if ($t->fromUser && !in_array($t->fromUser->name, $involvedStaffNames)) {
+                    $involvedStaffNames[] = $t->fromUser->name;
+                }
+                if ($t->toUser && !in_array($t->toUser->name, $involvedStaffNames)) {
+                    $involvedStaffNames[] = $t->toUser->name;
+                }
+            }
+        }
+        if ($assignedToName && !in_array($assignedToName, $involvedStaffNames)) {
+            $involvedStaffNames[] = $assignedToName;
+        }
+
         return [
             'id' => (string)$this->id,
             'ticket_number' => $this->ticket_number,
@@ -39,6 +54,8 @@ class ApplicationResource extends JsonResource
             'assignedTo' => $assignedToName,
             'assigned_to_id' => $this->assigned_to_id ? (string)$this->assigned_to_id : null,
             'assignedToId' => $this->assigned_to_id ? (string)$this->assigned_to_id : null,
+            'involved_staff_names' => $involvedStaffNames,
+            'involvedStaffNames' => $involvedStaffNames,
             'student_batch' => $this->student?->batch?->name,
             'studentBatch' => $this->student?->batch?->name,
             'student' => new UserResource($this->whenLoaded('student')),

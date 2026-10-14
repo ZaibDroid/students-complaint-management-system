@@ -20,10 +20,41 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
 
         if ($user->hasRole('Student')) {
             $query->where('student_id', $user->id);
-        } elseif ($user->hasAnyRole(['Batch Adviser', 'Coordinator', 'Office Staff'])) {
+        } elseif ($user->hasRole('Batch Adviser')) {
+            $assignedSectionIds = $user->assignedSections()->pluck('sections.id')->toArray();
+            $query->where(function ($q) use ($user, $assignedSectionIds) {
+                $q->where('assigned_to_id', $user->id)
+                  ->orWhere('student_id', $user->id)
+                  ->orWhereHas('timeline', function ($tq) use ($user) {
+                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
+                  });
+                if (!empty($assignedSectionIds)) {
+                    $q->orWhereHas('student', function ($sq) use ($assignedSectionIds) {
+                        $sq->whereIn('section_id', $assignedSectionIds);
+                    });
+                }
+            });
+        } elseif ($user->hasAnyRole(['Coordinator', 'Office Staff'])) {
             $query->where(function ($q) use ($user) {
                 $q->where('assigned_to_id', $user->id)
-                  ->orWhere('student_id', $user->id);
+                  ->orWhere('student_id', $user->id)
+                  ->orWhereHas('timeline', function ($tq) use ($user) {
+                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
+                  });
+                if ($user->department_id) {
+                    $q->orWhereHas('student', function ($sq) use ($user) {
+                        $sq->where('department_id', $user->department_id);
+                    });
+                }
+            });
+        } elseif (!$user->hasAnyRole(['Chairman', 'Dean', 'Vice Chancellor', 'Admin'])) {
+            // Any other role created in the future
+            $query->where(function ($q) use ($user) {
+                $q->where('assigned_to_id', $user->id)
+                  ->orWhere('student_id', $user->id)
+                  ->orWhereHas('timeline', function ($tq) use ($user) {
+                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
+                  });
             });
         }
         // Chairman, Dean, Vice Chancellor, Admin can view all Applications.
