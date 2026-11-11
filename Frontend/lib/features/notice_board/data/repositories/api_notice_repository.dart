@@ -27,13 +27,13 @@ class ApiNoticeRepository {
 
     if (notice.targetBatches != null && notice.targetBatches!.isNotEmpty) {
       for (final batch in notice.targetBatches!) {
-        targets.add({'type': 'batch', 'value': batch});
+        targets.add({'type': 'batch_id', 'value': batch});
       }
     }
 
     if (notice.targetSections != null && notice.targetSections!.isNotEmpty) {
       for (final section in notice.targetSections!) {
-        targets.add({'type': 'section', 'value': section});
+        targets.add({'type': 'section_id', 'value': section});
       }
     }
 
@@ -62,7 +62,7 @@ class ApiNoticeRepository {
       ApiConfig.notices,
       fields: fields,
       files: files,
-      fileFieldName: 'attachment',
+      fileFieldName: 'attachments',
     );
   }
 

@@ -89,9 +89,11 @@ class ApiComplaintRepository {
   }
 
   Future<void> addRemark(String complaintId, String remark, {String? actionTaken}) async {
-    await _apiClient.post('${ApiConfig.complaints}/$complaintId/remarks', body: {
+    final body = <String, dynamic>{
       'remark': remark,
-      'action_taken': ?actionTaken,
-    });
+    };
+    if (actionTaken != null) body['action_taken'] = actionTaken;
+
+    await _apiClient.post('${ApiConfig.complaints}/$complaintId/remarks', body: body);
   }
 }

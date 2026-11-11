@@ -34,14 +34,14 @@ class _AdminAccessPageState extends ConsumerState<AdminAccessPage> {
   final TextEditingController _passwordController = TextEditingController();
   
   String? _selectedRole;
-  final List<String> _roles = ['Vice Chancellor', 'Dean', 'Chairman', 'Department Office'];
+  final List<String> _roles = ['Vice Chancellor', 'Dean', 'Chairman', 'Office Staff'];
 
   IconData _getRoleIcon(String role) {
     switch (role) {
       case 'Vice Chancellor': return Icons.account_balance;
       case 'Dean': return Icons.school;
       case 'Chairman': return Icons.person;
-      case 'Department Office': return Icons.desk;
+      case 'Office Staff': return Icons.desk;
       default: return Icons.person_outline;
     }
   }

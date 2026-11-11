@@ -59,7 +59,6 @@ class ApiAuthRepository {
       'section': section,
       'adviser': adviser,
       'phone': phone,
-      'isCR': isCR,
     });
 
     if (response is Map<String, dynamic>) {

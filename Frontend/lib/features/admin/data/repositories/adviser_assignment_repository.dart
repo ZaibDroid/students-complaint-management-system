@@ -30,10 +30,10 @@ class AdviserAssignmentRepository {
     required String semester,
     required String section,
   }) async {
-    await _apiClient.post('/users/assign-adviser', body: {
-      'adviser_id': ?adviserId,
-      'semester': semester,
-      'section': section,
-    });
+    if (adviserId != null && adviserId.isNotEmpty) {
+      await _apiClient.post('/sections/$section/adviser', body: {
+        'adviser_id': adviserId,
+      });
+    }
   }
 }

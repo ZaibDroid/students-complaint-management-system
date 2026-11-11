@@ -31,11 +31,11 @@ class ApiNotificationRepository {
   }
 
   Future<void> markAsRead(String notificationId) async {
-    await _apiClient.put('${ApiConfig.notifications}/$notificationId/read');
+    await _apiClient.patch('${ApiConfig.notifications}/$notificationId/read');
   }
 
   Future<void> markAllAsRead() async {
-    await _apiClient.put('${ApiConfig.notifications}/read-all');
+    await _apiClient.patch('${ApiConfig.notifications}/read-all');
   }
 
   Future<void> deleteNotification(String notificationId) async {

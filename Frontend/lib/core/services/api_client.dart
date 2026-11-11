@@ -151,6 +151,21 @@ class ApiClient {
     }
   }
 
+  Future<dynamic> patch(String endpoint, {dynamic body}) async {
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
+      final headers = await _getHeaders();
+      final response = await http.patch(
+        uri,
+        headers: headers,
+        body: body != null ? jsonEncode(body) : null,
+      );
+      return _processResponse(response);
+    } catch (e) {
+      _handleNetworkError(e);
+    }
+  }
+
   Future<dynamic> delete(String endpoint) async {
     try {
       final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');

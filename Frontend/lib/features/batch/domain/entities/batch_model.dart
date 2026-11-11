@@ -11,8 +11,8 @@ class BatchModel {
 
   factory BatchModel.fromJson(Map<String, dynamic> json) {
     return BatchModel(
-      id: json['id'],
-      name: json['name'],
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
       sections: List<String>.from(json['sections'] ?? []),
     );
   }

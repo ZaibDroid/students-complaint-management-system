@@ -20,17 +20,21 @@ class NotificationModel {
   });
 
   factory NotificationModel.fromMap(Map<String, dynamic> map, String id) {
+    final rawTimestamp = map['timestamp'] ?? map['created_at'];
+    final rawRelatedId = map['relatedId'] ??
+        (map['reference'] is Map ? map['reference']['id'] : null);
+
     return NotificationModel(
-      id: id,
-      userId: map['userId'] ?? '',
-      title: map['title'] ?? '',
-      body: map['body'] ?? '',
-      category: map['category'] ?? 'System',
-      isRead: map['isRead'] ?? false,
-      timestamp: map['timestamp'] != null
-          ? DateTime.tryParse(map['timestamp'].toString()) ?? DateTime.now()
+      id: id.isNotEmpty ? id : (map['id'] ?? '').toString(),
+      userId: (map['userId'] ?? map['user_id'] ?? '').toString(),
+      title: (map['title'] ?? '').toString(),
+      body: (map['body'] ?? map['message'] ?? '').toString(),
+      category: (map['category'] ?? map['type'] ?? 'System').toString(),
+      isRead: (map['isRead'] ?? map['is_read'] ?? false) == true,
+      timestamp: rawTimestamp != null
+          ? DateTime.tryParse(rawTimestamp.toString()) ?? DateTime.now()
           : DateTime.now(),
-      relatedId: map['relatedId'],
+      relatedId: rawRelatedId?.toString(),
     );
   }
 
