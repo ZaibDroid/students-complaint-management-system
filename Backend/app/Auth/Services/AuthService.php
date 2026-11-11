@@ -16,8 +16,9 @@ class AuthService
      */
     public function validateCredentials(string $emailOrRegNumber, string $password): ?User
     {
+        $regNo = strtoupper(trim($emailOrRegNumber));
         $user = User::where('email', $emailOrRegNumber)
-                    ->orWhere('registration_number', $emailOrRegNumber)
+                    ->orWhere('registration_number', $regNo)
                     ->first();
 
         if ($user && Hash::check($password, $user->password)) {
@@ -37,15 +38,17 @@ class AuthService
             return; 
         }
 
-        LoginHistory::create([
-            'user_id' => $user->id,
-            'ip' => $ip,
-            'device' => $device,
-            'platform' => $platform,
-            'success' => $success,
-            'failure_reason' => $failureReason,
-            'login_at' => now(),
-        ]);
+        if (\Illuminate\Support\Facades\Schema::hasTable('login_histories')) {
+            LoginHistory::create([
+                'user_id' => $user->id,
+                'ip' => $ip,
+                'device' => $device,
+                'platform' => $platform,
+                'success' => $success,
+                'failure_reason' => $failureReason,
+                'login_at' => now(),
+            ]);
+        }
     }
 
     /**

@@ -15,7 +15,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email): ?User
     {
-        return $this->model->where('email', $email)->first();
+        return $this->model->where('email', $email)
+            ->orWhere('registration_number', strtoupper(trim($email)))
+            ->first();
     }
 
     public function getStaffMembers(array $filters = [], int $perPage = 15): LengthAwarePaginator
@@ -57,14 +59,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function assignSectionsToUser(User $user, array $sectionIds): void
     {
-        $cleanIds = [];
-        foreach ($sectionIds as $id) {
-            if (is_numeric($id)) {
-                $cleanIds[] = (int)$id;
-            } elseif (is_array($id) && isset($id['id']) && is_numeric($id['id'])) {
-                $cleanIds[] = (int)$id['id'];
-            }
-        }
-        $user->assignedSections()->sync($cleanIds);
+        $user->assignedSections()->sync($sectionIds);
     }
 }

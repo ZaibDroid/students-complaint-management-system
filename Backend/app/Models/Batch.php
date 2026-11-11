@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Concerns\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,6 +14,7 @@ class Batch extends Model
     use HasFactory, SoftDeletes, Filterable;
 
     protected $fillable = [
+        'department_id',
         'name',
         'start_year',
         'end_year',
@@ -24,6 +26,11 @@ class Batch extends Model
         'end_year' => 'integer',
         'is_active' => 'boolean',
     ];
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
 
     public function sections(): HasMany
     {

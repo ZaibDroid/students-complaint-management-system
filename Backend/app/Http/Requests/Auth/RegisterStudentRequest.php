@@ -6,13 +6,6 @@ use App\Http\Requests\BaseApiRequest;
 
 class RegisterStudentRequest extends BaseApiRequest
 {
-    protected function prepareForValidation(): void
-    {
-        if ($this->has('isCR') && !$this->has('is_cr')) {
-            $this->merge(['is_cr' => $this->boolean('isCR')]);
-        }
-    }
-
     public function rules(): array
     {
         return [
@@ -31,10 +24,12 @@ class RegisterStudentRequest extends BaseApiRequest
             'section_id' => ['nullable', 'exists:sections,id'],
             'year' => ['nullable', 'string'],
             'semester' => ['nullable', 'string'],
+            'current_semester' => ['nullable', 'integer', 'min:1', 'max:8'],
+            'registration_number' => ['nullable', 'string', 'max:50'],
             'adviser_id' => ['nullable', 'exists:users,id'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'is_cr' => ['nullable', 'boolean'],
-            'isCR' => ['nullable', 'boolean'],
+            'is_cr' => ['prohibited'],
+            'isCR' => ['prohibited'],
         ];
     }
 
@@ -42,6 +37,8 @@ class RegisterStudentRequest extends BaseApiRequest
     {
         return [
             'email.regex' => 'Registration is restricted to official @uetmardan.edu.pk email addresses.',
+            'is_cr.prohibited' => 'Students cannot assign themselves Class Representative status during registration.',
+            'isCR.prohibited' => 'Students cannot assign themselves Class Representative status during registration.',
         ];
     }
 }

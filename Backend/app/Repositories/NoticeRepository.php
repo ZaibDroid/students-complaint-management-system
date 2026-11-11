@@ -16,84 +16,41 @@ class NoticeRepository extends BaseRepository implements NoticeRepositoryInterfa
 
     public function getNoticesForUser(User $user, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = $this->model->with(['sender', 'targets', 'attachments']);
+        $query = $this->model->with(['sender', 'attachments']);
 
-        $isElevatedAdmin = $user->hasAnyRole(['Admin', 'Chairman', 'Dean']);
-
-        if (!$isElevatedAdmin) {
-            $userRoles = $user->getRoleNames()->toArray();
-            if (empty($userRoles)) {
-                $userRoles = ['Student'];
-            }
-            if (in_array('Batch Adviser', $userRoles) && !in_array('Teacher', $userRoles)) {
-                $userRoles[] = 'Teacher';
-            }
-
-            $userBatchName = $user->batch?->name;
-            $userBatchId = $user->batch_id ? (string)$user->batch_id : null;
-            $userSectionName = $user->section?->name;
-            $userSectionId = $user->section_id ? (string)$user->section_id : null;
-            $isCR = (bool)$user->is_cr || $user->hasRole('Class Representative');
-
-            $query->where(function ($mainQ) use ($user, $userRoles, $userBatchName, $userBatchId, $userSectionName, $userSectionId, $isCR) {
-                // 1. Author can always see their own notices
-                $mainQ->where('sender_id', $user->id)
-                      ->orWhere(function ($pubQ) use ($userRoles, $userBatchName, $userBatchId, $userSectionName, $userSectionId, $isCR) {
-                          $pubQ->where('status', Notice::STATUS_PUBLISHED);
-
-                          // Case A: Broadcast notices with NO targets at all
-                          $pubQ->where(function ($targetFilterQ) use ($userRoles, $userBatchName, $userBatchId, $userSectionName, $userSectionId, $isCR) {
-                              $targetFilterQ->whereDoesntHave('targets')
-                                            ->orWhere(function ($hasTargetQ) use ($userRoles, $userBatchName, $userBatchId, $userSectionName, $userSectionId, $isCR) {
-                                                // Role match
-                                                $hasTargetQ->where(function ($roleQ) use ($userRoles) {
-                                                    $roleQ->whereDoesntHave('targets', function ($sub) {
-                                                        $sub->where('target_type', 'role');
-                                                    })->orWhereHas('targets', function ($sub) use ($userRoles) {
-                                                        $sub->where('target_type', 'role')
-                                                            ->whereIn('target_value', $userRoles);
-                                                    });
-                                                });
-
-                                                // Batch match (if notice specifies batches)
-                                                $hasTargetQ->where(function ($batchQ) use ($userBatchName, $userBatchId) {
-                                                    $batchQ->whereDoesntHave('targets', function ($sub) {
-                                                        $sub->whereIn('target_type', ['batch', 'batch_id']);
-                                                    });
-                                                    if ($userBatchName || $userBatchId) {
-                                                        $validBatchValues = array_filter([$userBatchName, $userBatchId]);
-                                                        $batchQ->orWhereHas('targets', function ($sub) use ($validBatchValues) {
-                                                            $sub->whereIn('target_type', ['batch', 'batch_id'])
-                                                                ->whereIn('target_value', $validBatchValues);
-                                                        });
-                                                    }
-                                                });
-
-                                                // Section match (if notice specifies sections)
-                                                $hasTargetQ->where(function ($secQ) use ($userSectionName, $userSectionId) {
-                                                    $secQ->whereDoesntHave('targets', function ($sub) {
-                                                        $sub->whereIn('target_type', ['section', 'section_id']);
-                                                    });
-                                                    if ($userSectionName || $userSectionId) {
-                                                        $validSecValues = array_filter([$userSectionName, $userSectionId]);
-                                                        $secQ->orWhereHas('targets', function ($sub) use ($validSecValues) {
-                                                            $sub->whereIn('target_type', ['section', 'section_id'])
-                                                                ->whereIn('target_value', $validSecValues);
-                                                        });
-                                                    }
-                                                });
-
-                                                // CRs only check
-                                                if (!$isCR) {
-                                                    $hasTargetQ->whereDoesntHave('targets', function ($sub) {
-                                                        $sub->where('target_type', 'crs_only')
-                                                            ->where('target_value', 'true');
-                                                    });
-                                                }
-                                            });
-                          });
+        if ($user->hasRole('Student')) {
+            $query->where('status', Notice::STATUS_PUBLISHED)
+                  ->where(function ($q) use ($user) {
+                      $q->where(function ($sub) use ($user) {
+                          $sub->whereNull('department_id')
+                              ->orWhere('department_id', $user->department_id);
+                      })
+                      ->where(function ($sub) use ($user) {
+                          $sub->whereNull('target_batch_id')
+                              ->orWhere('target_batch_id', $user->batch_id);
+                      })
+                      ->where(function ($sub) use ($user) {
+                          $sub->whereNull('target_section_id')
+                              ->orWhere('target_section_id', $user->section_id);
+                      })
+                      ->where(function ($sub) use ($user) {
+                          $isCr = $user->is_cr || $user->hasAnyRole(['CR', 'Class Representative']);
+                          $sub->whereNull('target_role')
+                              ->orWhere('target_role', '!=', 'CR');
+                          if ($isCr) {
+                              $sub->orWhere('target_role', 'CR');
+                          }
                       });
-            });
+                  });
+        } elseif (!$user->hasRole('Admin')) {
+            if ($user->department_id) {
+                $query->where(function ($q) use ($user) {
+                    $q->whereNull('department_id')
+                      ->orWhere('department_id', $user->department_id);
+                });
+            } else {
+                $query->whereNull('department_id');
+            }
         }
 
         // Custom search filters

@@ -43,6 +43,81 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
         $this->notificationService = $notificationService;
     }
 
+    public function generateSequentialTicketNumber(?int $year = null): string
+    {
+        $year = $year ?? (int) date('Y');
+
+        $execute = function () use ($year) {
+            $prefix = "DCMS-{$year}-";
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('ticket_sequences')) {
+                $seqName = "applications_{$year}";
+
+                // Ensure the sequence record exists
+                $exists = DB::table('ticket_sequences')->where('name', $seqName)->exists();
+                if (!$exists) {
+                    $maxSeq = 0;
+                    $existingTickets = Application::withTrashed()
+                        ->where('ticket_number', 'LIKE', "{$prefix}%")
+                        ->pluck('ticket_number');
+
+                    foreach ($existingTickets as $ticket) {
+                        if (preg_match('/-(\d+)$/', $ticket, $matches)) {
+                            $num = (int) $matches[1];
+                            if ($num > $maxSeq) {
+                                $maxSeq = $num;
+                            }
+                        }
+                    }
+
+                    DB::table('ticket_sequences')->insertOrIgnore([
+                        'name' => $seqName,
+                        'current_value' => $maxSeq,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                // Pessimistic locking to serialize concurrent ticket generations
+                $seqRow = DB::table('ticket_sequences')
+                    ->where('name', $seqName)
+                    ->lockForUpdate()
+                    ->first();
+
+                $nextVal = ($seqRow ? (int) $seqRow->current_value : 0) + 1;
+
+                DB::table('ticket_sequences')
+                    ->where('name', $seqName)
+                    ->update([
+                        'current_value' => $nextVal,
+                        'updated_at' => now(),
+                    ]);
+
+                return sprintf('%s%04d', $prefix, $nextVal);
+            }
+
+            // Fallback lock query if sequence table is unavailable
+            $maxSeq = 0;
+            $existingTickets = Application::withTrashed()
+                ->where('ticket_number', 'LIKE', "{$prefix}%")
+                ->lockForUpdate()
+                ->pluck('ticket_number');
+
+            foreach ($existingTickets as $ticket) {
+                if (preg_match('/-(\d+)$/', $ticket, $matches)) {
+                    $num = (int) $matches[1];
+                    if ($num > $maxSeq) {
+                        $maxSeq = $num;
+                    }
+                }
+            }
+
+            return sprintf('%s%04d', $prefix, $maxSeq + 1);
+        };
+
+        return DB::transactionLevel() > 0 ? $execute() : DB::transaction($execute);
+    }
+
     public function createApplication(User $student, array $data, array $files = []): Application
     {
         $adviserId = $student->adviser_id;
@@ -50,11 +125,11 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             $section = \App\Models\Section::find($student->section_id);
             if ($section) {
                 $adviser = $section->assignedStaff()
-                    ->whereHas('roles', function($q) { $q->where('name', 'Batch Adviser'); })
+                    ->whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
                     ->first();
                 if (!$adviser) {
                     $adviser = \App\Models\User::where('section_id', $section->id)
-                        ->whereHas('roles', function($q) { $q->where('name', 'Batch Adviser'); })
+                        ->whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
                         ->first();
                 }
                 if ($adviser) {
@@ -64,12 +139,12 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             }
         }
 
-        if (!$adviserId) {
-            $defaultAdviser = User::whereHas('roles', function($q) {
-                $q->where('name', 'Batch Adviser');
-            })->first();
-            if ($defaultAdviser) {
-                $adviserId = $defaultAdviser->id;
+        if (!$adviserId && $student->department_id) {
+            $fallbackAdviser = User::where('department_id', $student->department_id)
+                ->whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
+                ->first();
+            if ($fallbackAdviser) {
+                $adviserId = $fallbackAdviser->id;
                 $student->update(['adviser_id' => $adviserId]);
             }
         }
@@ -79,16 +154,42 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
         }
 
         return DB::transaction(function () use ($student, $data, $files, $adviserId) {
+            // 1. Concurrency-safe sequential ticket generation
+            if (empty($data['ticket_number'])) {
+                $data['ticket_number'] = $this->generateSequentialTicketNumber();
+            }
+
             $data['student_id'] = $student->id;
+            if (\Illuminate\Support\Facades\Schema::hasColumn('applications', 'department_id')) {
+                $data['department_id'] = $student->department_id ?? \App\Models\Department::value('id');
+            }
             $data['status'] = 'pending';
             $data['assigned_to_id'] = $adviserId;
 
             /** @var Application $application */
             $application = $this->repository->create($data);
 
-            // Save attachment if provided
+            // 2. Multi-file attachment handling into application_attachments
+            $allFiles = [];
             if (isset($files['attachment']) && $files['attachment'] instanceof UploadedFile) {
-                $this->uploadAttachment($application, $files['attachment']);
+                $allFiles[] = $files['attachment'];
+            }
+            if (isset($files['attachments'])) {
+                $attList = is_array($files['attachments']) ? $files['attachments'] : [$files['attachments']];
+                foreach ($attList as $file) {
+                    if ($file instanceof UploadedFile) {
+                        $allFiles[] = $file;
+                    }
+                }
+            }
+            foreach ($files as $key => $file) {
+                if (is_numeric($key) && $file instanceof UploadedFile) {
+                    $allFiles[] = $file;
+                }
+            }
+
+            foreach ($allFiles as $file) {
+                $this->uploadAttachment($application, $file);
             }
 
             // Dispatch Event after commit
@@ -96,7 +197,7 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
                 event(new ApplicationSubmitted($application, $student, $adviserId ? User::find($adviserId) : null, 'Application submitted by student'));
             });
 
-            return $application->fresh(['student', 'assignedTo']);
+            return $application->fresh(['student', 'assignedTo', 'department', 'attachments']);
         });
     }
 
@@ -119,9 +220,24 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
                 'status' => Application::STATUS_FORWARDED,
                 'assigned_to_id' => $assignTo->id,
             ];
-            if ($notes !== null) {
+            if ($notes !== null && \Illuminate\Support\Facades\Schema::hasColumn('applications', 'admin_remarks')) {
                 $updateData['admin_remarks'] = $notes;
             }
+
+            // Automatically create ApplicationRemark entry
+            $remarkText = !empty(trim((string)$notes))
+                ? trim((string)$notes)
+                : "Application forwarded to {$assignTo->name}";
+
+            $remarkData = [
+                'application_id' => $lockedApplication->id,
+                'user_id' => $actor->id,
+                'remark' => $remarkText,
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('application_remarks', 'action_taken')) {
+                $remarkData['action_taken'] = 'Forwarded';
+            }
+            $this->remarkRepository->create($remarkData);
 
             $this->repository->update($lockedApplication->id, $updateData);
             
@@ -144,9 +260,24 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             }
 
             $updateData = ['status' => Application::STATUS_RESOLVED];
-            if ($notes !== null) {
+            if ($notes !== null && \Illuminate\Support\Facades\Schema::hasColumn('applications', 'admin_remarks')) {
                 $updateData['admin_remarks'] = $notes;
             }
+
+            // Automatically create ApplicationRemark entry
+            $remarkText = !empty(trim((string)$notes))
+                ? trim((string)$notes)
+                : "Application resolved successfully";
+
+            $remarkData = [
+                'application_id' => $lockedApplication->id,
+                'user_id' => $actor->id,
+                'remark' => $remarkText,
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('application_remarks', 'action_taken')) {
+                $remarkData['action_taken'] = 'Resolved';
+            }
+            $this->remarkRepository->create($remarkData);
 
             $this->repository->update($lockedApplication->id, $updateData);
             
@@ -169,9 +300,24 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             }
 
             $updateData = ['status' => Application::STATUS_REJECTED];
-            if ($notes !== null) {
+            if ($notes !== null && \Illuminate\Support\Facades\Schema::hasColumn('applications', 'admin_remarks')) {
                 $updateData['admin_remarks'] = $notes;
             }
+
+            // Automatically create ApplicationRemark entry
+            $remarkText = !empty(trim((string)$notes))
+                ? trim((string)$notes)
+                : "Application rejected";
+
+            $remarkData = [
+                'application_id' => $lockedApplication->id,
+                'user_id' => $actor->id,
+                'remark' => $remarkText,
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('application_remarks', 'action_taken')) {
+                $remarkData['action_taken'] = 'Rejected';
+            }
+            $this->remarkRepository->create($remarkData);
 
             $this->repository->update($lockedApplication->id, $updateData);
             
@@ -194,9 +340,24 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             }
 
             $updateData = ['status' => Application::STATUS_RETURNED];
-            if ($notes !== null) {
+            if ($notes !== null && \Illuminate\Support\Facades\Schema::hasColumn('applications', 'admin_remarks')) {
                 $updateData['admin_remarks'] = $notes;
             }
+
+            // Automatically create ApplicationRemark entry
+            $remarkText = !empty(trim((string)$notes))
+                ? trim((string)$notes)
+                : "Application returned for corrections";
+
+            $remarkData = [
+                'application_id' => $lockedApplication->id,
+                'user_id' => $actor->id,
+                'remark' => $remarkText,
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('application_remarks', 'action_taken')) {
+                $remarkData['action_taken'] = 'Returned';
+            }
+            $this->remarkRepository->create($remarkData);
 
             $this->repository->update($lockedApplication->id, $updateData);
             
@@ -212,22 +373,26 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
 
     public function addRemark(User $author, Application $application, string $remarkText, ?string $actionTaken = null): ApplicationRemark
     {
-        /** @var ApplicationRemark $remark */
-        $remark = $this->remarkRepository->create([
+        $remarkData = [
             'application_id' => $application->id,
             'user_id' => $author->id,
             'remark' => $remarkText,
-            'action_taken' => $actionTaken,
-        ]);
+        ];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('application_remarks', 'action_taken')) {
+            $remarkData['action_taken'] = $actionTaken;
+        }
+
+        /** @var ApplicationRemark $remark */
+        $remark = $this->remarkRepository->create($remarkData);
 
         // Notify student of official remark
-        if ($author->id !== $application->student_id) {
-            $this->notificationService->sendToUser(
-                $application->student_id,
+        if ($author->id !== $application->student_id && $application->student) {
+            $this->notificationService->sendApplicationNotification(
+                $application->student,
+                \App\Enums\NotificationType::ApplicationUpdated,
+                $application,
                 'New Remark on Application',
-                "Official remark added to your Application {$application->ticket_number}.",
-                'applications',
-                (string)$application->id
+                "Official remark added to your Application {$application->ticket_number}."
             );
         }
 
@@ -242,33 +407,50 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             $fileSize = $file->getSize();
             $filePath = $file->store("Applications/{$application->id}", 'public');
 
-            $this->repository->update($application->id, [
-                'attachment_path' => asset('storage/' . $filePath),
-                'attachment_name' => $fileName,
-                'attachment_type' => $fileType,
-                'attachment_size' => $fileSize,
-            ]);
+            // 1. Create relational attachment record if table exists
+            if (\Illuminate\Support\Facades\Schema::hasTable('application_attachments')) {
+                $this->attachmentRepository->create([
+                    'application_id' => $application->id,
+                    'file_name' => $fileName,
+                    'file_path' => $filePath,
+                    'file_type' => $fileType,
+                    'file_size' => $fileSize,
+                ]);
+            }
+
+            // 2. Backward-compatible column update if column exists
+            if (\Illuminate\Support\Facades\Schema::hasColumn('applications', 'attachment_path')) {
+                $this->repository->update($application->id, [
+                    'attachment_path' => asset('storage/' . $filePath),
+                    'attachment_name' => $fileName,
+                    'attachment_type' => $fileType,
+                    'attachment_size' => $fileSize,
+                ]);
+            }
         });
     }
 
     public function removeAttachment(Application $application): void
     {
-        if ($application->attachment_path) {
-            DB::transaction(function () use ($application) {
-                $relativeStoragePath = str_replace(asset('storage/'), '', $application->attachment_path);
+        DB::transaction(function () use ($application) {
+            foreach ($application->attachments as $att) {
+                $path = $att->file_path;
+                $att->delete();
+                Storage::disk('public')->delete($path);
+            }
 
+            if (\Illuminate\Support\Facades\Schema::hasColumn('applications', 'attachment_path')) {
+                if ($application->attachment_path) {
+                    $relativeStoragePath = str_replace(asset('storage/'), '', $application->attachment_path);
+                    Storage::disk('public')->delete($relativeStoragePath);
+                }
                 $this->repository->update($application->id, [
                     'attachment_path' => null,
                     'attachment_name' => null,
                     'attachment_type' => null,
                     'attachment_size' => null,
                 ]);
-
-                // Delete file after DB update succeeds
-                DB::afterCommit(function () use ($relativeStoragePath) {
-                    Storage::disk('public')->delete($relativeStoragePath);
-                });
-            });
-        }
+            }
+        });
     }
 }

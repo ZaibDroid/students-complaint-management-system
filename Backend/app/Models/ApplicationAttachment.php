@@ -12,14 +12,29 @@ class ApplicationAttachment extends Model
 
     protected $fillable = [
         'application_id',
-        'file_path',
         'file_name',
+        'file_path',
         'file_type',
         'file_size',
     ];
 
-    public function Application(): BelongsTo
+    protected $casts = [
+        'file_size' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);
+    }
+
+    public function getUrlAttribute(): string
+    {
+        if (str_starts_with($this->file_path, 'http://') || str_starts_with($this->file_path, 'https://')) {
+            return $this->file_path;
+        }
+
+        return asset('storage/' . ltrim($this->file_path, '/'));
     }
 }

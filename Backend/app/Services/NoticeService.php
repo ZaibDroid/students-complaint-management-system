@@ -42,16 +42,33 @@ class NoticeService extends BaseService implements NoticeServiceInterface
             // Versioning defaults to 1
             $data['version'] = 1;
 
+            // Map legacy targets into normalized columns if not already provided
+            foreach ($targets as $target) {
+                $type = $target['type'] ?? '';
+                $val = $target['value'] ?? null;
+                if ($type === 'department_id' && is_numeric($val) && empty($data['department_id'])) {
+                    $data['department_id'] = (int)$val;
+                } elseif ($type === 'batch_id' && is_numeric($val) && empty($data['target_batch_id'])) {
+                    $data['target_batch_id'] = (int)$val;
+                } elseif ($type === 'section_id' && is_numeric($val) && empty($data['target_section_id'])) {
+                    $data['target_section_id'] = (int)$val;
+                } elseif ($type === 'crs_only' && empty($data['target_role'])) {
+                    $data['target_role'] = 'CR';
+                }
+            }
+
             /** @var Notice $notice */
             $notice = $this->repository->create($data);
 
-            // Save targets
-            foreach ($targets as $target) {
-                $this->targetRepository->create([
-                    'notice_id' => $notice->id,
-                    'target_type' => $target['type'],
-                    'target_value' => $target['value'] ?? null,
-                ]);
+            // Save targets if table exists
+            if (\Illuminate\Support\Facades\Schema::hasTable('notice_targets')) {
+                foreach ($targets as $target) {
+                    $this->targetRepository->create([
+                        'notice_id' => $notice->id,
+                        'target_type' => $target['type'],
+                        'target_value' => $target['value'] ?? null,
+                    ]);
+                }
             }
 
             // Save attachments
@@ -67,7 +84,12 @@ class NoticeService extends BaseService implements NoticeServiceInterface
                 $notice = $this->publishingService->schedule($notice, new \DateTime($data['scheduled_at']));
             }
 
-            return $notice->fresh(['sender', 'targets', 'attachments']);
+            $relationsToLoad = ['sender', 'attachments', 'targetBatch', 'targetSection', 'department'];
+            if (\Illuminate\Support\Facades\Schema::hasTable('notice_targets')) {
+                $relationsToLoad[] = 'targets';
+            }
+
+            return $notice->fresh($relationsToLoad);
         });
     }
 
@@ -82,7 +104,7 @@ class NoticeService extends BaseService implements NoticeServiceInterface
 
             $this->repository->update($notice->id, $data);
 
-            if ($targets !== null) {
+            if ($targets !== null && \Illuminate\Support\Facades\Schema::hasTable('notice_targets')) {
                 $notice->targets()->delete();
                 foreach ($targets as $target) {
                     $this->targetRepository->create([
@@ -110,7 +132,12 @@ class NoticeService extends BaseService implements NoticeServiceInterface
                 }
             }
 
-            return $notice->fresh(['sender', 'targets', 'attachments']);
+            $relationsToLoad = ['sender', 'attachments', 'targetBatch', 'targetSection', 'department'];
+            if (\Illuminate\Support\Facades\Schema::hasTable('notice_targets')) {
+                $relationsToLoad[] = 'targets';
+            }
+
+            return $notice->fresh($relationsToLoad);
         });
     }
 

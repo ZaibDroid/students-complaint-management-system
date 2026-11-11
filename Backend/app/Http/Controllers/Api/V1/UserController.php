@@ -85,12 +85,7 @@ class UserController extends BaseApiController
     {
         $this->authorize('createStaff', User::class);
 
-        $data = $request->validated();
-        if (empty($data['department_id']) && $request->user()->department_id) {
-            $data['department_id'] = $request->user()->department_id;
-        }
-
-        $staff = $this->userService->createStaff($data);
+        $staff = $this->userService->createStaff($request->validated());
 
         return $this->createdResponse(new UserResource($staff), 'Staff account created successfully');
     }

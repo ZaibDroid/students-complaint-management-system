@@ -23,7 +23,7 @@ class CreateTimelineEntry implements ShouldQueue
 
     public function handle($event): void
     {
-        $application = $event->application ?? ($event->Application ?? null);
+        $application = $event->application ?? $event->Application ?? null;
         $actor = $event->actor;
         $targetUser = $event->targetUser;
         $notes = $event->notes;

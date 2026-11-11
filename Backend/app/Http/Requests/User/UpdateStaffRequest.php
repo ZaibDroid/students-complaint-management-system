@@ -6,6 +6,16 @@ use App\Http\Requests\BaseApiRequest;
 
 class UpdateStaffRequest extends BaseApiRequest
 {
+    public function authorize(): bool
+    {
+        $user = $this->user();
+        if (!$user) {
+            return false;
+        }
+
+        return $user->hasAnyRole(['Admin', 'Super Admin', 'Chairman', 'Coordinator']);
+    }
+
     public function rules(): array
     {
         $userId = $this->route('user') ? $this->route('user')->id : null;
@@ -22,5 +32,37 @@ class UpdateStaffRequest extends BaseApiRequest
             'semester' => ['nullable', 'string'],
             'assigned_sections' => ['nullable', 'array'],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $user = $this->user();
+            if (!$user) {
+                return;
+            }
+
+            if ($this->has('role')) {
+                $requestedRole = (string)$this->input('role');
+                if ($user->hasRole('Coordinator')) {
+                    $allowed = ['Batch Adviser', 'Batch Advisor', 'Office Staff'];
+                    if (!in_array($requestedRole, $allowed, true)) {
+                        $validator->errors()->add('role', 'Coordinators can only assign Batch Adviser or Office Staff roles.');
+                    }
+                } elseif ($user->hasRole('Chairman')) {
+                    $allowed = ['Coordinator', 'Batch Adviser', 'Batch Advisor', 'Office Staff'];
+                    if (!in_array($requestedRole, $allowed, true)) {
+                        $validator->errors()->add('role', 'Chairmen cannot assign Admin or Chairman roles.');
+                    }
+                }
+            }
+
+            if ($this->has('department_id')) {
+                $requestedDept = (int)$this->input('department_id');
+                if (($user->hasRole('Coordinator') || $user->hasRole('Chairman')) && $requestedDept !== (int)$user->department_id) {
+                    $validator->errors()->add('department_id', 'You cannot reassign staff members outside your department.');
+                }
+            }
+        });
     }
 }

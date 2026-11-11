@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\ComplaintCategory;
+use App\Models\ApplicationCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -18,7 +18,7 @@ class ComplaintCategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            ComplaintCategory::updateOrCreate(
+            ApplicationCategory::updateOrCreate(
                 ['slug' => Str::slug($category['name'])],
                 [
                     'name' => $category['name'],

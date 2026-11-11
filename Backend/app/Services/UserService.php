@@ -75,27 +75,6 @@ class UserService implements UserServiceInterface
         return null;
     }
 
-    protected function normalizeSectionIds(array $assignedSections): array
-    {
-        $sectionIds = [];
-        foreach ($assignedSections as $item) {
-            if (is_numeric($item)) {
-                $sectionIds[] = (int)$item;
-            } elseif (is_array($item)) {
-                if (isset($item['id']) && is_numeric($item['id'])) {
-                    $sectionIds[] = (int)$item['id'];
-                } elseif (isset($item['batch']) && isset($item['section'])) {
-                    $dummyData = ['batch' => $item['batch'], 'section' => $item['section']];
-                    $secId = $this->resolveBatchAndSection($dummyData);
-                    if ($secId) {
-                        $sectionIds[] = $secId;
-                    }
-                }
-            }
-        }
-        return array_values(array_unique($sectionIds));
-    }
-
     public function createStaff(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
@@ -113,13 +92,12 @@ class UserService implements UserServiceInterface
         $user = $this->userRepository->create($data);
         $user->assignRole($role);
 
-        $sectionIds = $this->normalizeSectionIds($assignedSections);
-        if ($createdSectionId && !in_array($createdSectionId, $sectionIds)) {
-            $sectionIds[] = $createdSectionId;
+        if (!empty($assignedSections)) {
+            $this->userRepository->assignSectionsToUser($user, $assignedSections);
         }
 
-        if (!empty($sectionIds)) {
-            $this->userRepository->assignSectionsToUser($user, $sectionIds);
+        if ($createdSectionId) {
+            $user->assignedSections()->syncWithoutDetaching([$createdSectionId]);
         }
 
         return $user->load(['department', 'batch', 'section', 'roles', 'assignedSections']);
@@ -138,20 +116,17 @@ class UserService implements UserServiceInterface
             unset($data['role']);
         }
 
-        $assignedSections = $data['assigned_sections'] ?? null;
-        unset($data['assigned_sections']);
+        if (isset($data['assigned_sections'])) {
+            $this->userRepository->assignSectionsToUser($user, $data['assigned_sections']);
+            unset($data['assigned_sections']);
+        }
 
         $createdSectionId = $this->resolveBatchAndSection($data);
 
         $this->userRepository->update($user->id, $data);
 
-        $sectionIds = $assignedSections !== null ? $this->normalizeSectionIds($assignedSections) : [];
-        if ($createdSectionId && !in_array($createdSectionId, $sectionIds)) {
-            $sectionIds[] = $createdSectionId;
-        }
-
-        if (!empty($sectionIds)) {
-            $this->userRepository->assignSectionsToUser($user, $sectionIds);
+        if ($createdSectionId) {
+            $user->assignedSections()->syncWithoutDetaching([$createdSectionId]);
         }
 
         return $user->fresh(['department', 'batch', 'section', 'roles', 'assignedSections']);

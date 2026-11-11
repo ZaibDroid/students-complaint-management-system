@@ -29,13 +29,25 @@ class UserResource extends JsonResource
             ]];
         }
 
+        $deptName = $this->department?->name ?? ($this->relationLoaded('department') ? $this->department?->name : null);
+        $batchName = $this->batch?->name ?? $this->batch_display;
+        $sectionName = $this->section?->name ?? $this->section_display;
+        $adviserName = $this->adviser?->name ?? ($this->relationLoaded('adviser') ? $this->adviser?->name : null);
+
+        $yearStr = $this->year ?? ($this->current_semester ? "Semester {$this->current_semester}" : null);
+        $semesterStr = $this->current_semester ? "Semester {$this->current_semester}" : ($this->semester ?? null);
+
         return [
             'id' => (string)$this->id,
             'name' => $this->name,
             'email' => $this->email,
             'role' => $roleName,
             'roles' => $this->getRoleNames(),
-            'department' => $this->department?->name ?? ($this->relationLoaded('department') ? $this->department?->name : null),
+            'department_id' => $this->department_id ? (string)$this->department_id : null,
+            'departmentId' => $this->department_id ? (string)$this->department_id : null,
+            'department' => $deptName,
+            'department_name' => $deptName,
+            'departmentName' => $deptName,
             'department_details' => $this->whenLoaded('department', function () {
                 return [
                     'id' => $this->department->id,
@@ -46,23 +58,31 @@ class UserResource extends JsonResource
             'registration_number' => $this->registration_number,
             'registrationNumber' => $this->registration_number,
             'reg_no' => $this->registration_number,
-            'batch' => $this->batch?->name ?? $this->batch_display,
+            'batch_id' => $this->batch_id ? (string)$this->batch_id : null,
+            'batchId' => $this->batch_id ? (string)$this->batch_id : null,
+            'batch' => $batchName,
             'batch_details' => $this->whenLoaded('batch', function () {
                 return [
                     'id' => $this->batch->id,
                     'name' => $this->batch->name,
                 ];
             }),
-            'section' => $this->section?->name ?? $this->section_display,
+            'section_id' => $this->section_id ? (string)$this->section_id : null,
+            'sectionId' => $this->section_id ? (string)$this->section_id : null,
+            'section' => $sectionName,
             'section_details' => $this->whenLoaded('section', function () {
                 return [
                     'id' => $this->section->id,
                     'name' => $this->section->name,
                 ];
             }),
-            'year' => $this->year,
-            'semester' => $this->semester,
-            'adviser' => $this->adviser?->name ?? ($this->relationLoaded('adviser') ? $this->adviser?->name : null),
+            'current_semester' => $this->current_semester,
+            'currentSemester' => $this->current_semester,
+            'year' => $yearStr,
+            'semester' => $semesterStr,
+            'adviser_id' => $this->adviser_id ? (string)$this->adviser_id : null,
+            'adviserId' => $this->adviser_id ? (string)$this->adviser_id : null,
+            'adviser' => $adviserName,
             'adviser_details' => $this->whenLoaded('adviser', function () {
                 return [
                     'id' => $this->adviser->id,

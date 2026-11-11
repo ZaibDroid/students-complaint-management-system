@@ -93,6 +93,9 @@ class AuthService implements AuthServiceInterface
 
     public function registerStudent(array $data): array
     {
+        // Enforce privilege isolation: prevent student self-promotion to CR or custom roles
+        unset($data['is_cr'], $data['isCR'], $data['role']);
+        $data['is_cr'] = false;
         $data['password'] = Hash::make($data['password']);
         $data['status'] = 'unlinked'; // Student starts as unlinked, must send request to Batch Adviser
         $data['adviser_id'] = null;   // No auto-linking of adviser

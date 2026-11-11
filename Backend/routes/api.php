@@ -115,6 +115,7 @@ Route::prefix('v1')->group(function () {
         // In-App Notification Center Routes
         Route::prefix('notifications')->group(function () {
             Route::get('/', [NotificationController::class, 'index']);
+            Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
             Route::patch('/read-all', [NotificationController::class, 'markAllAsRead']);
             Route::patch('/{notification}/read', [NotificationController::class, 'markAsRead']);
             Route::delete('/{notification}', [NotificationController::class, 'destroy']);
@@ -158,7 +159,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/{application}/timeline', [ApplicationTimelineController::class, 'index']);
         });
 
-        // Complaints (Alias for Applications)
+        // Complaints Route Aliases (Frontend Compatibility)
         Route::prefix('complaints')->group(function () {
             Route::get('/', [ApplicationController::class, 'index']);
             Route::post('/', [ApplicationController::class, 'store']);

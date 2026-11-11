@@ -12,11 +12,9 @@ use Illuminate\Http\JsonResponse;
 class ApplicationRemarkController extends BaseApiController
 {
     protected ApplicationServiceInterface $applicationService;
-    protected ApplicationServiceInterface $ApplicationService;
 
     public function __construct(ApplicationServiceInterface $applicationService)
     {
-        $this->applicationService = $applicationService;
         $this->ApplicationService = $applicationService;
     }
 

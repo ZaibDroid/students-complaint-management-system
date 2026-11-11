@@ -24,30 +24,24 @@ class DemoDataSeeder extends Seeder
             return;
         }
 
-        // Categories
-        $infraCat = ApplicationCategory::firstOrCreate(
+        $infraCategory = ApplicationCategory::firstOrCreate(
             ['slug' => 'infrastructure'],
-            ['name' => 'Infrastructure', 'description' => 'Facilities, classrooms, and hardware issues', 'is_active' => true]
+            ['name' => 'Infrastructure', 'description' => 'Issues related to facilities, labs, and classrooms.', 'is_active' => true]
         );
 
-        $academicCat = ApplicationCategory::firstOrCreate(
+        $academicCategory = ApplicationCategory::firstOrCreate(
             ['slug' => 'academic'],
-            ['name' => 'Academic', 'description' => 'Courses, timetable, and faculty matters', 'is_active' => true]
+            ['name' => 'Academic', 'description' => 'Issues related to academics, courses, and faculty.', 'is_active' => true]
         );
 
-        ApplicationCategory::firstOrCreate(
-            ['slug' => 'administrative'],
-            ['name' => 'Administrative', 'description' => 'Documentation, certificates, and administration', 'is_active' => true]
-        );
-
-        // Demo Complaints / Applications
+        // Demo Applications
         $c1 = Application::create([
             'student_id' => $student->id,
             'assigned_to_id' => $adviser->id,
-            'category_id' => $infraCat->id,
             'title' => 'Projector not functioning in Lab 3',
             'description' => 'The multimedia projector display flickers continuously during the afternoon lectures.',
-            'status' => 'pending',
+            'category_id' => $infraCategory->id,
+            'status' => Application::STATUS_PENDING,
             'priority' => 'medium',
         ]);
 
@@ -56,23 +50,22 @@ class DemoDataSeeder extends Seeder
             'action' => 'submitted',
             'from_user_id' => $student->id,
             'to_user_id' => $adviser->id,
-            'notes' => 'Complaint submitted by student.',
+            'notes' => 'Application submitted by student.',
         ]);
 
         ApplicationRemark::create([
             'application_id' => $c1->id,
             'user_id' => $adviser->id,
             'remark' => 'Inspected lab projector. Lab technician notified for repair.',
-            'action_taken' => 'Inspected',
         ]);
 
         $c2 = Application::create([
             'student_id' => $student->id,
             'assigned_to_id' => $coordinator->id,
-            'category_id' => $academicCat->id,
             'title' => 'Timetable overlap for CS-301 and CS-305',
             'description' => 'Algorithm Design and Database Systems classes are scheduled at the exact same hour on Monday.',
-            'status' => 'forwarded',
+            'category_id' => $academicCategory->id,
+            'status' => Application::STATUS_FORWARDED,
             'priority' => 'high',
         ]);
 
@@ -87,6 +80,7 @@ class DemoDataSeeder extends Seeder
         // Demo Notices
         Notice::create([
             'sender_id' => $coordinator->id,
+            'department_id' => $coordinator->department_id,
             'title' => 'Midterm Examination Schedule Released',
             'description' => 'Spring 2026 Midterm Exams will commence from next Monday. Check notice board for timetable.',
             'tag' => 'Academic',
@@ -96,6 +90,7 @@ class DemoDataSeeder extends Seeder
 
         Notice::create([
             'sender_id' => $coordinator->id,
+            'department_id' => $coordinator->department_id,
             'title' => 'Lab Maintenance Session',
             'description' => 'Computer Lab 1 and 2 will remain closed on Friday for network maintenance.',
             'tag' => 'General',
@@ -109,8 +104,9 @@ class DemoDataSeeder extends Seeder
             'type' => NotificationType::ApplicationUpdated,
             'reference_type' => Application::class,
             'reference_id' => $c1->id,
-            'title' => 'Complaint Status Update',
-            'message' => 'Your complaint "Projector not functioning in Lab 3" is under review.',
+            'title' => 'Application Status Update',
+            'message' => 'Your application "Projector not functioning in Lab 3" is under review.',
+            'read_at' => null,
         ]);
     }
 }

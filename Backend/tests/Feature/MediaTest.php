@@ -38,26 +38,25 @@ class MediaTest extends TestCase
 
         $response->assertStatus(200);
 
-        // Assert file exists in storage
-        $this->assertDatabaseHas('applications', [
-            'id' => $application->id,
-            'attachment_name' => 'document.pdf'
+        // Assert file exists in relational attachments table
+        $this->assertDatabaseHas('application_attachments', [
+            'application_id' => $application->id,
+            'file_name' => 'document.pdf'
         ]);
 
-        $application->refresh();
-        $path = str_replace(asset('storage/'), '', $application->attachment_path);
-        Storage::disk('public')->assertExists($path);
+        $attachment = \App\Models\ApplicationAttachment::where('application_id', $application->id)->first();
+        $this->assertNotNull($attachment);
+        Storage::disk('public')->assertExists($attachment->file_path);
 
         // Delete attachment
         $deleteResponse = $this->actingAs($student)->deleteJson("/api/v1/applications/attachments/{$application->id}");
 
         $deleteResponse->assertStatus(200);
 
-        $this->assertDatabaseHas('applications', [
-            'id' => $application->id,
-            'attachment_path' => null
+        $this->assertDatabaseMissing('application_attachments', [
+            'application_id' => $application->id,
         ]);
 
-        Storage::disk('public')->assertMissing($path);
+        Storage::disk('public')->assertMissing($attachment->file_path);
     }
 }

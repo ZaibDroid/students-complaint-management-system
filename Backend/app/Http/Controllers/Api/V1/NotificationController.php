@@ -55,6 +55,16 @@ class NotificationController extends BaseApiController
         return $this->successResponse(null, 'All notifications marked as read');
     }
 
+    public function unreadCount(Request $request): JsonResponse
+    {
+        $count = Notification::where('user_id', $request->user()->id)->unread()->count();
+
+        return $this->successResponse([
+            'count' => $count,
+            'unread_count' => $count,
+        ], 'Unread notification count retrieved successfully');
+    }
+
     public function destroy(Notification $notification): JsonResponse
     {
         $this->authorize('delete', $notification);

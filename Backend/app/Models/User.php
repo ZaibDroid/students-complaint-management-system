@@ -18,13 +18,14 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, Filterable;
 
     protected $fillable = [
+        'registration_number',
         'name',
         'email',
         'password',
         'department_id',
         'batch_id',
         'section_id',
-        'year',
+        'current_semester',
         'semester',
         'adviser_id',
         'status',
@@ -40,7 +41,44 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'current_semester' => 'integer',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            $attrs = $user->getAttributes();
+
+            // Auto-populate registration_number from email if missing in raw attributes
+            if (empty($attrs['registration_number']) && !empty($user->email) && str_contains($user->email, '@')) {
+                $user->registration_number = strtoupper(trim(explode('@', $user->email)[0]));
+            }
+
+            // Auto-populate current_semester from semester string if missing in raw attributes
+            if (empty($attrs['current_semester'])) {
+                if (!empty($user->semester)) {
+                    if (is_numeric(trim($user->semester))) {
+                        $sem = (int)trim($user->semester);
+                        if ($sem >= 1 && $sem <= 8) {
+                            $user->current_semester = $sem;
+                        }
+                    } elseif (preg_match('/(?:semester|sem)\s*(\d+)/i', $user->semester, $m)) {
+                        $sem = (int)$m[1];
+                        if ($sem >= 1 && $sem <= 8) {
+                            $user->current_semester = $sem;
+                        }
+                    }
+                } elseif (!empty($user->year)) {
+                    if (preg_match('/(?:semester|sem)\s*(\d+)/i', $user->year, $m)) {
+                        $sem = (int)$m[1];
+                        if ($sem >= 1 && $sem <= 8) {
+                            $user->current_semester = $sem;
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     public function department(): BelongsTo
     {
@@ -121,6 +159,38 @@ class User extends Authenticatable
         return 'N/A';
     }
 
+    public function setRegistrationNumberAttribute($value): void
+    {
+        $this->attributes['registration_number'] = $value ? strtoupper(trim((string)$value)) : null;
+    }
+
+    public function setCurrentSemesterAttribute($value): void
+    {
+        if ($value === null || $value === '') {
+            $this->attributes['current_semester'] = null;
+            return;
+        }
+
+        if (is_numeric($value)) {
+            $val = (int)$value;
+            $this->attributes['current_semester'] = ($val >= 1 && $val <= 8) ? $val : null;
+        } elseif (preg_match('/(?:semester|sem)\s*(\d+)/i', (string)$value, $m)) {
+            $val = (int)$m[1];
+            $this->attributes['current_semester'] = ($val >= 1 && $val <= 8) ? $val : null;
+        } else {
+            $this->attributes['current_semester'] = null;
+        }
+    }
+
+    public function getYearAttribute(): ?string
+    {
+        if (array_key_exists('year', $this->attributes) && $this->attributes['year']) {
+            return $this->attributes['year'];
+        }
+
+        return $this->current_semester ? "Semester {$this->current_semester}" : null;
+    }
+
     public function getBatchDisplayAttribute(): string
     {
         if ($this->relationLoaded('batch') && $this->batch) {
@@ -141,6 +211,15 @@ class User extends Authenticatable
             return "Batch {$fullYr}";
         }
         return 'N/A';
+    }
+
+    public function getIsCrAttribute(): bool
+    {
+        if (isset($this->attributes['is_cr']) && $this->attributes['is_cr']) {
+            return true;
+        }
+
+        return $this->hasAnyRole(['CR', 'Class Representative']);
     }
 
     public function getSectionDisplayAttribute(): string
@@ -168,7 +247,9 @@ class User extends Authenticatable
 
     public function scopeCrs($query)
     {
-        return $query->role('CR');
+        return $query->whereHas('roles', function ($q) {
+            $q->whereIn('name', ['CR', 'Class Representative']);
+        });
     }
 
     public function scopeApproved($query)

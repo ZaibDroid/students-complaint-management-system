@@ -22,6 +22,7 @@ class Application extends Model
 
     protected $fillable = [
         'ticket_number',
+        'department_id',
         'student_id',
         'assigned_to_id',
         'title',
@@ -29,12 +30,16 @@ class Application extends Model
         'category_id',
         'status',
         'priority',
-        'admin_remarks',
-        'attachment_path',
-        'attachment_name',
-        'attachment_type',
-        'attachment_size',
     ];
+
+    public function getAdminRemarksAttribute(): ?string
+    {
+        if (array_key_exists('admin_remarks', $this->attributes) && $this->attributes['admin_remarks']) {
+            return $this->attributes['admin_remarks'];
+        }
+
+        return $this->remarks()->latest('id')->value('remark');
+    }
 
     protected $casts = [
         'created_at' => 'datetime',
@@ -48,11 +53,25 @@ class Application extends Model
         static::creating(function ($application) {
             if (empty($application->ticket_number)) {
                 $year = date('Y');
-                $latest = static::withTrashed()->latest('id')->first();
-                $nextId = $latest ? $latest->id + 1 : 1;
-                $application->ticket_number = sprintf('DCMS-%s-%04d', $year, $nextId);
+                $application->ticket_number = sprintf('DCMS-%s-%s', $year, strtoupper(\Illuminate\Support\Str::random(6)));
+            }
+            if (empty($application->department_id) && !empty($application->student_id)) {
+                $studentDeptId = User::where('id', $application->student_id)->value('department_id');
+                if ($studentDeptId) {
+                    $application->department_id = $studentDeptId;
+                }
             }
         });
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(ApplicationAttachment::class);
     }
 
     public function media(): \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -112,6 +131,11 @@ class Application extends Model
         return $query->where('status', self::STATUS_RETURNED);
     }
 
+    public function scopeForDepartment($query, int $departmentId)
+    {
+        return $query->where('department_id', $departmentId);
+    }
+
     /**
      * Define valid state transitions.
      */
@@ -121,11 +145,11 @@ class Application extends Model
             self::STATUS_PENDING => [self::STATUS_FORWARDED, self::STATUS_RESOLVED, self::STATUS_REJECTED, self::STATUS_RETURNED],
             self::STATUS_FORWARDED => [self::STATUS_FORWARDED, self::STATUS_RESOLVED, self::STATUS_REJECTED, self::STATUS_RETURNED],
             self::STATUS_RETURNED => [self::STATUS_PENDING], // Once returned, student can submit again (goes to pending)
-            self::STATUS_RESOLVED => [self::STATUS_FORWARDED, self::STATUS_RESOLVED],
+            self::STATUS_RESOLVED => [], // Terminal state (usually)
             self::STATUS_REJECTED => [], // Terminal state
         ];
 
-        $allowed = $validTransitions[$this->status] ?? [self::STATUS_FORWARDED, self::STATUS_RESOLVED, self::STATUS_REJECTED];
+        $allowed = $validTransitions[$this->status] ?? [];
         return in_array($newStatus, $allowed);
     }
 }

@@ -13,6 +13,8 @@ interface ApplicationServiceInterface extends BaseServiceInterface
 {
     public function createApplication(User $student, array $data, array $files = []): Application;
 
+    public function generateSequentialTicketNumber(?int $year = null): string;
+
     public function getApplicationsForUser(User $user, array $filters = [], int $perPage = 15): LengthAwarePaginator;
 
     public function forward(User $actor, Application $application, User $assignTo, ?string $notes = null): Application;

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             BatchAndSectionSeeder::class,
             SettingSeeder::class,
             AdminUserSeeder::class,
+            ComplaintCategorySeeder::class,
             DemoDataSeeder::class,
         ]);
     }

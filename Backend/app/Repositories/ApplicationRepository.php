@@ -16,48 +16,56 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
 
     public function getApplicationsForUser(User $user, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = $this->model->with(['student', 'assignedTo', 'remarks.user', 'timeline.fromUser', 'timeline.toUser']);
+        $query = $this->model->with([
+            'department',
+            'attachments',
+            'student.batch',
+            'student.section',
+            'assignedTo',
+            'remarks.user',
+            'timeline.fromUser',
+            'timeline.toUser',
+        ]);
 
         if ($user->hasRole('Student')) {
             $query->where('student_id', $user->id);
-        } elseif ($user->hasRole('Batch Adviser')) {
+        } elseif ($user->hasAnyRole(['Batch Adviser', 'Batch Advisor'])) {
             $assignedSectionIds = $user->assignedSections()->pluck('sections.id')->toArray();
+            if ($user->section_id && !in_array($user->section_id, $assignedSectionIds)) {
+                $assignedSectionIds[] = $user->section_id;
+            }
+
             $query->where(function ($q) use ($user, $assignedSectionIds) {
                 $q->where('assigned_to_id', $user->id)
-                  ->orWhere('student_id', $user->id)
-                  ->orWhereHas('timeline', function ($tq) use ($user) {
-                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
-                  });
-                if (!empty($assignedSectionIds)) {
-                    $q->orWhereHas('student', function ($sq) use ($assignedSectionIds) {
-                        $sq->whereIn('section_id', $assignedSectionIds);
+                  ->orWhere('student_id', $user->id);
+
+                if (!empty($assignedSectionIds) || !empty($user->batch_id)) {
+                    $q->orWhereHas('student', function ($sq) use ($user, $assignedSectionIds) {
+                        $sq->where(function ($sub) use ($user, $assignedSectionIds) {
+                            if (!empty($assignedSectionIds)) {
+                                $sub->whereIn('section_id', $assignedSectionIds);
+                            }
+                            if (!empty($user->batch_id)) {
+                                $sub->orWhere('batch_id', $user->batch_id);
+                            }
+                        });
                     });
                 }
             });
-        } elseif ($user->hasAnyRole(['Coordinator', 'Office Staff'])) {
-            $query->where(function ($q) use ($user) {
-                $q->where('assigned_to_id', $user->id)
-                  ->orWhere('student_id', $user->id)
-                  ->orWhereHas('timeline', function ($tq) use ($user) {
-                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
-                  });
-                if ($user->department_id) {
-                    $q->orWhereHas('student', function ($sq) use ($user) {
-                        $sq->where('department_id', $user->department_id);
-                    });
-                }
-            });
-        } elseif (!$user->hasAnyRole(['Chairman', 'Dean', 'Vice Chancellor', 'Admin'])) {
-            // Any other role created in the future
-            $query->where(function ($q) use ($user) {
-                $q->where('assigned_to_id', $user->id)
-                  ->orWhere('student_id', $user->id)
-                  ->orWhereHas('timeline', function ($tq) use ($user) {
-                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
-                  });
-            });
+        } elseif ($user->hasAnyRole(['Coordinator', 'Chairman'])) {
+            if ($user->department_id) {
+                $query->where('department_id', $user->department_id);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        } elseif ($user->hasRole('Office Staff')) {
+            if ($user->department_id) {
+                $query->where('department_id', $user->department_id);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
-        // Chairman, Dean, Vice Chancellor, Admin can view all Applications.
+        // Dean, Vice Chancellor, Admin can view across all departments.
 
         // Custom search filter
         if (!empty($filters['search'])) {

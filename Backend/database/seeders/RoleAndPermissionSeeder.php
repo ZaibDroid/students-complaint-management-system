@@ -19,6 +19,7 @@ class RoleAndPermissionSeeder extends Seeder
         foreach (RoleConstants::allRoles() as $roleName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
         }
+        Role::firstOrCreate(['name' => 'CR', 'guard_name' => 'web']);
 
         // Define matrix mapping Roles to specific Permissions
         $rolePermissions = [

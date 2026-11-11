@@ -15,12 +15,10 @@ use Illuminate\Http\Request;
 class ApplicationController extends BaseApiController
 {
     protected ApplicationServiceInterface $applicationService;
-    protected ApplicationServiceInterface $ApplicationService;
 
     public function __construct(ApplicationServiceInterface $applicationService)
     {
         $this->applicationService = $applicationService;
-        $this->ApplicationService = $applicationService;
     }
 
     public function index(Request $request): JsonResponse
@@ -28,7 +26,7 @@ class ApplicationController extends BaseApiController
         $this->authorize('viewAny', Application::class);
 
         $perPage = (int) $request->get('per_page', 15);
-        $paginator = $this->ApplicationService->getApplicationsForUser($request->user(), $request->all(), $perPage);
+        $paginator = $this->applicationService->getApplicationsForUser($request->user(), $request->all(), $perPage);
 
         return response()->json([
             'success' => true,
@@ -51,10 +49,40 @@ class ApplicationController extends BaseApiController
     {
         $this->authorize('create', Application::class);
 
-        $data = $request->only(['title', 'description', 'category_id', 'priority']);
-        $files = $request->allFiles();
+        $categoryId = $request->input('category_id');
+        if (!$categoryId && $request->filled('category')) {
+            $catInput = trim((string)$request->input('category'));
+            if (is_numeric($catInput)) {
+                $categoryId = (int) $catInput;
+            } else {
+                $categoryModel = \App\Models\ApplicationCategory::where('name', 'LIKE', '%' . $catInput . '%')
+                    ->orWhere('slug', 'LIKE', '%' . \Illuminate\Support\Str::slug($catInput) . '%')
+                    ->first();
+                if (!$categoryModel) {
+                    $firstWord = explode(' ', $catInput)[0];
+                    $categoryModel = \App\Models\ApplicationCategory::where('name', 'LIKE', '%' . $firstWord . '%')->first();
+                }
+                $categoryId = $categoryModel?->id;
+            }
+        }
 
-        $application = $this->ApplicationService->createApplication($request->user(), $data, $files);
+        if (!$categoryId) {
+            $categoryId = \App\Models\ApplicationCategory::where('is_active', true)->first()?->id ?? 1;
+        }
+
+        $data = $request->only(['title', 'description', 'priority']);
+        $data['category_id'] = $categoryId;
+
+        $files = [];
+        if ($request->hasFile('attachment')) {
+            $files['attachment'] = $request->file('attachment');
+        }
+        if ($request->hasFile('attachments')) {
+            $attachmentFiles = $request->file('attachments');
+            $files['attachments'] = is_array($attachmentFiles) ? $attachmentFiles : [$attachmentFiles];
+        }
+
+        $application = $this->applicationService->createApplication($request->user(), $data, $files);
 
         return $this->createdResponse(new ApplicationResource($application), 'Application submitted successfully');
     }
@@ -64,7 +92,7 @@ class ApplicationController extends BaseApiController
         $this->authorize('view', $application);
 
         return $this->successResponse(
-            new ApplicationResource($application->load(['student', 'assignedTo', 'category', 'remarks.user', 'timeline.fromUser', 'timeline.toUser'])),
+            new ApplicationResource($application->load(['department', 'attachments', 'student', 'assignedTo', 'category', 'remarks.user', 'timeline.fromUser', 'timeline.toUser'])),
             'Application details retrieved successfully'
         );
     }
@@ -73,7 +101,7 @@ class ApplicationController extends BaseApiController
     {
         $this->authorize('update', $application);
 
-        $this->ApplicationService->update($application->id, $request->validated());
+        $this->applicationService->update($application->id, $request->validated());
 
         return $this->successResponse(new ApplicationResource($application->fresh()), 'Application updated successfully');
     }
@@ -88,29 +116,20 @@ class ApplicationController extends BaseApiController
 
         switch ($status) {
             case Application::STATUS_FORWARDED:
-                $assignedToId = $request->assigned_to_id;
-                if (!$assignedToId) {
-                    $officeStaff = \App\Models\User::whereHas('roles', function($q) {
-                        $q->where('name', 'Office Staff');
-                    })->first();
-                    if ($officeStaff) {
-                        $assignTo = $officeStaff;
-                    } else {
-                        return response()->json(['success' => false, 'message' => 'assigned_to_id is required for forwarding'], 422);
-                    }
-                } else {
-                    $assignTo = \App\Models\User::findOrFail($assignedToId);
+                if (!$request->assigned_to_id) {
+                    return response()->json(['success' => false, 'message' => 'assigned_to_id is required for forwarding'], 422);
                 }
-                $updated = $this->ApplicationService->forward($actor, $application, $assignTo, $notes);
+                $assignTo = \App\Models\User::findOrFail($request->assigned_to_id);
+                $updated = $this->applicationService->forward($actor, $application, $assignTo, $notes);
                 break;
             case Application::STATUS_RESOLVED:
-                $updated = $this->ApplicationService->resolve($actor, $application, $notes);
+                $updated = $this->applicationService->resolve($actor, $application, $notes);
                 break;
             case Application::STATUS_REJECTED:
-                $updated = $this->ApplicationService->reject($actor, $application, $notes);
+                $updated = $this->applicationService->reject($actor, $application, $notes);
                 break;
             case Application::STATUS_RETURNED:
-                $updated = $this->ApplicationService->returnApplication($actor, $application, $notes);
+                $updated = $this->applicationService->returnApplication($actor, $application, $notes);
                 break;
             default:
                 return response()->json(['success' => false, 'message' => 'Invalid status requested'], 422);
@@ -123,7 +142,7 @@ class ApplicationController extends BaseApiController
     {
         $this->authorize('delete', $application);
 
-        $this->ApplicationService->delete($application->id);
+        $this->applicationService->delete($application->id);
 
         return $this->successResponse(null, 'Application deleted successfully');
     }

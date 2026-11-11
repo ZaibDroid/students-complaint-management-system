@@ -14,8 +14,12 @@ class ApplicationRemark extends Model
         'application_id',
         'user_id',
         'remark',
-        'action_taken',
     ];
+
+    public function getActionTakenAttribute(): ?string
+    {
+        return $this->attributes['action_taken'] ?? null;
+    }
 
     public function Application(): BelongsTo
     {

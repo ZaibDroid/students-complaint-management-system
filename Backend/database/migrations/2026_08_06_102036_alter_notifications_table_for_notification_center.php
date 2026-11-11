@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->index('user_id');
-            $table->dropIndex(['user_id', 'is_read']);
+            $table->dropForeign(['user_id']);
+            $table->dropIndex('notifications_user_id_is_read_index');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
             $table->renameColumn('body', 'message');
             $table->dropColumn(['category', 'is_read', 'related_id']);
