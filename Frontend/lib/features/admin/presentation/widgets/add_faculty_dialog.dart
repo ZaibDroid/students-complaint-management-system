@@ -4,6 +4,8 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../providers/adviser_assignment_provider.dart';
+import '../providers/coordinator_provider.dart';
+import '../providers/staff_accounts_provider.dart';
 import '../../../../features/batch/presentation/providers/batch_provider.dart';
 
 class AddFacultyDialog extends ConsumerStatefulWidget {
@@ -130,6 +132,9 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
+      final messenger = ScaffoldMessenger.of(context);
+      final navigator = Navigator.of(context);
+
       setState(() => _isLoading = true);
       try {
         final batchVal = _batchController.text.trim();
@@ -146,27 +151,29 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
               {'batch': batchVal, 'section': sectionVal}
           ],
         );
-        if (mounted) {
-          ref.invalidate(batchAdvisersStreamProvider);
-          ref.invalidate(batchesStreamProvider);
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('New faculty member registered successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+
+        ref.invalidate(coordinatorsStreamProvider);
+        ref.invalidate(batchAdvisersStreamProvider);
+        ref.invalidate(batchesStreamProvider);
+        ref.invalidate(staffAccountsProvider);
+
+        navigator.pop();
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('${widget.defaultRole} registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
       } catch (e) {
         if (mounted) {
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString().replaceAll('Exception: ', '')),
-              backgroundColor: Colors.red,
-            ),
-          );
         }
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '').replaceAll('ApiException: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

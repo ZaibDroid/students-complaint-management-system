@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/auth/domain/entities/user.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
+import '../providers/adviser_assignment_provider.dart';
+import '../providers/coordinator_provider.dart';
+import '../../../../features/batch/presentation/providers/batch_provider.dart';
 
 class HandoverDialog extends ConsumerStatefulWidget {
   final User oldAdviser;
@@ -24,6 +27,9 @@ class _HandoverDialogState extends ConsumerState<HandoverDialog> {
   Future<void> _submitHandover() async {
     if (_selectedAdviserName == null) return;
     
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     setState(() => _isLoading = true);
 
     final isCoordinator = widget.oldAdviser.role == 'Coordinator';
@@ -33,24 +39,24 @@ class _HandoverDialogState extends ConsumerState<HandoverDialog> {
           ? await ref.read(apiAuthRepositoryProvider).handoverAdvisers(widget.oldAdviser.name, _selectedAdviserName!)
           : await ref.read(apiAuthRepositoryProvider).handoverStudents(widget.oldAdviser.name, _selectedAdviserName!);
 
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Successfully transferred $updatedCount ${isCoordinator ? 'advisers' : 'students'} to $_selectedAdviserName!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      ref.invalidate(coordinatorsStreamProvider);
+      ref.invalidate(batchAdvisersStreamProvider);
+      ref.invalidate(batchesStreamProvider);
+
+      navigator.pop();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Successfully transferred $updatedCount ${isCoordinator ? 'advisers' : 'students'} to $_selectedAdviserName!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error transferring ${isCoordinator ? 'advisers' : 'students'}: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Error transferring ${isCoordinator ? 'advisers' : 'students'}: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

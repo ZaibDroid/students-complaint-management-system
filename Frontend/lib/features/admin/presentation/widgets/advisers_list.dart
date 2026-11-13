@@ -6,10 +6,12 @@ import 'delete_adviser_dialog.dart';
 
 class AdvisersList extends StatelessWidget {
   final List<User> advisers;
+  final String? emptyMessage;
 
   const AdvisersList({
     super.key,
     required this.advisers,
+    this.emptyMessage,
   });
 
   @override
@@ -17,12 +19,12 @@ class AdvisersList extends StatelessWidget {
     final theme = Theme.of(context);
 
     if (advisers.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Text(
-            'No batch advisers registered yet.',
-            style: TextStyle(color: Colors.grey),
+            emptyMessage ?? 'No batch advisers registered yet.',
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );

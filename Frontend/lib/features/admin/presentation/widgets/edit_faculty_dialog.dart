@@ -5,6 +5,8 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../../features/auth/domain/entities/user.dart';
 import '../providers/adviser_assignment_provider.dart';
+import '../providers/coordinator_provider.dart';
+import '../providers/staff_accounts_provider.dart';
 import '../../../../features/batch/presentation/providers/batch_provider.dart';
 
 class EditFacultyDialog extends ConsumerStatefulWidget {
@@ -120,6 +122,9 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
+      final messenger = ScaffoldMessenger.of(context);
+      final navigator = Navigator.of(context);
+
       setState(() => _isLoading = true);
       try {
         await ref.read(apiAuthRepositoryProvider).updateStaffAccount(
@@ -129,27 +134,29 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
           section: _sectionController.text.trim(),
           semester: _semesterController.text.trim(),
         );
-        if (mounted) {
-          ref.invalidate(batchAdvisersStreamProvider);
-          ref.invalidate(batchesStreamProvider);
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Batch adviser details updated successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+
+        ref.invalidate(coordinatorsStreamProvider);
+        ref.invalidate(batchAdvisersStreamProvider);
+        ref.invalidate(batchesStreamProvider);
+        ref.invalidate(staffAccountsProvider);
+
+        navigator.pop();
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Faculty details updated successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
       } catch (e) {
         if (mounted) {
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString().replaceAll('Exception: ', '')),
-              backgroundColor: Colors.red,
-            ),
-          );
         }
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '').replaceAll('ApiException: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

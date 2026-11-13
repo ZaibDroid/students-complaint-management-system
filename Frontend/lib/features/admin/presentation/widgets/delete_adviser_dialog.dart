@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/auth/domain/entities/user.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
+import '../providers/adviser_assignment_provider.dart';
+import '../providers/coordinator_provider.dart';
+import '../providers/staff_accounts_provider.dart';
+import '../../../../features/batch/presentation/providers/batch_provider.dart';
 
 class DeleteAdviserDialog extends ConsumerStatefulWidget {
   final User adviserToDelete;
@@ -24,6 +28,9 @@ class _DeleteAdviserDialogState extends ConsumerState<DeleteAdviserDialog> {
   Future<void> _submitDelete() async {
     if (_selectedAdviserName == null) return;
     
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     setState(() => _isLoading = true);
 
     final isCoordinator = widget.adviserToDelete.role == 'Coordinator';
@@ -37,24 +44,25 @@ class _DeleteAdviserDialogState extends ConsumerState<DeleteAdviserDialog> {
           .read(apiAuthRepositoryProvider)
           .deleteStaffAccount(widget.adviserToDelete.id);
 
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Successfully transferred $updatedCount ${isCoordinator ? 'advisers' : 'students'} and deleted ${isCoordinator ? 'coordinator' : 'adviser'}!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      ref.invalidate(coordinatorsStreamProvider);
+      ref.invalidate(batchAdvisersStreamProvider);
+      ref.invalidate(batchesStreamProvider);
+      ref.invalidate(staffAccountsProvider);
+
+      navigator.pop();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Successfully transferred $updatedCount ${isCoordinator ? 'advisers' : 'students'} and deleted ${isCoordinator ? 'coordinator' : 'adviser'}!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
