@@ -15,8 +15,10 @@ trait Filterable
      */
     public function scopeFilter(Builder $query, array $filters): Builder
     {
+        $ignoredFields = ['page', 'per_page', 'sort', 'direction', 'order', 'order_by'];
+
         foreach ($filters as $field => $value) {
-            if ($value === null || $value === '') {
+            if ($value === null || $value === '' || in_array($field, $ignoredFields, true)) {
                 continue;
             }
 

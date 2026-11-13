@@ -110,8 +110,12 @@ class AdvisersList extends StatelessWidget {
                           child: Text(
                             isAssigned 
                                 ? (hasAssignedSections 
-                                    ? adviser.assignedSections!.map((s) => '${s['batch']} (${s['section']})').join(', ')
-                                    : '${adviser.semester ?? adviser.batch} (${adviser.section})')
+                                    ? adviser.assignedSections!.map((s) {
+                                        final b = (s['batch'] != null && s['batch'].toString().isNotEmpty && s['batch'] != 'N/A') ? 'Batch ${s['batch']}' : 'Batch';
+                                        final sec = (s['section'] != null && s['section'].toString().isNotEmpty && s['section'] != 'N/A') ? ' (${s['section']})' : '';
+                                        return '$b$sec';
+                                      }).join(', ')
+                                    : '${adviser.semester ?? adviser.batch ?? 'Assigned'} (${adviser.section ?? ''})')
                                 : 'Not Assigned',
                             style: TextStyle(
                               color: isAssigned ? Colors.green.shade700 : Colors.red.shade700,

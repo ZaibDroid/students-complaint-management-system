@@ -22,7 +22,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function getStaffMembers(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = $this->model->with(['department', 'roles', 'assignedSections'])
+        $query = $this->model->with(['department', 'roles', 'assignedSections.batch'])
             ->whereDoesntHave('roles', function ($q) {
                 $q->where('name', 'Student');
             });
@@ -33,6 +33,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             $query->role($role);
         }
 
+        unset($filters['per_page'], $filters['page']);
+
         if (!empty($filters) && method_exists($this->model, 'scopeFilter')) {
             $query->filter($filters);
         }
@@ -42,13 +44,15 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function getUsers(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = $this->model->with(['department', 'batch', 'section', 'adviser', 'roles', 'assignedSections']);
+        $query = $this->model->with(['department', 'batch', 'section', 'adviser', 'roles', 'assignedSections.batch']);
 
         if (!empty($filters['role'])) {
             $role = $filters['role'];
             unset($filters['role']);
             $query->role($role);
         }
+
+        unset($filters['per_page'], $filters['page']);
 
         if (!empty($filters) && method_exists($this->model, 'scopeFilter')) {
             $query->filter($filters);
@@ -59,6 +63,14 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function assignSectionsToUser(User $user, array $sectionIds): void
     {
-        $user->assignedSections()->sync($sectionIds);
+        $cleanIds = [];
+        foreach ($sectionIds as $item) {
+            if (is_numeric($item)) {
+                $cleanIds[] = (int)$item;
+            } elseif (is_array($item) && !empty($item['id']) && is_numeric($item['id'])) {
+                $cleanIds[] = (int)$item['id'];
+            }
+        }
+        $user->assignedSections()->sync($cleanIds);
     }
 }

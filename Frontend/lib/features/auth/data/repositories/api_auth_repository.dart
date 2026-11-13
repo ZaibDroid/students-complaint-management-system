@@ -78,20 +78,26 @@ class ApiAuthRepository {
     required String password,
     required String role,
     String? batch,
+    String? batchId,
     String? section,
+    String? sectionId,
     String? semester,
     List<Map<String, dynamic>>? assignedSections,
   }) async {
-    await _apiClient.post('/users/staff', body: {
+    final body = <String, dynamic>{
       'name': name,
       'email': email,
       'password': password,
       'role': role,
-      'batch': batch,
-      'section': section,
-      'semester': semester,
-      'assigned_sections': assignedSections,
-    });
+    };
+    if (batch != null) body['batch'] = batch;
+    if (batchId != null) body['batch_id'] = batchId;
+    if (section != null) body['section'] = section;
+    if (sectionId != null) body['section_id'] = sectionId;
+    if (semester != null) body['semester'] = semester;
+    if (assignedSections != null) body['assigned_sections'] = assignedSections;
+
+    await _apiClient.post('/users/staff', body: body);
   }
 
   Future<void> updateStaffAccount(String uid, {
@@ -101,8 +107,11 @@ class ApiAuthRepository {
     String? phone,
     String? password,
     String? batch,
+    String? batchId,
     String? section,
+    String? sectionId,
     String? semester,
+    List<Map<String, dynamic>>? assignedSections,
   }) async {
     final body = <String, dynamic>{};
     if (name != null) body['name'] = name;
@@ -111,8 +120,11 @@ class ApiAuthRepository {
     if (phone != null) body['phone'] = phone;
     if (password != null && password.isNotEmpty) body['password'] = password;
     if (batch != null) body['batch'] = batch;
+    if (batchId != null) body['batch_id'] = batchId;
     if (section != null) body['section'] = section;
+    if (sectionId != null) body['section_id'] = sectionId;
     if (semester != null) body['semester'] = semester;
+    if (assignedSections != null) body['assigned_sections'] = assignedSections;
 
     await _apiClient.put('/users/staff/$uid', body: body);
   }

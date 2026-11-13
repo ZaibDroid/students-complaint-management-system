@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/services/api_client.dart';
 import '../../../auth/domain/entities/user.dart';
@@ -14,7 +15,8 @@ final coordinatorsStreamProvider = FutureProvider.autoDispose<List<User>>((ref) 
     } else {
       return [];
     }
-  } catch (_) {
-    return [];
+  } catch (e, stack) {
+    debugPrint('Error loading coordinators: $e\n$stack');
+    rethrow;
   }
 });

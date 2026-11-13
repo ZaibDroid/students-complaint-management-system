@@ -6,6 +6,7 @@ use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Contracts\Services\UserServiceInterface;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserService implements UserServiceInterface
@@ -64,10 +65,23 @@ class UserService implements UserServiceInterface
 
             if ($sectionName !== null && $sectionName !== '') {
                 $secName = strtoupper(trim((string)$sectionName));
-                $section = \App\Models\Section::firstOrCreate([
-                    'batch_id' => $batch->id,
-                    'name' => $secName,
-                ]);
+                $shortSec = str_ireplace('SECTION ', '', $secName);
+                $longSec = 'Section ' . $shortSec;
+
+                $section = \App\Models\Section::where('batch_id', $batch->id)
+                    ->where(function ($q) use ($secName, $shortSec, $longSec) {
+                        $q->where('name', $secName)
+                          ->orWhere('name', $shortSec)
+                          ->orWhere('name', $longSec);
+                    })
+                    ->first();
+
+                if (!$section) {
+                    $section = \App\Models\Section::create([
+                        'batch_id' => $batch->id,
+                        'name' => $longSec,
+                    ]);
+                }
                 $data['section_id'] = $section->id;
                 return $section->id;
             }
@@ -77,59 +91,100 @@ class UserService implements UserServiceInterface
 
     public function createStaff(array $data): User
     {
-        $data['password'] = Hash::make($data['password']);
-        $data['status'] = 'approved';
+        return DB::transaction(function () use ($data) {
+            $data['password'] = Hash::make($data['password']);
+            $data['status'] = 'approved';
 
-        $role = $data['role'] ?? 'Office Staff';
-        unset($data['role']);
+            $role = $data['role'] ?? 'Office Staff';
+            unset($data['role']);
 
-        $assignedSections = $data['assigned_sections'] ?? [];
-        unset($data['assigned_sections']);
+            $assignedSections = $data['assigned_sections'] ?? [];
+            unset($data['assigned_sections']);
 
-        $createdSectionId = $this->resolveBatchAndSection($data);
+            $createdSectionId = $this->resolveBatchAndSection($data);
 
-        /** @var User $user */
-        $user = $this->userRepository->create($data);
-        $user->assignRole($role);
+            /** @var User $user */
+            $user = $this->userRepository->create($data);
+            $user->assignRole($role);
 
-        if (!empty($assignedSections)) {
-            $this->userRepository->assignSectionsToUser($user, $assignedSections);
-        }
+            $resolvedSectionIds = [];
+            if ($createdSectionId) {
+                $resolvedSectionIds[] = $createdSectionId;
+            }
 
-        if ($createdSectionId) {
-            $user->assignedSections()->syncWithoutDetaching([$createdSectionId]);
-        }
+            if (!empty($assignedSections) && is_array($assignedSections)) {
+                foreach ($assignedSections as $item) {
+                    if (is_numeric($item)) {
+                        $resolvedSectionIds[] = (int)$item;
+                    } elseif (is_array($item)) {
+                        $itemCopy = $item;
+                        $secId = $this->resolveBatchAndSection($itemCopy);
+                        if ($secId) {
+                            $resolvedSectionIds[] = $secId;
+                        } elseif (!empty($item['section_id']) && is_numeric($item['section_id'])) {
+                            $resolvedSectionIds[] = (int)$item['section_id'];
+                        }
+                    }
+                }
+            }
 
-        return $user->load(['department', 'batch', 'section', 'roles', 'assignedSections']);
+            $resolvedSectionIds = array_values(array_unique(array_filter($resolvedSectionIds)));
+            if (!empty($resolvedSectionIds)) {
+                $user->assignedSections()->sync($resolvedSectionIds);
+            }
+
+            return $user->load(['department', 'batch', 'section', 'roles', 'assignedSections.batch']);
+        });
     }
 
     public function updateStaff(User $user, array $data): User
     {
-        if (isset($data['password']) && !empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            unset($data['password']);
-        }
+        return DB::transaction(function () use ($user, $data) {
+            if (isset($data['password']) && !empty($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            } else {
+                unset($data['password']);
+            }
 
-        if (isset($data['role'])) {
-            $user->syncRoles([$data['role']]);
-            unset($data['role']);
-        }
+            if (isset($data['role'])) {
+                $user->syncRoles([$data['role']]);
+                unset($data['role']);
+            }
 
-        if (isset($data['assigned_sections'])) {
-            $this->userRepository->assignSectionsToUser($user, $data['assigned_sections']);
+            $assignedSections = $data['assigned_sections'] ?? null;
             unset($data['assigned_sections']);
-        }
 
-        $createdSectionId = $this->resolveBatchAndSection($data);
+            $createdSectionId = $this->resolveBatchAndSection($data);
 
-        $this->userRepository->update($user->id, $data);
+            $this->userRepository->update($user->id, $data);
 
-        if ($createdSectionId) {
-            $user->assignedSections()->syncWithoutDetaching([$createdSectionId]);
-        }
+            $resolvedSectionIds = [];
+            if ($createdSectionId) {
+                $resolvedSectionIds[] = $createdSectionId;
+            }
 
-        return $user->fresh(['department', 'batch', 'section', 'roles', 'assignedSections']);
+            if ($assignedSections !== null && is_array($assignedSections)) {
+                foreach ($assignedSections as $item) {
+                    if (is_numeric($item)) {
+                        $resolvedSectionIds[] = (int)$item;
+                    } elseif (is_array($item)) {
+                        $itemCopy = $item;
+                        $secId = $this->resolveBatchAndSection($itemCopy);
+                        if ($secId) {
+                            $resolvedSectionIds[] = $secId;
+                        } elseif (!empty($item['section_id']) && is_numeric($item['section_id'])) {
+                            $resolvedSectionIds[] = (int)$item['section_id'];
+                        }
+                    }
+                }
+                $resolvedSectionIds = array_values(array_unique(array_filter($resolvedSectionIds)));
+                $user->assignedSections()->sync($resolvedSectionIds);
+            } elseif (!empty($resolvedSectionIds)) {
+                $user->assignedSections()->syncWithoutDetaching($resolvedSectionIds);
+            }
+
+            return $user->fresh(['department', 'batch', 'section', 'roles', 'assignedSections.batch']);
+        });
     }
 
     public function deleteStaff(User $user): void

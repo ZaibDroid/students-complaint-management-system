@@ -29,7 +29,9 @@ class UpdateStaffRequest extends BaseApiRequest
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone' => ['nullable', 'string', 'max:20'],
             'batch' => ['nullable', 'string'],
+            'batch_id' => ['nullable'],
             'section' => ['nullable', 'string'],
+            'section_id' => ['nullable'],
             'semester' => ['nullable', 'string'],
             'assigned_sections' => ['nullable', 'array'],
         ];
