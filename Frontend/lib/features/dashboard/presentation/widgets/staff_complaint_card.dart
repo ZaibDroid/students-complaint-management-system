@@ -43,9 +43,6 @@ class StaffComplaintCard extends StatelessWidget {
     }
 
     String displayStatus = status.toUpperCase();
-    if (status.toLowerCase() == 'forwarded' && assignedTo != null && assignedTo!.isNotEmpty) {
-      displayStatus = 'FORWARDED TO ${assignedTo!.toUpperCase()}';
-    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -68,23 +65,29 @@ class StaffComplaintCard extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    displayStatus,
-                    style: TextStyle(
-                      color: statusColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      displayStatus,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 Text(
                   date,
                   style: const TextStyle(
@@ -107,19 +110,48 @@ class StaffComplaintCard extends StatelessWidget {
               children: [
                 Icon(Icons.person_outline, size: 14, color: Colors.grey.shade600),
                 const SizedBox(width: 4),
-                Text(
-                  studentName,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                Flexible(
+                  child: Text(
+                    studentName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Icon(Icons.class_outlined, size: 14, color: Colors.grey.shade600),
                 const SizedBox(width: 4),
-                Text(
-                  batch,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                Flexible(
+                  child: Text(
+                    batch,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
                 ),
               ],
             ),
+            if (status.toLowerCase() == 'forwarded' && assignedTo != null && assignedTo!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Icon(Icons.forward_to_inbox, size: 14, color: statusColor),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Forwarded to: $assignedTo',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             if (onForward != null || onResolve != null || onReject != null) ...[
               const SizedBox(height: 16),
               const Divider(),

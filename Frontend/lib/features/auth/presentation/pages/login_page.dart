@@ -110,7 +110,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   AppTextField(
                     controller: _emailController,
                     labelText: "University Email",
-                    hintText: "e.g. 23mdbcs495@uetmardan.edu.pk",
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: const Icon(Icons.email_outlined),
                     validator: AppValidators.loginEmail,

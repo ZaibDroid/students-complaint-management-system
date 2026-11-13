@@ -139,7 +139,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 AppTextField(
                   controller: _emailController,
                   labelText: "University Email",
-                  hintText: "e.g. 23mdbcs495@uetmardan.edu.pk",
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Icons.email_outlined),
                   validator: AppValidators.universityEmail,
@@ -148,7 +147,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 AppTextField(
                   controller: _phoneController,
                   labelText: "Phone Number",
-                  hintText: "e.g. 03001234567",
                   keyboardType: TextInputType.phone,
                   prefixIcon: const Icon(Icons.phone_outlined),
                   validator: (value) => value == null || value.isEmpty ? 'Required' : null,

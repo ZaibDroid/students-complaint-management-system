@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseApiRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateStaffRequest extends BaseApiRequest
 {
@@ -22,7 +23,7 @@ class UpdateStaffRequest extends BaseApiRequest
 
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $userId],
+            'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)->whereNull('deleted_at')],
             'password' => ['nullable', 'string', 'min:6'],
             'role' => ['sometimes', 'string', 'exists:roles,name'],
             'department_id' => ['nullable', 'exists:departments,id'],

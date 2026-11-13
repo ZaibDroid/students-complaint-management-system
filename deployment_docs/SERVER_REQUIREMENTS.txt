@@ -1,0 +1,102 @@
+================================================================================
+DCMS (Department Complaint Management System) — Physical Server Requirements
+Extracted directly from /Backend (composer.json, Dockerfile, config/, app/)
+================================================================================
+
+1. OPERATING SYSTEM
+   - Linux (Ubuntu 22.04 LTS / 24.04 LTS or Debian 12 recommended)
+
+2. RUNTIME & CORE SERVICES
+   - PHP            : >= 8.2 (composer.json requires "php": "^8.2")
+   - Web Server     : Nginx (recommended, with PHP-FPM) or Apache 2.4+ (mod_rewrite + PHP-FPM)
+   - Database       : MySQL >= 8.0 (utf8mb4 support)
+   - Composer       : >= 2.5
+   - Supervisor     : >= 4.x (required to keep `queue:work` daemons alive)
+   - Cron           : Standard system cron (required for `artisan schedule:run` every minute)
+   - SSL/TLS        : Certbot / Let's Encrypt (required for HTTPS + HSTS header)
+
+3. REQUIRED PHP EXTENSIONS
+   A. Explicit project / Dockerfile & runtime usage:
+      - pdo_mysql    (MySQL 8.0 database driver)
+      - mbstring     (UTF-8 string handling, Laravel core)
+      - exif         (Image metadata validation for profile/notice/complaint uploads)
+      - pcntl        (Supervisor / queue:work graceful worker shutdown signals)
+      - bcmath       (Arbitrary precision math)
+      - gd           (Image handling / upload validation)
+      - fileinfo     (MIME type verification on uploaded attachments)
+      - zip          (Composer package extraction & export handling)
+      - curl         (Outbound HTTP / future FCM / composer)
+
+   B. Required by Laravel 11 Framework ("laravel/framework": "^11.0"):
+      - ctype
+      - dom
+      - filter
+      - hash
+      - json
+      - openssl
+      - pcre
+      - pdo
+      - session
+      - tokenizer
+      - xml
+
+   Verify on server with:
+   $ php -m
+
+4. PHP.INI PRODUCTION TUNING (php-fpm + cli)
+   - upload_max_filesize = 20M     (Max single file limit in code is 10MB / 10240KB)
+   - post_max_size       = 64M     (Supports up to 5x 10MB attachments in one request)
+   - memory_limit        = 256M
+   - max_execution_time  = 120
+   - date.timezone       = Asia/Karachi
+
+5. COMPOSER PACKAGES (FROM Backend/composer.json)
+   - laravel/framework          ^11.0
+   - laravel/sanctum            ^4.0
+   - spatie/laravel-permission  ^6.0
+
+6. SPATIE ROLES & PERMISSIONS SEEDED (FROM RoleConstants.php & RoleAndPermissionSeeder.php)
+   Roles:
+   - Student
+   - Class Representative
+   - CR (legacy alias created in RoleAndPermissionSeeder)
+   - Batch Adviser
+   - Coordinator
+   - Chairman
+   - Office Staff
+   - Dean
+   - Vice Chancellor
+   - Admin
+
+   Permissions:
+   - applications.create
+   - applications.view_own
+   - applications.view_assigned
+   - applications.forward
+   - applications.resolve
+   - applications.view_department
+   - notices.view
+   - notices.create
+   - reports.export
+   - audit.view
+
+7. BACKGROUND PROCESSES & STORAGE PATHS
+   - Queue Workers (Supervisor): `php artisan queue:work database --sleep=3 --tries=3 --max-time=3600`
+     Handles ShouldQueue listeners:
+     * App\Listeners\CreateTimelineEntry
+     * App\Listeners\SendApplicationNotification
+     * App\Listeners\SendNoticeNotification
+     * App\Listeners\ClearDashboardCache
+   - Scheduled Tasks (Cron every minute): `php artisan schedule:run`
+     * `notices:process` (everyMinute, routes/console.php)
+     * `audit:prune --days=365` (recommended weekly cron)
+   - Writable Directories (chown www-data:www-data, chmod 775):
+     * Backend/storage
+     * Backend/bootstrap/cache
+   - Public Symlink (`php artisan storage:link`):
+     * Backend/public/storage -> Backend/storage/app/public
+     * Upload folders created on `public` disk:
+       - Applications/{application_id}
+       - notices
+       - profiles
+

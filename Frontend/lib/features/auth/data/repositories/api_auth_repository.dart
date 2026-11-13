@@ -95,17 +95,26 @@ class ApiAuthRepository {
   }
 
   Future<void> updateStaffAccount(String uid, {
-    required String name,
-    required String batch,
-    required String section,
-    required String semester,
+    String? name,
+    String? email,
+    String? role,
+    String? phone,
+    String? password,
+    String? batch,
+    String? section,
+    String? semester,
   }) async {
-    await _apiClient.put('/users/staff/$uid', body: {
-      'name': name,
-      'batch': batch,
-      'section': section,
-      'semester': semester,
-    });
+    final body = <String, dynamic>{};
+    if (name != null) body['name'] = name;
+    if (email != null) body['email'] = email;
+    if (role != null) body['role'] = role;
+    if (phone != null) body['phone'] = phone;
+    if (password != null && password.isNotEmpty) body['password'] = password;
+    if (batch != null) body['batch'] = batch;
+    if (section != null) body['section'] = section;
+    if (semester != null) body['semester'] = semester;
+
+    await _apiClient.put('/users/staff/$uid', body: body);
   }
 
   Future<void> deleteStaffAccount(String uid) async {

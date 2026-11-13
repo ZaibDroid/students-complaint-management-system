@@ -134,7 +134,11 @@ class UserService implements UserServiceInterface
 
     public function deleteStaff(User $user): void
     {
-        $this->userRepository->delete($user->id);
+        $user->tokens()->delete();
+        if (method_exists($user, 'roles')) {
+            $user->roles()->detach();
+        }
+        $user->forceDelete();
     }
 
     public function listUsers(array $filters = [], int $perPage = 15): LengthAwarePaginator
