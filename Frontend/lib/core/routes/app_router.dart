@@ -9,6 +9,7 @@ import '../../features/admin/presentation/pages/admin_access_page.dart';
 import '../../features/admin/presentation/pages/chairman_dashboard_page.dart';
 import '../../features/admin/presentation/pages/adviser_dashboard_page.dart';
 import '../../features/dashboard/presentation/pages/student_dashboard_page.dart';
+import '../../features/dashboard/presentation/pages/complaint_guide_page.dart';
 import '../../features/dashboard/presentation/pages/analytics_dashboard_page.dart';
 import '../../features/complaints/presentation/pages/submit_complaint_page.dart';
 import '../../features/complaints/presentation/pages/complaint_timeline_page.dart';
@@ -144,6 +145,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/submit_complaint',
         builder: (context, state) => const SubmitComplaintPage(),
+      ),
+      GoRoute(
+        path: '/complaint_guide',
+        builder: (context, state) => const ComplaintGuidePage(),
       ),
       GoRoute(
         path: '/complaint_timeline',

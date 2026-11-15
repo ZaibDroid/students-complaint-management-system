@@ -16,19 +16,12 @@ class ComplaintArchivePage extends ConsumerStatefulWidget {
 }
 
 class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
-  final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'all'; // all, pending, resolved, rejected, forwarded
 
   @override
   void initState() {
     super.initState();
     _selectedFilter = widget.initialFilter;
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   @override
@@ -47,37 +40,18 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
       appBar: const DashboardAppBar(),
       body: Column(
         children: [
-          // Header & Search
+          // Header & Filters
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Access and review all historical resolution records.',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _searchController,
-                  onChanged: (val) => setState(() {}),
-                  decoration: InputDecoration(
-                    hintText: 'Search by ID, keyword, or student name...',
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey.shade50,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -109,18 +83,6 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
                   if (_selectedFilter != 'all' && c.status.toLowerCase() != _selectedFilter) {
                     return false;
                   }
-
-                  // Filter by search (ID, Ticket Number, Title, Student Name)
-                  final query = _searchController.text.toLowerCase();
-                  if (query.isNotEmpty) {
-                    if (!c.id.toLowerCase().contains(query) && 
-                        !(c.ticketNumber?.toLowerCase().contains(query) ?? false) &&
-                        !c.title.toLowerCase().contains(query) &&
-                        !c.studentName.toLowerCase().contains(query)) {
-                      return false;
-                    }
-                  }
-                  
                   return true;
                 }).toList();
 
@@ -187,8 +149,8 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
                           studentName: c.studentName,
                           batch: c.studentBatch ?? 'N/A',
                           title: c.title,
-                status: c.status,
-                assignedTo: c.assignedTo,
+                          status: c.status,
+                          assignedTo: c.assignedTo,
                           date: 'Archived', 
                           onForward: () {}, 
                           onResolve: () {}, 

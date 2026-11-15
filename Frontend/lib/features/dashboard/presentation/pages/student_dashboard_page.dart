@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/complaint_status_card.dart';
+import 'complaint_guide_page.dart';
 
 import '../widgets/dashboard_app_bar.dart';
 import '../widgets/quick_action_card.dart';
@@ -360,7 +361,14 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
                     title: 'Filing Guide',
                     subtitle: 'Learn how to file',
                     color: theme.primaryColor,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ComplaintGuidePage(),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
