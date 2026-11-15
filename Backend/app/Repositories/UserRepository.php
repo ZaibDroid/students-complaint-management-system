@@ -15,8 +15,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email): ?User
     {
-        return $this->model->where('email', $email)
-            ->orWhere('registration_number', strtoupper(trim($email)))
+        $clean = trim($email);
+        return $this->model->where('email', $clean)
+            ->orWhereRaw('LOWER(email) = ?', [strtolower($clean)])
+            ->orWhere('registration_number', strtoupper($clean))
             ->first();
     }
 
@@ -31,6 +33,28 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             $role = $filters['role'];
             unset($filters['role']);
             $query->role($role);
+        }
+
+        if (!empty($filters['batch_id'])) {
+            $bId = $filters['batch_id'];
+            unset($filters['batch_id']);
+            $query->where(function($q) use ($bId) {
+                $q->where('batch_id', $bId)
+                  ->orWhereHas('assignedSections', function($sq) use ($bId) {
+                      $sq->where('batch_id', $bId);
+                  });
+            });
+        }
+
+        if (!empty($filters['section_id'])) {
+            $sId = $filters['section_id'];
+            unset($filters['section_id']);
+            $query->where(function($q) use ($sId) {
+                $q->where('section_id', $sId)
+                  ->orWhereHas('assignedSections', function($sq) use ($sId) {
+                      $sq->where('sections.id', $sId);
+                  });
+            });
         }
 
         unset($filters['per_page'], $filters['page']);
@@ -50,6 +74,28 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             $role = $filters['role'];
             unset($filters['role']);
             $query->role($role);
+        }
+
+        if (!empty($filters['batch_id'])) {
+            $bId = $filters['batch_id'];
+            unset($filters['batch_id']);
+            $query->where(function($q) use ($bId) {
+                $q->where('batch_id', $bId)
+                  ->orWhereHas('assignedSections', function($sq) use ($bId) {
+                      $sq->where('batch_id', $bId);
+                  });
+            });
+        }
+
+        if (!empty($filters['section_id'])) {
+            $sId = $filters['section_id'];
+            unset($filters['section_id']);
+            $query->where(function($q) use ($sId) {
+                $q->where('section_id', $sId)
+                  ->orWhereHas('assignedSections', function($sq) use ($sId) {
+                      $sq->where('sections.id', $sId);
+                  });
+            });
         }
 
         unset($filters['per_page'], $filters['page']);

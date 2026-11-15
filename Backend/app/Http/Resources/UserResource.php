@@ -34,8 +34,8 @@ class UserResource extends JsonResource
         $sectionName = $this->section?->name ?? $this->section_display;
         $adviserName = $this->adviser?->name ?? ($this->relationLoaded('adviser') ? $this->adviser?->name : null);
 
-        $yearStr = $this->year ?? ($this->current_semester ? "Semester {$this->current_semester}" : null);
-        $semesterStr = $this->current_semester ? "Semester {$this->current_semester}" : ($this->semester ?? null);
+        $yearStr = $this->year ?? ($this->current_semester ? "Semester {$this->current_semester}" : ($this->semester ?? null));
+        $semesterStr = $this->semester ?? ($this->current_semester ? "Semester {$this->current_semester}" : null);
 
         return [
             'id' => (string)$this->id,

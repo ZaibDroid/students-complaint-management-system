@@ -173,13 +173,20 @@ class ApiAuthRepository {
     required String phone,
     String? department,
   }) async {
+    final cleanSemNum = year.replaceAll(RegExp(r'[^0-9]'), '');
+    final int? semInt = int.tryParse(cleanSemNum);
+
     final body = <String, dynamic>{
       'name': name,
       'year': year,
+      'semester': year,
       'batch': batch,
       'section': section,
       'phone': phone,
     };
+    if (semInt != null) {
+      body['current_semester'] = semInt;
+    }
     if (department != null) {
       body['department'] = department;
     }

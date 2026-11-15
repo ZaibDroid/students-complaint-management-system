@@ -9,6 +9,72 @@ final batchAdvisersStreamProvider = StreamProvider.autoDispose<List<User>>((ref)
   return ref.watch(adviserAssignmentRepositoryProvider).getBatchAdvisers();
 });
 
+/// Checks whether a given [adviser] is specifically assigned to the [student]'s batch and section.
+bool doesAdviserMatchStudent(User adviser, User student) {
+  final studentBatch = student.batch?.trim() ?? '';
+  final studentSection = student.section?.trim() ?? '';
+  if (studentBatch.isEmpty) return false;
+
+  final studentYear = extractBatchYear(studentBatch);
+  final studentSecNorm = normalizeSectionName(studentSection);
+
+  // 1. Check assignedSections list
+  if (adviser.assignedSections != null && adviser.assignedSections!.isNotEmpty) {
+    for (final sec in adviser.assignedSections!) {
+      final aBatch = sec['batch']?.toString().trim() ?? '';
+      final aSec = (sec['section'] ?? sec['name'])?.toString().trim() ?? '';
+
+      final aYear = extractBatchYear(aBatch);
+      final aSecNorm = normalizeSectionName(aSec);
+
+      final batchMatches = (studentYear != null && aYear != null && studentYear == aYear) ||
+          (aBatch.isNotEmpty && aBatch.toLowerCase() == studentBatch.toLowerCase());
+
+      final secMatches = studentSecNorm.isEmpty || aSecNorm.isEmpty || (studentSecNorm == aSecNorm);
+
+      if (batchMatches && secMatches) {
+        return true;
+      }
+    }
+  }
+
+  // 2. Check adviser's direct batch & section fields
+  if (adviser.batch != null && adviser.batch!.trim().isNotEmpty) {
+    final aYear = extractBatchYear(adviser.batch!);
+    final aSecNorm = normalizeSectionName(adviser.section);
+
+    final batchMatches = (studentYear != null && aYear != null && studentYear == aYear) ||
+        (adviser.batch!.trim().toLowerCase() == studentBatch.toLowerCase());
+
+    final secMatches = studentSecNorm.isEmpty || aSecNorm.isEmpty || (studentSecNorm == aSecNorm);
+
+    if (batchMatches && secMatches) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+String? extractBatchYear(String? input) {
+  if (input == null || input.isEmpty) return null;
+  final match = RegExp(r'\b(20\d{2})\b').firstMatch(input);
+  if (match != null) return match.group(1);
+  return null;
+}
+
+String normalizeSectionName(String? sec) {
+  if (sec == null) return '';
+  return sec
+      .replaceAll(RegExp(r'(section|sec|\s|-)', caseSensitive: false), '')
+      .toUpperCase();
+}
+
+final studentMatchingAdvisersProvider = Provider.autoDispose.family<List<User>, User>((ref, student) {
+  final advisers = ref.watch(batchAdvisersStreamProvider).value ?? [];
+  return advisers.where((a) => doesAdviserMatchStudent(a, student)).toList();
+});
+
 final adviserAssignmentsProvider = Provider.autoDispose<List<AdviserAssignment>>((ref) {
   final advisersAsync = ref.watch(batchAdvisersStreamProvider);
   final batchesAsync = ref.watch(batchesStreamProvider);

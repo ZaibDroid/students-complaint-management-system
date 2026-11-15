@@ -114,6 +114,15 @@ class ApplicationController extends BaseApiController
         $actor = $request->user();
         $notes = $request->notes;
 
+        if (in_array($status, [Application::STATUS_FORWARDED, Application::STATUS_RESOLVED, Application::STATUS_REJECTED])) {
+            if ($actor->hasRole('Batch Adviser') && empty(trim((string)$notes))) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Remarks/comments are compulsory when forwarding, resolving, or rejecting a complaint.',
+                ], 422);
+            }
+        }
+
         switch ($status) {
             case Application::STATUS_FORWARDED:
                 if (!$request->assigned_to_id) {

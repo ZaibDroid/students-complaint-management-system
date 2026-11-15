@@ -27,8 +27,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
+      final formattedEmail = AppValidators.formatEmail(_emailController.text);
       await ref.read(authStateProvider.notifier).login(
-            _emailController.text.trim(),
+            formattedEmail,
             _passwordController.text,
           );
       
@@ -110,8 +111,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   AppTextField(
                     controller: _emailController,
                     labelText: "University Email",
+                    hintText: "00MDBCS000@uetmardan.edu.pk",
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: const Icon(Icons.email_outlined),
+                    inputFormatters: const [StudentEmailInputFormatter(isStudentOnly: false)],
                     validator: AppValidators.loginEmail,
                   ),
                   const SizedBox(height: 16),

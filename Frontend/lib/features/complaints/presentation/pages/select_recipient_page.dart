@@ -44,15 +44,17 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
   String? _selectedStaffId;
   String? _selectedStaffName;
   final TextEditingController _commentController = TextEditingController();
+  String? _commentError;
 
   void _confirmTransfer() async {
     if (_selectedStaffId == null || _selectedStaffName == null) return;
     
     final commentText = _commentController.text.trim();
     if (commentText.isEmpty) {
+      setState(() => _commentError = 'Remarks are compulsory before forwarding.');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please add remarks or feedback before forwarding.'),
+          content: Text('Remarks are compulsory before forwarding to the coordinator or administration.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -248,8 +250,14 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                 TextField(
                   controller: _commentController,
                   maxLines: 4,
+                  onChanged: (val) {
+                    if (_commentError != null && val.trim().isNotEmpty) {
+                      setState(() => _commentError = null);
+                    }
+                  },
                   decoration: InputDecoration(
                     hintText: 'Add instructions, reasons for forwarding, or any contextual notes...',
+                    errorText: _commentError,
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(

@@ -27,6 +27,7 @@ class User extends Authenticatable
         'section_id',
         'current_semester',
         'semester',
+        'year',
         'adviser_id',
         'status',
         'phone',
@@ -48,6 +49,17 @@ class User extends Authenticatable
     {
         static::saving(function (User $user) {
             $attrs = $user->getAttributes();
+
+            // Normalize student email format: uppercase registration prefix, lowercase domain
+            if (!empty($user->email) && str_contains($user->email, '@')) {
+                $parts = explode('@', $user->email, 2);
+                $local = trim($parts[0]);
+                $domain = strtolower(trim($parts[1]));
+                if (preg_match('/^\d{2}[A-Za-z]+\d+$/', $local)) {
+                    $local = strtoupper($local);
+                }
+                $user->email = $local . '@' . $domain;
+            }
 
             // Auto-populate registration_number from email if missing in raw attributes
             if (empty($attrs['registration_number']) && !empty($user->email) && str_contains($user->email, '@')) {
@@ -179,6 +191,24 @@ class User extends Authenticatable
             $this->attributes['current_semester'] = ($val >= 1 && $val <= 8) ? $val : null;
         } else {
             $this->attributes['current_semester'] = null;
+        }
+    }
+
+    public function setYearAttribute($value): void
+    {
+        $this->setCurrentSemesterAttribute($value);
+        if ($value !== null && $value !== '') {
+            $this->attributes['semester'] = is_numeric($value) ? "Semester {$value}" : (string)$value;
+        } else {
+            $this->attributes['semester'] = null;
+        }
+    }
+
+    public function setSemesterAttribute($value): void
+    {
+        $this->attributes['semester'] = ($value !== null && $value !== '') ? (string)$value : null;
+        if ($value !== null && $value !== '') {
+            $this->setCurrentSemesterAttribute($value);
         }
     }
 

@@ -7,6 +7,7 @@ import '../widgets/quick_action_card.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../auth/domain/entities/user.dart';
 import '../../../complaints/presentation/providers/complaint_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../admin/presentation/providers/adviser_assignment_provider.dart';
@@ -24,11 +25,12 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
   String? _selectedAdviser;
   bool _isSubmitting = false;
 
-  Future<void> _sendAdviserRequest(String uid) async {
-    if (_selectedAdviser == null) return;
+  Future<void> _sendAdviserRequest(String uid, [String? adviserName]) async {
+    final targetAdviser = adviserName ?? _selectedAdviser;
+    if (targetAdviser == null) return;
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(apiAuthRepositoryProvider).updateUserAdviser(uid, _selectedAdviser!);
+      await ref.read(apiAuthRepositoryProvider).updateUserAdviser(uid, targetAdviser);
       await ref.read(authStateProvider.notifier).refreshUser();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -49,7 +51,10 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
     final theme = Theme.of(context);
     final user = ref.watch(authStateProvider).value;
     final advisersAsync = ref.watch(batchAdvisersStreamProvider);
-    final batchAdvisers = advisersAsync.value ?? [];
+    final allAdvisers = advisersAsync.value ?? [];
+    final matchingAdvisers = user != null ? allAdvisers.where((a) => doesAdviserMatchStudent(a, user)).toList() : <User>[];
+    final selectedAdviserValid = matchingAdvisers.any((a) => a.name == _selectedAdviser);
+    final activeSelectedAdviser = selectedAdviserValid ? _selectedAdviser : (matchingAdvisers.isNotEmpty ? matchingAdvisers.first.name : null);
 
     if (user == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -119,51 +124,90 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
                   const SizedBox(height: 32),
                   
                   if (!isPending) ...[
-                    const Text('Select Your Batch Adviser', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedAdviser,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFFF8FAFC),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                    if (matchingAdvisers.isEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade50,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.amber.shade200),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        child: Column(
+                          children: [
+                            Icon(Icons.person_off_outlined, color: Colors.amber.shade800, size: 40),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No Batch Adviser Assigned Yet',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.amber.shade900),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Your department coordinator has not assigned a Batch Adviser to ${user.batch ?? "your batch"}${user.section != null && user.section!.isNotEmpty ? " (Section ${user.section})" : ""} yet.\n\nPlease contact your Department Coordinator.',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.4),
+                            ),
+                            const SizedBox(height: 16),
+                            OutlinedButton.icon(
+                              onPressed: () => ref.invalidate(batchAdvisersStreamProvider),
+                              icon: const Icon(Icons.refresh, size: 18),
+                              label: const Text('Check Again'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.amber.shade900,
+                                side: BorderSide(color: Colors.amber.shade400),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      isExpanded: true,
-                      items: batchAdvisers.map((a) {
-                        String detail = '';
-                        if (a.assignedSections != null && a.assignedSections!.isNotEmpty) {
-                          final secList = a.assignedSections!.map((s) => '${s['batch'] ?? ''} ${s['section'] ?? ''}'.trim()).where((s) => s.isNotEmpty).join(', ');
-                          if (secList.isNotEmpty) detail = ' ($secList)';
-                        } else if (a.batch != null || a.section != null) {
-                          final bName = a.batch ?? '';
-                          final sName = a.section ?? '';
-                          detail = ' ($bName $sName)'.trim();
-                        }
-                        final display = '${a.name}$detail';
-                        return DropdownMenuItem(value: a.name, child: Text(display, overflow: TextOverflow.ellipsis));
-                      }).toList(),
-                      onChanged: (val) => setState(() => _selectedAdviser = val),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: _isSubmitting || _selectedAdviser == null ? null : () => _sendAdviserRequest(user.id),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ] else ...[
+                      const Text('Select Your Batch Adviser', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        key: ValueKey(activeSelectedAdviser),
+                        initialValue: activeSelectedAdviser,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: const Color(0xFFF8FAFC),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                        isExpanded: true,
+                        items: matchingAdvisers.map((a) {
+                          String detail = '';
+                          if (a.assignedSections != null && a.assignedSections!.isNotEmpty) {
+                            final secList = a.assignedSections!.map((s) => '${s['batch'] ?? ''} ${s['section'] ?? ''}'.trim()).where((s) => s.isNotEmpty).join(', ');
+                            if (secList.isNotEmpty) detail = ' ($secList)';
+                          } else if (a.batch != null || a.section != null) {
+                            final bName = a.batch ?? '';
+                            final sName = a.section ?? '';
+                            detail = ' ($bName $sName)'.trim();
+                          }
+                          final display = '${a.name}$detail';
+                          return DropdownMenuItem(value: a.name, child: Text(display, overflow: TextOverflow.ellipsis));
+                        }).toList(),
+                        onChanged: (val) => setState(() => _selectedAdviser = val),
                       ),
-                      child: _isSubmitting 
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) 
-                          : const Text('Send Link Request', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _isSubmitting || activeSelectedAdviser == null ? null : () => _sendAdviserRequest(user.id, activeSelectedAdviser),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: _isSubmitting 
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) 
+                            : const Text('Send Link Request', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ],
 
                   if (isPending)

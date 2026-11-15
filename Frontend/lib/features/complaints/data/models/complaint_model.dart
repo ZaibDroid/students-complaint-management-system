@@ -11,6 +11,7 @@ class ComplaintModel {
   final String? assignedTo; // UID or name of adviser/chairman
   final String? assignedToId;
   final String? studentBatch;
+  final String? studentSection;
   final String? priority;
   final String? adminRemarks;
   final DateTime? updatedAt;
@@ -31,6 +32,7 @@ class ComplaintModel {
     this.assignedTo,
     this.assignedToId,
     this.studentBatch,
+    this.studentSection,
     this.priority,
     this.adminRemarks,
     this.updatedAt,
@@ -52,6 +54,7 @@ class ComplaintModel {
     String? assignedTo,
     String? assignedToId,
     String? studentBatch,
+    String? studentSection,
     String? priority,
     String? adminRemarks,
     DateTime? updatedAt,
@@ -72,6 +75,7 @@ class ComplaintModel {
       assignedTo: assignedTo ?? this.assignedTo,
       assignedToId: assignedToId ?? this.assignedToId,
       studentBatch: studentBatch ?? this.studentBatch,
+      studentSection: studentSection ?? this.studentSection,
       priority: priority ?? this.priority,
       adminRemarks: adminRemarks ?? this.adminRemarks,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -95,6 +99,7 @@ class ComplaintModel {
       'assignedTo': assignedTo,
       'assignedToId': assignedToId,
       'studentBatch': studentBatch,
+      'studentSection': studentSection,
       'priority': priority,
       'adminRemarks': adminRemarks,
       'updatedAt': updatedAt?.toIso8601String(),
@@ -120,6 +125,7 @@ class ComplaintModel {
       assignedTo: map['assignedTo'] ?? map['assigned_to'],
       assignedToId: (map['assignedToId'] ?? map['assigned_to_id'])?.toString(),
       studentBatch: map['studentBatch'] ?? map['student_batch'],
+      studentSection: map['studentSection'] ?? map['student_section'],
       priority: map['priority'],
       adminRemarks: map['adminRemarks'] ?? map['admin_remarks'],
       updatedAt: map['updatedAt'] != null

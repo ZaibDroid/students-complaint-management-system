@@ -132,6 +132,20 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
                         ->whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
                         ->first();
                 }
+                if (!$adviser && $section->batch_id) {
+                    $cleanSec = trim(preg_replace('/^(section\s*|sec\s*)/i', '', $section->name));
+                    $siblingSec = \App\Models\Section::where('batch_id', $section->batch_id)
+                        ->where('id', '!=', $section->id)
+                        ->where(function($q) use ($cleanSec) {
+                            $q->where('name', $cleanSec)
+                              ->orWhere('name', 'Section ' . $cleanSec);
+                        })->first();
+                    if ($siblingSec) {
+                        $adviser = $siblingSec->assignedStaff()
+                            ->whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
+                            ->first();
+                    }
+                }
                 if ($adviser) {
                     $adviserId = $adviser->id;
                     $student->update(['adviser_id' => $adviserId]);
@@ -139,12 +153,16 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
             }
         }
 
-        if (!$adviserId && $student->department_id) {
-            $fallbackAdviser = User::where('department_id', $student->department_id)
-                ->whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
+        if (!$adviserId && $student->batch_id) {
+            $adviser = \App\Models\User::whereHas('roles', function($q) { $q->whereIn('name', ['Batch Adviser', 'Batch Advisor']); })
+                ->where(function($q) use ($student) {
+                    $q->whereHas('assignedSections', function($sq) use ($student) {
+                        $sq->where('batch_id', $student->batch_id);
+                    })->orWhere('batch_id', $student->batch_id);
+                })
                 ->first();
-            if ($fallbackAdviser) {
-                $adviserId = $fallbackAdviser->id;
+            if ($adviser) {
+                $adviserId = $adviser->id;
                 $student->update(['adviser_id' => $adviserId]);
             }
         }

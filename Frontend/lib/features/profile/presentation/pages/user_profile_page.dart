@@ -21,11 +21,12 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   bool _isSubmitting = false;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _sendAdviserRequest(String uid) async {
-    if (_selectedAdviser == null) return;
+  Future<void> _sendAdviserRequest(String uid, [String? adviserName]) async {
+    final target = adviserName ?? _selectedAdviser;
+    if (target == null) return;
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(apiAuthRepositoryProvider).updateUserAdviser(uid, _selectedAdviser!);
+      await ref.read(apiAuthRepositoryProvider).updateUserAdviser(uid, target);
       await ref.read(authStateProvider.notifier).refreshUser();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -70,7 +71,15 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     final List<String> years = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6', 'Semester 7', 'Semester 8'];
     final List<String> sections = ['A', 'B', 'C', 'D', 'E', 'F'];
     
-    String? selectedYear = years.contains(user.year) ? user.year : (user.year != null && user.year!.isNotEmpty ? years.first : null);
+    final String currentSemStr = (user.year ?? user.semester ?? '').trim();
+    String? selectedYear;
+    for (final y in years) {
+      if (currentSemStr.toLowerCase() == y.toLowerCase() ||
+          (currentSemStr.isNotEmpty && currentSemStr.replaceAll(RegExp(r'[^0-9]'), '') == y.replaceAll(RegExp(r'[^0-9]'), ''))) {
+        selectedYear = y;
+        break;
+      }
+    }
     String? selectedSection = sections.contains(user.section) ? user.section : (user.section != null && user.section!.isNotEmpty ? sections.first : null);
     
     bool isUpdating = false;
@@ -152,7 +161,14 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                       if (user.role == 'Batch Adviser' || user.role == 'Coordinator') ...[
                         TextField(
                           controller: batchController,
-                          decoration: InputDecoration(labelText: user.role == 'Coordinator' ? 'Coordinating Batch No.' : 'Advising Batch No.'),
+                          enabled: user.role != 'Batch Adviser',
+                          decoration: InputDecoration(
+                            labelText: user.role == 'Coordinator' ? 'Coordinating Batch No.' : 'Advising Batch No.',
+                            helperText: user.role == 'Batch Adviser' ? 'Assigned by Coordinator (Read-only)' : null,
+                            suffixIcon: user.role == 'Batch Adviser' ? const Icon(Icons.lock_outline, size: 18, color: Colors.grey) : null,
+                            filled: user.role == 'Batch Adviser',
+                            fillColor: user.role == 'Batch Adviser' ? const Color(0xFFF1F5F9) : null,
+                          ),
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 12),
@@ -160,8 +176,14 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                           DropdownButtonFormField<String>(
                             initialValue: selectedSection,
                             items: sections.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                            onChanged: (val) => setState(() => selectedSection = val),
-                            decoration: const InputDecoration(labelText: 'Advising Section'),
+                            onChanged: null,
+                            decoration: const InputDecoration(
+                              labelText: 'Advising Section',
+                              helperText: 'Assigned by Coordinator (Read-only)',
+                              suffixIcon: Icon(Icons.lock_outline, size: 18, color: Colors.grey),
+                              filled: true,
+                              fillColor: Color(0xFFF1F5F9),
+                            ),
                           ),
                       ]
                     ]
@@ -182,10 +204,13 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     final newBatch = batchController.text.trim();
                     final newDepartment = departmentController.text.trim();
                     
+                    final userSemNumber = (user.year ?? user.semester ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+                    final selectedSemNumber = (selectedYear ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+
                     // Check if any data actually changed
                     bool hasChanges = newName != user.name ||
                         newPhone != (user.phone ?? '') ||
-                        (selectedYear ?? '') != (user.year ?? '') ||
+                        userSemNumber != selectedSemNumber ||
                         newBatch != (user.batch ?? '') ||
                         (selectedSection ?? '') != (user.section ?? '');
 
@@ -200,12 +225,14 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     
                     setState(() => isUpdating = true);
                     try {
+                      final finalBatch = user.role == 'Batch Adviser' ? (user.batch ?? '') : newBatch;
+                      final finalSection = user.role == 'Batch Adviser' ? (user.section ?? '') : (selectedSection ?? '');
                       await ref.read(apiAuthRepositoryProvider).updatePersonalInfo(
                         user.id, 
                         name: newName,
                         year: selectedYear ?? '',
-                        batch: newBatch,
-                        section: selectedSection ?? '',
+                        batch: finalBatch,
+                        section: finalSection,
                         phone: newPhone,
                         department: user.role != 'Student' ? newDepartment : null,
                       );
@@ -327,10 +354,15 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     final bool isPending = isStudent && user.status == 'pending';
 
     final advisersAsyncValue = ref.watch(batchAdvisersStreamProvider);
-    final List<String> advisers = (advisersAsyncValue.value ?? [])
+    final allAdvisers = advisersAsyncValue.value ?? [];
+    final matchingAdvisers = allAdvisers.where((a) => doesAdviserMatchStudent(a, user)).toList();
+    final List<String> advisers = matchingAdvisers
         .map((u) => u.name)
         .toSet()
         .toList();
+    final String? activeSelectedAdviser = advisers.contains(_selectedAdviser) 
+        ? _selectedAdviser 
+        : (advisers.isNotEmpty ? advisers.first : null);
 
     final bodyContent = SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -356,29 +388,54 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text('You must link your account to a Batch Adviser to submit complaints. Please select your adviser below.'),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      DropdownButtonFormField<String>(
-                        isExpanded: true,
-                        initialValue: advisers.contains(_selectedAdviser) ? _selectedAdviser : null,
-                        decoration: const InputDecoration(labelText: 'Select Batch Adviser', filled: true, fillColor: Colors.white),
-                        items: advisers.map((e) => DropdownMenuItem(value: e, child: Text(e, overflow: TextOverflow.ellipsis))).toList(),
-                        onChanged: (val) => setState(() => _selectedAdviser = val),
-                        hint: advisers.isEmpty ? const Text('No advisers found') : null,
+                  if (advisers.isEmpty) ...[
+                    Text(
+                      'No Batch Adviser has been assigned to ${user.batch ?? "your batch"}${user.section != null && user.section!.isNotEmpty ? " (Section ${user.section})" : ""} yet. Please contact your Department Coordinator to assign your adviser.',
+                      style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.4),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: () => ref.invalidate(batchAdvisersStreamProvider),
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: const Text('Check Again'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.amber.shade900,
+                        side: BorderSide(color: Colors.amber.shade400),
                       ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: _isSubmitting || _selectedAdviser == null ? null : () => _sendAdviserRequest(user.id),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ] else ...[
+                    const Text('You must link your account to a Batch Adviser to submit complaints. Please select your adviser below.'),
+                    const SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        DropdownButtonFormField<String>(
+                          key: ValueKey(activeSelectedAdviser),
+                          isExpanded: true,
+                          initialValue: activeSelectedAdviser,
+                          decoration: const InputDecoration(labelText: 'Select Batch Adviser', filled: true, fillColor: Colors.white),
+                          items: matchingAdvisers.map((a) {
+                            String detail = '';
+                            if (a.assignedSections != null && a.assignedSections!.isNotEmpty) {
+                              final secList = a.assignedSections!.map((s) => '${s['batch'] ?? ''} ${s['section'] ?? ''}'.trim()).where((s) => s.isNotEmpty).join(', ');
+                              if (secList.isNotEmpty) detail = ' ($secList)';
+                            }
+                            final display = '${a.name}$detail';
+                            return DropdownMenuItem(value: a.name, child: Text(display, overflow: TextOverflow.ellipsis));
+                          }).toList(),
+                          onChanged: (val) => setState(() => _selectedAdviser = val),
                         ),
-                        child: _isSubmitting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Send Request'),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _isSubmitting || activeSelectedAdviser == null ? null : () => _sendAdviserRequest(user.id, activeSelectedAdviser),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: _isSubmitting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Send Request'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -521,7 +578,15 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                 if (isStudent) ...[
                   _buildTableRow('Batch', user.batch ?? 'N/A'),
                   const Divider(height: 1),
-                  _buildTableRow('Semester', user.year?.replaceAll('Semester ', '') ?? 'N/A'),
+                  Builder(
+                    builder: (context) {
+                      final semVal = (user.year ?? user.semester ?? '').trim();
+                      final semDisplay = semVal.isNotEmpty
+                          ? (semVal.toLowerCase().startsWith('semester') ? semVal : 'Semester $semVal')
+                          : 'N/A';
+                      return _buildTableRow('Semester', semDisplay);
+                    },
+                  ),
                   const Divider(height: 1),
                   _buildTableRow('Section', user.section ?? 'N/A'),
                   const Divider(height: 1),

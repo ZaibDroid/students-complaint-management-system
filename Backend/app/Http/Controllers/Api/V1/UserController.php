@@ -172,6 +172,9 @@ class UserController extends BaseApiController
     {
         $status = $request->input('status', 'approved');
         $user->status = $status;
+        if ($status === 'unlinked' || $status === 'rejected') {
+            $user->adviser_id = null;
+        }
         $user->save();
 
         return $this->successResponse(new UserResource($user), 'User status updated successfully');

@@ -47,9 +47,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         return;
       }
       
+      final formattedEmail = AppValidators.formatEmail(_emailController.text);
       await ref.read(authStateProvider.notifier).register(
         name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
+        email: formattedEmail,
         password: _passwordController.text,
         year: _selectedYear,
         batch: _batchController.text.trim(),
@@ -139,8 +140,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 AppTextField(
                   controller: _emailController,
                   labelText: "University Email",
+                  hintText: "00MDBCS000@uetmardan.edu.pk",
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Icons.email_outlined),
+                  inputFormatters: const [StudentEmailInputFormatter(isStudentOnly: true)],
                   validator: AppValidators.universityEmail,
                 ),
                 const SizedBox(height: 16),

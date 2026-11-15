@@ -59,59 +59,83 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
 
   void _showActionDialog(BuildContext context, String actionType) {
     final commentController = TextEditingController();
+    String? errorMessage;
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('${actionType == 'resolved' ? 'Resolve' : 'Reject'} Complaint'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Please provide remarks/comments for this action:'),
-              const SizedBox(height: 12),
-              TextField(
-                controller: commentController,
-                decoration: InputDecoration(
-                  hintText: 'Enter comments...',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('${actionType == 'resolved' ? 'Resolve' : 'Reject'} Complaint'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Remarks / Comments ',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
+                      ),
+                      const Text('*', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: commentController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter mandatory remarks...',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      errorText: errorMessage,
+                    ),
+                    maxLines: 3,
+                    onChanged: (val) {
+                      if (errorMessage != null && val.trim().isNotEmpty) {
+                        setState(() => errorMessage = null);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
                 ),
-                maxLines: 3,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final comment = commentController.text.trim().isEmpty 
-                    ? (actionType == 'resolved' ? 'Issue resolved by administration' : 'Invalid complaint')
-                    : commentController.text.trim();
-                
-                showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
-                
-                final success = await ref.read(submitComplaintProvider.notifier).updateStatus(_complaint.id, actionType, comment);
-                
-                if (context.mounted) {
-                  Navigator.pop(context); // close loading
-                  Navigator.pop(context); // close dialog
-                  if (success) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Complaint $actionType successfully.')));
-                    context.pop(); // go back
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Action failed.')));
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Confirm'),
-            ),
-          ],
+                ElevatedButton(
+                  onPressed: () async {
+                    final comment = commentController.text.trim();
+                    if (comment.isEmpty) {
+                      setState(() {
+                        errorMessage = 'Remarks are compulsory to ${actionType == 'resolved' ? 'resolve' : 'reject'} this complaint.';
+                      });
+                      return;
+                    }
+                    
+                    showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
+                    
+                    final success = await ref.read(submitComplaintProvider.notifier).updateStatus(_complaint.id, actionType, comment);
+                    
+                    if (context.mounted) {
+                      Navigator.pop(context); // close loading
+                      Navigator.pop(context); // close dialog
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Complaint $actionType successfully.')));
+                        context.pop(); // go back
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Action failed.')));
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

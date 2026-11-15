@@ -270,9 +270,21 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
 
 
 
+  String _formatDateTime(DateTime dt) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final day = dt.day.toString().padLeft(2, '0');
+    final month = months[dt.month - 1];
+    final year = dt.year;
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = dt.hour >= 12 ? 'PM' : 'AM';
+    return '$day $month $year • ${hour.toString().padLeft(2, '0')}:$minute $period';
+  }
+
   void _showActionDialog(BuildContext context, ComplaintModel c, String actionType) {
     final commentController = TextEditingController();
     bool forwardToOffice = false;
+    String? errorMessage;
     
     showDialog(
       context: context,
@@ -283,16 +295,31 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
               title: Text('${actionType == 'resolved' ? 'Resolve' : 'Reject'} Complaint'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Please provide a comment for this action:'),
-                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Text(
+                        'Remarks / Reason ',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
+                      ),
+                      const Text('*', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: commentController,
                     decoration: InputDecoration(
-                      hintText: 'Enter comment...',
+                      hintText: 'Enter mandatory remarks for this action...',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      errorText: errorMessage,
                     ),
                     maxLines: 3,
+                    onChanged: (val) {
+                      if (errorMessage != null && val.trim().isNotEmpty) {
+                        setState(() => errorMessage = null);
+                      }
+                    },
                   ),
                   if (actionType == 'resolved') ...[
                     const SizedBox(height: 16),
@@ -321,12 +348,13 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    final defaultResolvedComment = forwardToOffice 
-                        ? 'Issue resolved by adviser (Forwarded to Office for notification)'
-                        : 'Issue resolved by adviser';
-                    final comment = commentController.text.trim().isEmpty 
-                        ? (actionType == 'resolved' ? defaultResolvedComment : 'Invalid complaint')
-                        : commentController.text.trim();
+                    final comment = commentController.text.trim();
+                    if (comment.isEmpty) {
+                      setState(() {
+                        errorMessage = 'Remarks are compulsory to ${actionType == 'resolved' ? 'resolve' : 'reject'} this complaint.';
+                      });
+                      return;
+                    }
                     
                     final action = (actionType == 'resolved' && forwardToOffice) ? 'forwarded' : actionType;
                     final assignedTo = (actionType == 'resolved' && forwardToOffice) ? 'Office' : null;
@@ -391,10 +419,11 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
             child: StaffComplaintCard(
               studentName: c.studentName,
               batch: c.studentBatch ?? 'N/A',
+              section: c.studentSection,
               title: c.title,
-                status: c.status,
-                assignedTo: c.assignedTo,
-              date: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
+              status: c.status,
+              assignedTo: c.assignedTo,
+              date: _formatDateTime(c.createdAt),
               onForward: isPending ? () => context.push('/select_recipient', extra: c) : null,
               onResolve: isPending ? () => _showActionDialog(context, c, 'resolved') : null,
               onReject: isPending ? () => _showActionDialog(context, c, 'rejected') : null,
@@ -470,6 +499,54 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
     );
   }
 
+  void _confirmUnlinkStudent(User student) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.link_off_rounded, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Unlink Student'),
+            ],
+          ),
+          content: Text(
+            'Are you sure you want to unlink ${student.name} (${student.registrationNumber ?? student.email})?\n\nThe student will be disconnected from your batch and will need to request linking again.',
+            style: const TextStyle(fontSize: 14, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                Navigator.pop(context);
+                try {
+                  await ref.read(apiAuthRepositoryProvider).updateUserStatus(student.id, 'unlinked');
+                  ref.invalidate(adviserStudentsProvider);
+                  ref.invalidate(adviserComplaintsProvider);
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('${student.name} has been unlinked successfully.')),
+                  );
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Failed to unlink student: $e')),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+              child: const Text('Unlink'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildStudentCard(User s, ThemeData theme, {required bool isPending}) {
     final regNo = s.registrationNumber ?? 
         (s.email.contains('@') ? s.email.split('@')[0].toUpperCase() : 'N/A');
@@ -488,7 +565,7 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
       sectionDisplay = s.semester!;
     }
 
-    return Card(
+    final cardWidget = Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 4,
       shadowColor: Colors.black.withValues(alpha: 0.05),
@@ -512,35 +589,40 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    s.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
+                      Icon(Icons.email_outlined, size: 14, color: Colors.grey.shade600),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          s.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: theme.primaryColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          regNo,
-                          style: TextStyle(
-                            color: theme.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                          ),
+                          s.email,
+                          style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    s.email,
-                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                  Row(
+                    children: [
+                      Icon(Icons.badge_outlined, size: 14, color: theme.primaryColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Reg No: $regNo',
+                        style: TextStyle(
+                          color: theme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -635,18 +717,40 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
                       ),
                     ],
                   )
-                : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.green.shade200),
-                    ),
-                    child: const Text('Linked', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 11)),
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.green.shade200),
+                        ),
+                        child: const Text('Linked', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 11)),
+                      ),
+                      const SizedBox(height: 6),
+                      IconButton(
+                        icon: const Icon(Icons.link_off_rounded, color: Colors.red, size: 20),
+                        tooltip: 'Unlink Student',
+                        constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                        padding: EdgeInsets.zero,
+                        onPressed: () => _confirmUnlinkStudent(s),
+                      ),
+                    ],
                   ),
           ],
         ),
       ),
     );
+
+    if (!isPending) {
+      return InkWell(
+        onTap: () => _confirmUnlinkStudent(s),
+        borderRadius: BorderRadius.circular(16),
+        child: cardWidget,
+      );
+    }
+    return cardWidget;
   }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Contracts\Services\UserServiceInterface;
+use App\Exceptions\ApiException;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -224,6 +225,42 @@ class UserService implements UserServiceInterface
             ->first();
 
         if ($adviser) {
+            // If the user being linked is a Student, ensure the adviser actually matches the student's batch!
+            if ($user->hasRole('Student') && $user->batch_id) {
+                $matchesBatch = false;
+
+                // 1. Direct batch match
+                if ($adviser->batch_id && (int)$adviser->batch_id === (int)$user->batch_id) {
+                    $matchesBatch = true;
+                }
+
+                // 2. Assigned sections match
+                if (!$matchesBatch && $adviser->assignedSections()->where('batch_id', $user->batch_id)->exists()) {
+                    $matchesBatch = true;
+                }
+
+                // 3. Batch start year match (in case batch records share the same start year)
+                if (!$matchesBatch) {
+                    $studentBatch = $user->batch ?? \App\Models\Batch::find($user->batch_id);
+                    if ($studentBatch && $studentBatch->start_year) {
+                        $adviserBatchIds = $adviser->assignedSections()->pluck('batch_id')->filter()->toArray();
+                        if ($adviser->batch_id) {
+                            $adviserBatchIds[] = $adviser->batch_id;
+                        }
+                        if (!empty($adviserBatchIds)) {
+                            $matchesBatch = \App\Models\Batch::whereIn('id', $adviserBatchIds)
+                                ->where('start_year', $studentBatch->start_year)
+                                ->exists();
+                        }
+                    }
+                }
+
+                if (!$matchesBatch) {
+                    $batchName = $user->batch?->name ?? 'your batch';
+                    throw new ApiException("The selected adviser ({$adviser->name}) is not assigned to {$batchName}. Please select your batch adviser.", 422);
+                }
+            }
+
             $user->adviser_id = $adviser->id;
             if ($user->status === 'unlinked' || $user->hasRole('Student')) {
                 $user->status = 'pending';

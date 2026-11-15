@@ -81,14 +81,41 @@ class AuthService implements AuthServiceInterface
 
         if ($sectionName !== null && $sectionName !== '') {
             $secName = strtoupper(trim((string)$sectionName));
+            $shortSec = trim(preg_replace('/^(section\s*|sec\s*)/i', '', $secName));
+            $longSec = 'Section ' . $shortSec;
             if ($batchId) {
-                $section = \App\Models\Section::firstOrCreate([
-                    'batch_id' => $batchId,
-                    'name' => $secName,
-                ]);
+                $section = \App\Models\Section::where('batch_id', $batchId)
+                    ->where(function ($q) use ($secName, $shortSec, $longSec) {
+                        $q->where('name', $secName)
+                          ->orWhere('name', $shortSec)
+                          ->orWhere('name', $longSec);
+                    })
+                    ->first();
+
+                if (!$section) {
+                    $section = \App\Models\Section::create([
+                        'batch_id' => $batchId,
+                        'name' => $longSec,
+                    ]);
+                }
                 $data['section_id'] = $section->id;
             }
         }
+
+        $yearInput = $data['year'] ?? $data['semester'] ?? $data['current_semester'] ?? null;
+        if ($yearInput !== null && $yearInput !== '') {
+            $semNum = null;
+            if (is_numeric($yearInput)) {
+                $semNum = (int)$yearInput;
+            } elseif (preg_match('/(?:semester|sem)\s*(\d+)/i', (string)$yearInput, $m)) {
+                $semNum = (int)$m[1];
+            }
+            if ($semNum !== null && $semNum >= 1 && $semNum <= 8) {
+                $data['current_semester'] = $semNum;
+                $data['semester'] = "Semester {$semNum}";
+            }
+        }
+        unset($data['year']);
     }
 
     public function registerStudent(array $data): array
@@ -99,6 +126,16 @@ class AuthService implements AuthServiceInterface
         $data['password'] = Hash::make($data['password']);
         $data['status'] = 'unlinked'; // Student starts as unlinked, must send request to Batch Adviser
         $data['adviser_id'] = null;   // No auto-linking of adviser
+
+        if (!empty($data['email']) && str_contains($data['email'], '@')) {
+            $parts = explode('@', $data['email'], 2);
+            $local = trim($parts[0]);
+            $domain = strtolower(trim($parts[1]));
+            if (preg_match('/^\d{2}[A-Za-z]+\d+$/', $local)) {
+                $local = strtoupper($local);
+            }
+            $data['email'] = $local . '@' . $domain;
+        }
 
         $this->resolveBatchSectionAndAdviser($data);
 
@@ -157,9 +194,12 @@ class AuthService implements AuthServiceInterface
 
     public function updateProfile(User $user, array $data): User
     {
+        if ($user->hasRole('Batch Adviser')) {
+            unset($data['batch'], $data['batch_id'], $data['section'], $data['section_id']);
+        }
         $this->resolveBatchSectionAndAdviser($data, $user);
         $this->userRepository->update($user->id, $data);
-        return $user->fresh(['department', 'batch', 'section', 'roles', 'adviser']);
+        return $user->fresh(['department', 'batch', 'section', 'roles', 'adviser', 'assignedSections']);
     }
 
     public function uploadProfileImage(User $user, UploadedFile $file): string

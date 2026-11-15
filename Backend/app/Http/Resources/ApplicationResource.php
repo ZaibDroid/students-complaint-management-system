@@ -67,6 +67,8 @@ class ApplicationResource extends JsonResource
             'assignedToId' => $this->assigned_to_id ? (string)$this->assigned_to_id : null,
             'student_batch' => $this->student?->batch?->name,
             'studentBatch' => $this->student?->batch?->name,
+            'student_section' => $this->student?->section?->name,
+            'studentSection' => $this->student?->section?->name,
             'student' => $this->whenLoaded('student', fn() => new UserResource($this->student)),
             'assigned_to_user' => $this->whenLoaded('assignedTo', fn() => new UserResource($this->assignedTo)),
             'attachments' => $attachmentUrls,
