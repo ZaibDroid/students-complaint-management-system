@@ -127,14 +127,13 @@ class _ComplaintArchivePageState extends ConsumerState<ComplaintArchivePage> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: InkWell(
                             onTap: () => context.push('/complaint_details', extra: c),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             child: ComplaintStatusCard(
-                              id: c.ticketNumber ?? (c.id.length > 6 ? c.id.substring(0, 6).toUpperCase() : c.id),
                               title: c.title,
                               description: c.description,
                               category: c.category,
                               assignedTo: c.assignedTo ?? 'Unassigned',
-                              timeAgo: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
+                              createdAt: c.createdAt,
                               status: status,
                             ),
                           ),

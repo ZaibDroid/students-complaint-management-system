@@ -103,8 +103,8 @@ class SubmitComplaintNotifier extends AsyncNotifier<void> {
     try {
       await _repository.submitComplaint(complaint, attachment: attachment);
       state = const AsyncValue.data(null);
-      // Automatically refresh complaints lists so UI is instantly updated
-      await ref.read(studentComplaintsProvider.notifier).refresh();
+      // Invalidate providers so lists refresh asynchronously without blocking the submission UI
+      ref.invalidate(studentComplaintsProvider);
       ref.invalidate(allComplaintsProvider);
       ref.invalidate(departmentComplaintsProvider);
       return true;

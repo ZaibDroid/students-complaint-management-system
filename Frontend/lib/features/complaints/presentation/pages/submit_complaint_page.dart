@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../widgets/file_upload_box.dart';
@@ -26,6 +27,45 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
 
   File? _selectedFile;
   bool _isSubmitting = false;
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: source,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        imageQuality: 80,
+      );
+
+      if (picked != null) {
+        final file = File(picked.path);
+        final sizeInBytes = await file.length();
+        final sizeInMB = sizeInBytes / (1024 * 1024);
+
+        if (sizeInMB > 5) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Image is too large. Maximum allowed size is 5MB.'),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 4),
+            ),
+          );
+          return;
+        }
+
+        setState(() {
+          _selectedFile = file;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not select image: $e')),
+      );
+    }
+  }
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -54,6 +94,72 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
         _selectedFile = file;
       });
     }
+  }
+
+  void _showAttachmentSourceSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Text(
+                    'Attach Evidence or File',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blue.shade50,
+                    child: const Icon(Icons.photo_library, color: Colors.blue),
+                  ),
+                  title: const Text('Choose Photo from Gallery', style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Fast upload • Auto-optimized for mobile'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.green.shade50,
+                    child: const Icon(Icons.camera_alt, color: Colors.green),
+                  ),
+                  title: const Text('Take Photo with Camera', style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Capture direct photo evidence'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.orange.shade50,
+                    child: const Icon(Icons.attach_file, color: Colors.orange),
+                  ),
+                  title: const Text('Upload Document (PDF, Word, File)', style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Select file from device storage'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickFile();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _removeFile() {
@@ -281,42 +387,84 @@ class _SubmitComplaintPageState extends ConsumerState<SubmitComplaintPage> {
                     
                     const Text('Evidence & Attachments (Max 5MB)', style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    FileUploadBox(onTap: _pickFile),
+                    FileUploadBox(onTap: _showAttachmentSourceSheet),
                     
                     if (_selectedFile != null) ...[
                       const SizedBox(height: 16),
-                      Stack(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
+                      Builder(
+                        builder: (context) {
+                          final filePath = _selectedFile!.path;
+                          final fileName = filePath.split(RegExp(r'[\\/]')).last;
+                          final lower = fileName.toLowerCase();
+                          final isImg = lower.endsWith('.png') ||
+                              lower.endsWith('.jpg') ||
+                              lower.endsWith('.jpeg') ||
+                              lower.endsWith('.webp');
+
+                          return Container(
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: Colors.grey.shade300),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.insert_drive_file, color: Colors.blue),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    _selectedFile!.path.split(Platform.pathSeparator).last,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
-                          ),
-                          Positioned(
-                            top: -4,
-                            right: -4,
-                            child: IconButton(
-                              icon: const Icon(Icons.cancel, color: Colors.red),
-                              onPressed: _removeFile,
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: isImg
+                                      ? Image.file(
+                                          _selectedFile!,
+                                          width: 52,
+                                          height: 52,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(
+                                          width: 52,
+                                          height: 52,
+                                          color: Colors.blue.shade50,
+                                          child: Icon(
+                                            lower.endsWith('.pdf') ? Icons.picture_as_pdf : Icons.insert_drive_file,
+                                            color: lower.endsWith('.pdf') ? Colors.red : Colors.blue,
+                                            size: 26,
+                                          ),
+                                        ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        fileName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        isImg ? 'Photo ready to upload (optimized)' : 'Document attached',
+                                        style: TextStyle(fontSize: 11, color: Colors.green.shade700, fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.cancel, color: Colors.red),
+                                  tooltip: 'Remove attachment',
+                                  onPressed: _removeFile,
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ],
                     

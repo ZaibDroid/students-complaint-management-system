@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/complaint_model.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../providers/complaint_provider.dart';
+import '../widgets/complaint_attachment_card.dart';
 
 class ComplaintDetailsPage extends ConsumerStatefulWidget {
   final ComplaintModel complaint;
@@ -16,20 +16,42 @@ class ComplaintDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
+  late ComplaintModel _complaint;
+
+  @override
+  void initState() {
+    super.initState();
+    _complaint = widget.complaint;
+    _refreshComplaint();
+  }
+
+  Future<void> _refreshComplaint() async {
+    if (_complaint.id.isEmpty) return;
+    try {
+      final repo = ref.read(apiComplaintRepositoryProvider);
+      final fresh = await repo.getComplaintById(_complaint.id);
+      if (fresh != null && mounted) {
+        setState(() {
+          _complaint = fresh;
+        });
+      }
+    } catch (_) {}
+  }
+
   String _getCurrentLocation() {
-    if (widget.complaint.status.toLowerCase() == 'pending') {
+    if (_complaint.status.toLowerCase() == 'pending') {
       return 'Batch Adviser';
-    } else if (widget.complaint.status.toLowerCase() == 'forwarded') {
-      final assignedTo = widget.complaint.assignedTo ?? '';
+    } else if (_complaint.status.toLowerCase() == 'forwarded') {
+      final assignedTo = _complaint.assignedTo ?? '';
       final RegExp roleExp = RegExp(r'\((.*?)\)');
       final match = roleExp.firstMatch(assignedTo);
       if (match != null) {
         return match.group(1)!;
       }
       return assignedTo.isNotEmpty ? assignedTo : 'Coordinator/Chairman';
-    } else if (widget.complaint.status.toLowerCase() == 'resolved') {
+    } else if (_complaint.status.toLowerCase() == 'resolved') {
       return 'Resolved';
-    } else if (widget.complaint.status.toLowerCase() == 'rejected') {
+    } else if (_complaint.status.toLowerCase() == 'rejected') {
       return 'Rejected';
     }
     return 'Unknown';
@@ -70,7 +92,7 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
                 
                 showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
                 
-                final success = await ref.read(submitComplaintProvider.notifier).updateStatus(widget.complaint.id, actionType, comment);
+                final success = await ref.read(submitComplaintProvider.notifier).updateStatus(_complaint.id, actionType, comment);
                 
                 if (context.mounted) {
                   Navigator.pop(context); // close loading
@@ -100,7 +122,7 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
     final theme = Theme.of(context);
     final authState = ref.watch(authStateProvider).value;
     final isStaff = authState != null && authState.role != 'Student';
-    final isActionable = widget.complaint.status == 'pending' || widget.complaint.status == 'forwarded';
+    final isActionable = _complaint.status == 'pending' || _complaint.status == 'forwarded';
     final currentUserRole = authState?.role.toLowerCase() ?? '';
     
     return Scaffold(
@@ -120,19 +142,19 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'ID: ${widget.complaint.id.length > 8 ? widget.complaint.id.substring(0, 8).toUpperCase() : widget.complaint.id}',
-                  style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+                  _complaint.ticketNumber ?? 'ID: ${_complaint.id.length > 8 ? _complaint.id.substring(0, 8).toUpperCase() : _complaint.id}',
+                  style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: widget.complaint.status == 'resolved' ? Colors.green.shade100 : Colors.orange.shade100,
+                    color: _complaint.status == 'resolved' ? Colors.green.shade100 : Colors.orange.shade100,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    widget.complaint.status.toUpperCase(),
+                    _complaint.status.toUpperCase(),
                     style: TextStyle(
-                      color: widget.complaint.status == 'resolved' ? Colors.green.shade700 : Colors.orange.shade700,
+                      color: _complaint.status == 'resolved' ? Colors.green.shade700 : Colors.orange.shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -144,7 +166,7 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
             
             // Title
             Text(
-              widget.complaint.title,
+              _complaint.title,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -155,14 +177,14 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
                 Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
                 const SizedBox(width: 4),
                 Text(
-                  '${widget.complaint.createdAt.year}-${widget.complaint.createdAt.month.toString().padLeft(2, '0')}-${widget.complaint.createdAt.day.toString().padLeft(2, '0')} ${widget.complaint.createdAt.hour.toString().padLeft(2, '0')}:${widget.complaint.createdAt.minute.toString().padLeft(2, '0')}',
+                  '${_complaint.createdAt.year}-${_complaint.createdAt.month.toString().padLeft(2, '0')}-${_complaint.createdAt.day.toString().padLeft(2, '0')} ${_complaint.createdAt.hour.toString().padLeft(2, '0')}:${_complaint.createdAt.minute.toString().padLeft(2, '0')}',
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
                 const SizedBox(width: 16),
                 Icon(Icons.category, size: 16, color: Colors.grey.shade600),
                 const SizedBox(width: 4),
                 Text(
-                  widget.complaint.category,
+                  _complaint.category,
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
               ],
@@ -217,14 +239,14 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                widget.complaint.description,
+                _complaint.description,
                 style: const TextStyle(fontSize: 16, height: 1.5),
               ),
             ),
             const SizedBox(height: 24),
 
             // Admin Remarks (if any)
-            if (widget.complaint.adminRemarks != null && widget.complaint.adminRemarks!.isNotEmpty) ...[
+            if (_complaint.adminRemarks != null && _complaint.adminRemarks!.isNotEmpty) ...[
               const Text(
                 'Admin Remarks',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -238,7 +260,7 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  widget.complaint.adminRemarks!,
+                  _complaint.adminRemarks!,
                   style: TextStyle(fontSize: 16, height: 1.5, color: Colors.blue.shade900),
                 ),
               ),
@@ -246,43 +268,14 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
             ],
 
             // Attachments
-            if (widget.complaint.attachments.isNotEmpty) ...[
+            if (_complaint.attachments.isNotEmpty) ...[
               const Text(
-                'Attachments',
+                'Evidence & Attachments',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.complaint.attachments.length,
-                itemBuilder: (context, index) {
-                  final attachment = widget.complaint.attachments[index];
-                  // If it's a base64 data URL
-                  if (attachment.startsWith('data:image')) {
-                    final base64Str = attachment.split(',').last;
-                    try {
-                      final bytes = base64Decode(base64Str);
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.memory(
-                            bytes,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    } catch (e) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Failed to load image.'),
-                      );
-                    }
-                  }
-                  return const SizedBox.shrink(); // Not an image URL or unsupported format
-                },
-              ),
+              ..._complaint.attachments.map((attachment) => ComplaintAttachmentCard(attachment: attachment)),
+              const SizedBox(height: 16),
             ],
           ],
         ),
@@ -306,7 +299,7 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () => context.push('/select_recipient', extra: widget.complaint),
+                  onPressed: () => context.push('/select_recipient', extra: _complaint),
                   icon: const Icon(Icons.forward_to_inbox),
                   label: Text(currentUserRole.contains('chairman')
                       ? 'Forward to Dean / Dept Office'

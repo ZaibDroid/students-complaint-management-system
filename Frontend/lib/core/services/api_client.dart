@@ -196,15 +196,14 @@ class ApiClient {
 
       if (files != null && files.isNotEmpty) {
         for (final file in files) {
-          final stream = http.ByteStream(file.openRead());
-          final length = await file.length();
-          final multipartFile = http.MultipartFile(
+          final fileName = file.uri.pathSegments.isNotEmpty
+              ? file.uri.pathSegments.last
+              : file.path.split(RegExp(r'[\\/]')).last;
+          request.files.add(await http.MultipartFile.fromPath(
             fileFieldName,
-            stream,
-            length,
-            filename: file.path.split('/').last,
-          );
-          request.files.add(multipartFile);
+            file.path,
+            filename: fileName,
+          ));
         }
       }
 

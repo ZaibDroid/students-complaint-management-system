@@ -35,6 +35,10 @@ class ApplicationAttachment extends Model
             return $this->file_path;
         }
 
+        if (request() && request()->getHttpHost()) {
+            return request()->getSchemeAndHttpHost() . '/storage/' . ltrim($this->file_path, '/');
+        }
+
         return asset('storage/' . ltrim($this->file_path, '/'));
     }
 }

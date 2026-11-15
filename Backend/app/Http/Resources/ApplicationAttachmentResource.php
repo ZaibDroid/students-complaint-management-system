@@ -15,6 +15,7 @@ class ApplicationAttachmentResource extends JsonResource
             'file_name' => $this->file_name,
             'file_type' => $this->file_type,
             'file_size' => $this->file_size,
+            'url' => $this->url,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }
