@@ -43,6 +43,37 @@ class ApplicationResource extends JsonResource
         $assignedToName = $this->assignedTo?->name;
         $deptName = $this->department?->name ?? $this->student?->department?->name;
 
+        $involvedStaffNames = collect([]);
+        if ($this->relationLoaded('timeline') && $this->timeline) {
+            foreach ($this->timeline as $tl) {
+                if ($tl->fromUser?->name) $involvedStaffNames->push($tl->fromUser->name);
+                if ($tl->toUser?->name) $involvedStaffNames->push($tl->toUser->name);
+            }
+        } elseif ($this->timeline()->exists()) {
+            $timelines = $this->timeline()->with(['fromUser', 'toUser'])->get();
+            foreach ($timelines as $tl) {
+                if ($tl->fromUser?->name) $involvedStaffNames->push($tl->fromUser->name);
+                if ($tl->toUser?->name) $involvedStaffNames->push($tl->toUser->name);
+            }
+        }
+
+        if ($this->relationLoaded('remarks') && $this->remarks) {
+            foreach ($this->remarks as $rem) {
+                if ($rem->user?->name) $involvedStaffNames->push($rem->user->name);
+            }
+        } elseif ($this->remarks()->exists()) {
+            $remarks = $this->remarks()->with('user')->get();
+            foreach ($remarks as $rem) {
+                if ($rem->user?->name) $involvedStaffNames->push($rem->user->name);
+            }
+        }
+
+        if ($this->student?->adviser?->name) {
+            $involvedStaffNames->push($this->student->adviser->name);
+        }
+
+        $involvedStaffNamesList = $involvedStaffNames->filter()->unique()->values()->all();
+
         return [
             'id' => (string)$this->id,
             'ticket_number' => $this->ticket_number,
@@ -69,6 +100,8 @@ class ApplicationResource extends JsonResource
             'studentBatch' => $this->student?->batch?->name,
             'student_section' => $this->student?->section?->name,
             'studentSection' => $this->student?->section?->name,
+            'involved_staff_names' => $involvedStaffNamesList,
+            'involvedStaffNames' => $involvedStaffNamesList,
             'student' => $this->whenLoaded('student', fn() => new UserResource($this->student)),
             'assigned_to_user' => $this->whenLoaded('assignedTo', fn() => new UserResource($this->assignedTo)),
             'attachments' => $attachmentUrls,

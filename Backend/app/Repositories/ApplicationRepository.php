@@ -37,7 +37,13 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
 
             $query->where(function ($q) use ($user, $assignedSectionIds) {
                 $q->where('assigned_to_id', $user->id)
-                  ->orWhere('student_id', $user->id);
+                  ->orWhere('student_id', $user->id)
+                  ->orWhereHas('timeline', function ($tq) use ($user) {
+                      $tq->where('from_user_id', $user->id)->orWhere('to_user_id', $user->id);
+                  })
+                  ->orWhereHas('remarks', function ($rq) use ($user) {
+                      $rq->where('user_id', $user->id);
+                  });
 
                 if (!empty($assignedSectionIds) || !empty($user->batch_id)) {
                     $q->orWhereHas('student', function ($sq) use ($user, $assignedSectionIds) {
@@ -48,22 +54,22 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
                             if (!empty($user->batch_id)) {
                                 $sub->orWhere('batch_id', $user->batch_id);
                             }
-                        });
+                        })->orWhere('adviser_id', $user->id);
+                    });
+                } else {
+                    $q->orWhereHas('student', function ($sq) use ($user) {
+                        $sq->where('adviser_id', $user->id);
                     });
                 }
             });
-        } elseif ($user->hasAnyRole(['Coordinator', 'Chairman'])) {
-            if ($user->department_id) {
-                $query->where('department_id', $user->department_id);
-            } else {
-                $query->whereRaw('1 = 0');
-            }
-        } elseif ($user->hasRole('Office Staff')) {
-            if ($user->department_id) {
-                $query->where('department_id', $user->department_id);
-            } else {
-                $query->whereRaw('1 = 0');
-            }
+        } elseif ($user->hasAnyRole(['Coordinator', 'Chairman', 'Office Staff'])) {
+            $deptId = $user->department_id ?: \App\Models\Department::first()?->id;
+            $query->where(function ($q) use ($user, $deptId) {
+                $q->where('assigned_to_id', $user->id);
+                if ($deptId) {
+                    $q->orWhere('department_id', $deptId);
+                }
+            });
         }
         // Dean, Vice Chancellor, Admin can view across all departments.
 

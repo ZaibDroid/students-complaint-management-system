@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/widgets/double_back_exit_scope.dart';
 
 class AdminLayout extends ConsumerWidget {
   final Widget child;
@@ -37,21 +38,31 @@ class AdminLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (index) => _onItemTapped(index, context),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: theme.primaryColor,
-        unselectedItemColor: Colors.grey.shade400,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.security), label: 'Access'),
-          BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Notices'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
+    return DoubleBackExitScope(
+      onBackAttempt: () async {
+        final currentIndex = _calculateSelectedIndex(context);
+        if (currentIndex != 0) {
+          context.go('/dashboard/admin');
+          return true;
+        }
+        return false;
+      },
+      child: Scaffold(
+        body: child,
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _calculateSelectedIndex(context),
+          onTap: (index) => _onItemTapped(index, context),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: theme.primaryColor,
+          unselectedItemColor: Colors.grey.shade400,
+          showUnselectedLabels: true,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+            BottomNavigationBarItem(icon: Icon(Icons.security), label: 'Access'),
+            BottomNavigationBarItem(icon: Icon(Icons.campaign), label: 'Notices'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          ],
+        ),
       ),
     );
   }

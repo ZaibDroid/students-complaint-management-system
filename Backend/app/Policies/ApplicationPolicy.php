@@ -32,11 +32,13 @@ class ApplicationPolicy
             return (int)$application->student_id === (int)$user->id;
         }
 
-        // Chairman, Coordinator, Office Staff are strictly scoped to their own department
+        // Chairman, Coordinator, Office Staff are scoped to their department or complaints assigned to them
         if ($user->hasAnyRole(['Chairman', 'Coordinator', 'Office Staff'])) {
-            return !empty($user->department_id) 
-                && !empty($application->department_id) 
-                && (int)$application->department_id === (int)$user->department_id;
+            if ((int)$application->assigned_to_id === (int)$user->id) {
+                return true;
+            }
+            $userDeptId = $user->department_id ?: \App\Models\Department::first()?->id;
+            return !empty($application->department_id) && (int)$application->department_id === (int)$userDeptId;
         }
 
         // Batch Adviser: assigned to them, or submitted by student in assigned section/batch
@@ -116,11 +118,13 @@ class ApplicationPolicy
             return true;
         }
 
-        // Chairman and Coordinator: strictly enforced department boundary
+        // Chairman and Coordinator: complaints assigned to them or in their department
         if ($user->hasAnyRole(['Chairman', 'Coordinator'])) {
-            return !empty($user->department_id) 
-                && !empty($application->department_id) 
-                && (int)$application->department_id === (int)$user->department_id;
+            if ((int)$application->assigned_to_id === (int)$user->id) {
+                return true;
+            }
+            $userDeptId = $user->department_id ?: \App\Models\Department::first()?->id;
+            return !empty($application->department_id) && (int)$application->department_id === (int)$userDeptId;
         }
 
         // Batch Adviser: must be currently assigned to them

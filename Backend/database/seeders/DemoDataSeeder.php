@@ -77,27 +77,6 @@ class DemoDataSeeder extends Seeder
             'notes' => 'Forwarded to Department Coordinator for timetable revision.',
         ]);
 
-        // Demo Notices
-        Notice::create([
-            'sender_id' => $coordinator->id,
-            'department_id' => $coordinator->department_id,
-            'title' => 'Midterm Examination Schedule Released',
-            'description' => 'Spring 2026 Midterm Exams will commence from next Monday. Check notice board for timetable.',
-            'tag' => 'Academic',
-            'status' => Notice::STATUS_PUBLISHED,
-            'published_at' => now(),
-        ]);
-
-        Notice::create([
-            'sender_id' => $coordinator->id,
-            'department_id' => $coordinator->department_id,
-            'title' => 'Lab Maintenance Session',
-            'description' => 'Computer Lab 1 and 2 will remain closed on Friday for network maintenance.',
-            'tag' => 'General',
-            'status' => Notice::STATUS_PUBLISHED,
-            'published_at' => now(),
-        ]);
-
         // Demo Notifications
         Notification::create([
             'user_id' => $student->id,

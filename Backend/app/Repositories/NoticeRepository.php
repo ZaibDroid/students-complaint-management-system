@@ -20,6 +20,9 @@ class NoticeRepository extends BaseRepository implements NoticeRepositoryInterfa
 
         if ($user->hasRole('Student')) {
             $query->where('status', Notice::STATUS_PUBLISHED)
+                  ->whereHas('sender', function ($sq) {
+                      $sq->role('Chairman');
+                  })
                   ->where(function ($q) use ($user) {
                       $q->where(function ($sub) use ($user) {
                           $sub->whereNull('department_id')

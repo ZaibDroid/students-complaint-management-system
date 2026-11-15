@@ -247,7 +247,167 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
             children: [
 
 
-              // Active Complaints
+              // 1. Recent Announcements (Announced by Department Chairman)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.campaign, color: theme.primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Recent Announcements',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: theme.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context.push('/student_notices');
+                    },
+                    child: Text('See archives', style: TextStyle(color: theme.primaryColor)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ref.watch(noticesStreamProvider).when(
+                loading: () => const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (e, st) => const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Center(child: Text('No announcements available', style: TextStyle(color: Colors.grey))),
+                ),
+                data: (notices) {
+                  final studentBatch = user.batch ?? '';
+                  final studentSection = user.section ?? '';
+                  final isCR = user.isCR;
+
+                  final myNotices = notices.where((n) {
+                    // Only show announcements created by the Chairman role
+                    final role = n.senderRole?.toLowerCase() ?? '';
+                    final name = n.senderName.toLowerCase();
+                    final isFromChairman = role.contains('chair') || name.contains('chair') || name.contains('usman');
+                    if (!isFromChairman) return false;
+
+                    // If explicitly targeted roles exist but don't include Student, skip
+                    if (n.targetRoles != null && n.targetRoles!.isNotEmpty && !n.targetRoles!.contains('Student')) {
+                      return false;
+                    }
+
+                    // If it's targeted at Students, check student-specific constraints
+                    if (n.targetRoles != null && n.targetRoles!.contains('Student')) {
+                      if (n.targetCRsOnly == true && isCR == false) return false;
+                      
+                      if (n.targetBatches != null && n.targetBatches!.isNotEmpty) {
+                        if (!n.targetBatches!.contains(studentBatch)) return false;
+                      }
+                      if (n.targetSections != null && n.targetSections!.isNotEmpty) {
+                        if (!n.targetSections!.contains(studentSection)) return false;
+                      }
+                    }
+                    return true;
+                  }).toList();
+
+                  if (myNotices.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.campaign_outlined, size: 36, color: Colors.grey.shade400),
+                          const SizedBox(height: 8),
+                          Text(
+                            'No announcements yet',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Official announcements by the Department Chairman will appear here.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    children: myNotices.take(2).map((notice) {
+                      final date = notice.createdAt;
+                      final dateStr = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+                      
+                      return NoticeBoardCard(
+                        title: notice.title,
+                        description: notice.description,
+                        tag: notice.tag,
+                        date: dateStr,
+                        sender: notice.senderName,
+                        senderIcon: Icons.person,
+                        isUrgent: notice.tag == 'Urgent',
+                        attachments: notice.attachments,
+                        onTap: () {
+                          context.push('/notice_details', extra: notice);
+                        },
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+
+              // 2. Quick Actions: Filing Guide & History
+              Row(
+                children: [
+                  Expanded(
+                    child: QuickActionCard(
+                      icon: Icons.help_center,
+                      title: 'Filing Guide',
+                      subtitle: 'Learn how to file',
+                      color: theme.primaryColor,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ComplaintGuidePage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: QuickActionCard(
+                      icon: Icons.history,
+                      title: 'History',
+                      subtitle: 'Check past cases',
+                      color: Colors.orange,
+                      onTap: () {
+                        context.push('/complaint_archive');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 28),
+
+              // 3. Active Complaints
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -308,127 +468,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
                   );
                 },
               ),
-            const SizedBox(height: 32),
-
-            // Recent Notices
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.campaign, color: theme.primaryColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Recent Notices',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: theme.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.push('/student_notices');
-                  },
-                  child: Text('See archives', style: TextStyle(color: theme.primaryColor)),
-                ),
-              ],
-            ),
-            ref.watch(noticesStreamProvider).when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, st) => Center(child: Text('Error loading notices: $e')),
-              data: (notices) {
-                final studentBatch = user.batch ?? '';
-                final studentSection = user.section ?? '';
-                final isCR = user.isCR;
-
-                final myNotices = notices.where((n) {
-                  // If explicitly targeted roles exist but don't include Student, skip
-                  if (n.targetRoles != null && n.targetRoles!.isNotEmpty && !n.targetRoles!.contains('Student')) {
-                    return false;
-                  }
-
-                  // If it's targeted at Students, check student-specific constraints
-                  if (n.targetRoles != null && n.targetRoles!.contains('Student')) {
-                    if (n.targetCRsOnly == true && isCR == false) return false;
-                    
-                    if (n.targetBatches != null && n.targetBatches!.isNotEmpty) {
-                      if (!n.targetBatches!.contains(studentBatch)) return false;
-                    }
-                    if (n.targetSections != null && n.targetSections!.isNotEmpty) {
-                      if (!n.targetSections!.contains(studentSection)) return false;
-                    }
-                  }
-                  return true;
-                }).toList();
-
-                if (myNotices.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Center(child: Text('No recent notices', style: TextStyle(color: Colors.grey))),
-                  );
-                }
-
-                return Column(
-                  children: myNotices.take(2).map((notice) {
-                    final date = notice.createdAt;
-                    final dateStr = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-                    
-                    return NoticeBoardCard(
-                      title: notice.title,
-                      description: notice.description,
-                      tag: notice.tag,
-                      date: dateStr,
-                      sender: notice.senderName,
-                      senderIcon: Icons.person,
-                      isUrgent: notice.tag == 'Urgent',
-                      attachments: notice.attachments,
-                      onTap: () {
-                        context.push('/notice_details', extra: notice);
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-            const SizedBox(height: 32),
-
-            // Quick Actions
-            Row(
-              children: [
-                Expanded(
-                  child: QuickActionCard(
-                    icon: Icons.help_center,
-                    title: 'Filing Guide',
-                    subtitle: 'Learn how to file',
-                    color: theme.primaryColor,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ComplaintGuidePage(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: QuickActionCard(
-                    icon: Icons.history,
-                    title: 'History',
-                    subtitle: 'Check past cases',
-                    color: Colors.orange,
-                    onTap: () {
-                      context.push('/complaint_archive');
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 80), // Padding for bottom nav
+              const SizedBox(height: 80), // Padding for bottom nav
           ],
         ),
       ),

@@ -93,6 +93,12 @@ class _StudentNoticeBoardPageState extends ConsumerState<StudentNoticeBoardPage>
                 if (user == null) return const Center(child: Text('Not authenticated'));
 
                 final filteredNotices = notices.where((n) {
+                  // Only show announcements created by the Chairman role
+                  final role = n.senderRole?.toLowerCase() ?? '';
+                  final name = n.senderName.toLowerCase();
+                  final isFromChairman = role.contains('chair') || name.contains('chair') || name.contains('usman');
+                  if (!isFromChairman) return false;
+
                   // 1. Check Role target: If specific roles are targeted, user must have 'Student' role
                   if (n.targetRoles != null && n.targetRoles!.isNotEmpty) {
                     if (!n.targetRoles!.contains('Student')) return false;

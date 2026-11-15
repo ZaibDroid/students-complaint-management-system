@@ -99,6 +99,10 @@ class UserService implements UserServiceInterface
             $role = $data['role'] ?? 'Office Staff';
             unset($data['role']);
 
+            if (empty($data['department_id'])) {
+                $data['department_id'] = \App\Models\Department::first()?->id ?? 1;
+            }
+
             $assignedSections = $data['assigned_sections'] ?? [];
             unset($data['assigned_sections']);
 

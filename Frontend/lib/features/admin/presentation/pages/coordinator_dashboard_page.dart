@@ -7,6 +7,7 @@ import '../../../../features/complaints/data/models/complaint_model.dart';
 import '../../../../features/profile/presentation/widgets/stat_card.dart';
 import '../../../../features/profile/presentation/pages/user_profile_page.dart';
 import 'assign_adviser_page.dart';
+import 'adviser_dashboard_page.dart';
 import '../../../../features/batch/presentation/pages/batch_management_portal_page.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
@@ -43,10 +44,10 @@ class _CoordinatorDashboardPageState extends ConsumerState<CoordinatorDashboardP
     
     final pendingCount = complaints.where((c) => isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected').length;
     final processedCount = complaints.where((c) => (c.status == 'resolved' || c.status == 'rejected') && isAssignedToMe(c.assignedTo, c.assignedToId)).length;
-    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
+    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo, c.assignedToId) && (c.status == 'forwarded' || c.involvedStaffNames.any((name) {
       final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
       return involvedLower == myNameLower;
-    })).length;
+    })) && c.status != 'resolved' && c.status != 'rejected').length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF8FC),
@@ -161,115 +162,163 @@ class _CoordinatorDashboardPageState extends ConsumerState<CoordinatorDashboardP
       if (_selectedFilter == 'pending') return isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected';
       if (_selectedFilter == 'processed') return (c.status == 'resolved' || c.status == 'rejected') && isAssignedToMe(c.assignedTo, c.assignedToId);
       if (_selectedFilter == 'forwarded') {
-        return !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
+        return !isAssignedToMe(c.assignedTo, c.assignedToId) && (c.status == 'forwarded' || c.involvedStaffNames.any((name) {
           final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
           return involvedLower == myNameLower;
-        });
+        }));
       }
       return true;
     }).toList();
 
-    if (filtered.isEmpty) {
-      return const Center(child: Text('No complaints found in this category.', style: TextStyle(color: Colors.grey)));
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      itemCount: filtered.length,
-      itemBuilder: (context, index) {
-        final c = filtered[index];
-        final myNameLower = (ref.read(authStateProvider).value?.name ?? '').toLowerCase().replaceAll('dr.', '').trim();
-        final assignedToLower = (c.assignedTo ?? '').toLowerCase().replaceAll('dr.', '').trim();
-        final isAssignedToMe = assignedToLower == myNameLower;
-        final isPending = isAssignedToMe && c.status != 'resolved' && c.status != 'rejected';
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            onTap: () => context.push('/complaint_details', extra: c),
-            borderRadius: BorderRadius.circular(16),
-            child: StaffComplaintCard(
-              studentName: c.studentName,
-              batch: c.studentBatch ?? 'N/A',
-              title: c.title,
-                status: c.status,
-                assignedTo: c.assignedTo,
-              date: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
-              onForward: isPending ? () => context.push('/select_recipient', extra: c) : null,
-              onResolve: isPending ? () => _showActionDialog(context, c, 'resolved') : null,
-              onReject: isPending ? () => _showActionDialog(context, c, 'rejected') : null,
-            ),
-          ),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(departmentComplaintsProvider);
+        await ref.read(departmentComplaintsProvider.notifier).refresh();
       },
+      child: filtered.isEmpty
+          ? LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Text('No complaints found in this category.', style: TextStyle(color: Colors.grey)),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              itemCount: filtered.length,
+              itemBuilder: (context, index) {
+                final c = filtered[index];
+                final isAssigned = isAssignedToMe(c.assignedTo, c.assignedToId);
+                final isPending = isAssigned && c.status != 'resolved' && c.status != 'rejected';
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: InkWell(
+                    onTap: () => context.push('/complaint_details', extra: c),
+                    borderRadius: BorderRadius.circular(16),
+                    child: StaffComplaintCard(
+                      studentName: c.studentName,
+                      batch: c.studentBatch ?? 'N/A',
+                      title: c.title,
+                      status: c.status,
+                      assignedTo: c.assignedTo,
+                      date: '${c.createdAt.day.toString().padLeft(2, '0')}-${c.createdAt.month.toString().padLeft(2, '0')}-${c.createdAt.year} ${c.createdAt.hour.toString().padLeft(2, '0')}:${c.createdAt.minute.toString().padLeft(2, '0')}',
+                      onForward: isPending ? () => context.push('/select_recipient', extra: c) : null,
+                      onResolve: isPending ? () => _showActionDialog(c, 'resolved') : null,
+                      onReject: isPending ? () => _showActionDialog(c, 'rejected') : null,
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 
-  void _showActionDialog(BuildContext context, ComplaintModel c, String actionType) {
+  void _showActionDialog(ComplaintModel c, String actionType) {
     final commentController = TextEditingController();
-    bool forwardToOffice = false;
-    
+    String? errorMessage;
+    bool isSubmitting = false;
+
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (dialogContext) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (dialogCtx, setDialogState) {
             return AlertDialog(
               title: Text('${actionType == 'resolved' ? 'Resolve' : 'Reject'} Complaint'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Please provide a comment for this action:'),
-                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Text(
+                        'Remarks / Reason ',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
+                      ),
+                      const Text('*', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: commentController,
+                    enabled: !isSubmitting,
                     decoration: InputDecoration(
-                      hintText: 'Enter comment...',
+                      hintText: 'Enter mandatory remarks for this action...',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      errorText: errorMessage,
                     ),
                     maxLines: 3,
+                    onChanged: (val) {
+                      if (errorMessage != null && val.trim().isNotEmpty) {
+                        setDialogState(() => errorMessage = null);
+                      }
+                    },
                   ),
-                  if (actionType == 'resolved') ...[
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: forwardToOffice,
-                          onChanged: (val) {
-                            setState(() {
-                              forwardToOffice = val ?? false;
-                            });
-                          },
-                        ),
-                        const Expanded(
-                          child: Text('Forward to Office for manual notification'),
-                        ),
-                      ],
-                    ),
-                  ],
                 ],
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
+                  onPressed: isSubmitting ? null : () => Navigator.pop(dialogContext),
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    final defaultResolvedComment = forwardToOffice 
-                        ? 'Issue resolved by coordinator (Forwarded to Office for notification)'
-                        : 'Issue resolved by coordinator';
-                    final comment = commentController.text.trim().isEmpty 
-                        ? (actionType == 'resolved' ? defaultResolvedComment : 'Returned by coordinator')
-                        : commentController.text.trim();
-                    
-                    final action = (actionType == 'resolved' && forwardToOffice) ? 'forwarded' : actionType;
-                    final assignedTo = (actionType == 'resolved' && forwardToOffice) ? 'Office' : null;
-                    
-                    ref.read(submitComplaintProvider.notifier).updateStatus(c.id, action, comment, assignedTo: assignedTo);
-                    if (dialogContext.mounted) Navigator.pop(dialogContext);
-                  },
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          final comment = commentController.text.trim();
+                          if (comment.isEmpty) {
+                            setDialogState(() => errorMessage = 'Remarks are compulsory.');
+                            return;
+                          }
+
+                          setDialogState(() => isSubmitting = true);
+
+                          final success = await ref.read(submitComplaintProvider.notifier).updateStatus(
+                            c.id,
+                            actionType,
+                            comment,
+                          );
+
+                          if (dialogContext.mounted) {
+                            Navigator.pop(dialogContext);
+                          }
+                          if (mounted) {
+                            if (success) {
+                              ref.invalidate(departmentComplaintsProvider);
+                              ref.invalidate(adviserComplaintsProvider);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Complaint marked as ${actionType == 'resolved' ? 'Resolved' : 'Rejected'}.'),
+                                  backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to update complaint status. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
                   style: ElevatedButton.styleFrom(backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red, foregroundColor: Colors.white),
-                  child: const Text('Confirm'),
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text('Confirm'),
                 ),
               ],
             );

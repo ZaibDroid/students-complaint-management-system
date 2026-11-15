@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             AdminUserSeeder::class,
             ComplaintCategorySeeder::class,
-            DemoDataSeeder::class,
         ]);
     }
 }

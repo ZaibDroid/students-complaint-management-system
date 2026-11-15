@@ -43,6 +43,7 @@ import '../../features/admin/presentation/pages/manage_coordinators_page.dart';
 import '../../features/admin/presentation/pages/chairman_announcements_page.dart';
 import '../../features/admin/presentation/pages/create_announcement_page.dart';
 import '../../features/admin/presentation/pages/vc_dashboard_page.dart';
+import '../widgets/double_back_exit_scope.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final isFirstLaunchProvider = Provider<bool>((ref) => false);
@@ -62,7 +63,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginPage(),
+        builder: (context, state) => const DoubleBackExitScope(child: LoginPage()),
       ),
       GoRoute(
         path: '/register',
@@ -140,7 +141,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/dashboard/adviser',
-        builder: (context, state) => const AdviserDashboardPage(),
+        builder: (context, state) => const DoubleBackExitScope(child: AdviserDashboardPage()),
       ),
       GoRoute(
         path: '/submit_complaint',
@@ -205,15 +206,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/dashboard/dean',
-        builder: (context, state) => const DeanDashboardPage(),
+        builder: (context, state) => const DoubleBackExitScope(child: DeanDashboardPage()),
       ),
       GoRoute(
         path: '/dashboard/vc',
-        builder: (context, state) => const VcDashboardPage(),
+        builder: (context, state) => const DoubleBackExitScope(child: VcDashboardPage()),
       ),
       GoRoute(
         path: '/dashboard/coordinator',
-        builder: (context, state) => const CoordinatorDashboardPage(),
+        builder: (context, state) => const DoubleBackExitScope(child: CoordinatorDashboardPage()),
       ),
       GoRoute(
         path: '/assign_adviser',
@@ -221,7 +222,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/dashboard/office',
-        builder: (context, state) => const OfficeDashboardPage(),
+        builder: (context, state) => const DoubleBackExitScope(child: OfficeDashboardPage()),
       ),
       GoRoute(
         path: '/select_recipient',

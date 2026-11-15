@@ -89,6 +89,7 @@ class _CreateAnnouncementPageState extends ConsumerState<CreateAnnouncementPage>
       createdAt: DateTime.now(),
       senderId: user.id,
       senderName: user.name,
+      senderRole: user.role,
       targetRoles: targetRoles,
       targetCRsOnly: (!_broadcastToAll && _selectedRoles.contains('Student')) ? _onlyToCRs : false,
       targetBatches: (!_broadcastToAll && _selectedRoles.contains('Student') && _selectedBatches.isNotEmpty) ? _selectedBatches.toList() : null,

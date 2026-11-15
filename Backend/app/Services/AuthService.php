@@ -29,12 +29,23 @@ class AuthService implements AuthServiceInterface
 
         if ($deptName !== null && $deptName !== '') {
             $deptStr = trim((string)$deptName);
+            $cleanName = trim(preg_replace('/^(department\s*of\s*|dept\s*of\s*)/i', '', $deptStr));
             $dept = \App\Models\Department::where('name', $deptStr)
                 ->orWhere('code', $deptStr)
+                ->orWhereRaw('LOWER(name) = ?', [strtolower($deptStr)])
+                ->orWhereRaw('LOWER(code) = ?', [strtolower($deptStr)])
+                ->orWhere('name', 'LIKE', "%{$cleanName}%")
+                ->orWhere('name', 'LIKE', "%{$deptStr}%")
                 ->first();
-            if ($dept) {
-                $data['department_id'] = $dept->id;
+
+            if (!$dept) {
+                $code = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $cleanName), 0, 4));
+                $dept = \App\Models\Department::create([
+                    'name' => 'Department of ' . ucwords($cleanName),
+                    'code' => !empty($code) ? $code : 'GEN',
+                ]);
             }
+            $data['department_id'] = $dept->id;
         }
 
         $batchId = $data['batch_id'] ?? ($user ? $user->batch_id : null);

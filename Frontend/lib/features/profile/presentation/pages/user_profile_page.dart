@@ -155,7 +155,10 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     ] else ...[
                       TextField(
                         controller: departmentController,
-                        decoration: const InputDecoration(labelText: 'Department Name'),
+                        decoration: const InputDecoration(
+                          labelText: 'Department Name',
+                          hintText: 'e.g. Computer Science or CS',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       if (user.role == 'Batch Adviser' || user.role == 'Coordinator') ...[

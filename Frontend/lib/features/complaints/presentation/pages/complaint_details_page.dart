@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/complaint_model.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
+import '../../../admin/presentation/pages/adviser_dashboard_page.dart';
 import '../providers/complaint_provider.dart';
 import '../widgets/complaint_attachment_card.dart';
 
@@ -120,6 +121,8 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
                       Navigator.pop(context); // close loading
                       Navigator.pop(context); // close dialog
                       if (success) {
+                        ref.invalidate(adviserComplaintsProvider);
+                        ref.invalidate(departmentComplaintsProvider);
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Complaint $actionType successfully.')));
                         context.pop(); // go back
                       } else {
@@ -146,7 +149,25 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
     final theme = Theme.of(context);
     final authState = ref.watch(authStateProvider).value;
     final isStaff = authState != null && authState.role != 'Student';
-    final isActionable = _complaint.status == 'pending' || _complaint.status == 'forwarded';
+    final isAdmin = authState != null && authState.role.toLowerCase() == 'admin';
+
+    bool isAssignedToMe() {
+      if (authState == null) return false;
+      if (_complaint.assignedToId != null && _complaint.assignedToId!.isNotEmpty) {
+        if (_complaint.assignedToId == authState.id) return true;
+      }
+      if (_complaint.assignedTo != null && _complaint.assignedTo!.isNotEmpty) {
+        final assignedLower = _complaint.assignedTo!.toLowerCase().replaceAll('dr.', '').trim();
+        final myNameLower = authState.name.toLowerCase().replaceAll('dr.', '').trim();
+        if (assignedLower == myNameLower) return true;
+      }
+      return false;
+    }
+
+    final isAssigned = isAssignedToMe();
+    final isActionable = (isAdmin || isAssigned) &&
+        _complaint.status != 'resolved' &&
+        _complaint.status != 'rejected';
     final currentUserRole = authState?.role.toLowerCase() ?? '';
     
     return Scaffold(

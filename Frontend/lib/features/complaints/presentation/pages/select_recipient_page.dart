@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/models/complaint_model.dart';
 import '../providers/complaint_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../admin/presentation/pages/adviser_dashboard_page.dart';
 
 import '../../../../core/services/api_client.dart';
 
@@ -47,14 +48,22 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
   String? _commentError;
 
   void _confirmTransfer() async {
-    if (_selectedStaffId == null || _selectedStaffName == null) return;
+    if (_selectedStaffId == null || _selectedStaffName == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a recipient faculty member first.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     
     final commentText = _commentController.text.trim();
     if (commentText.isEmpty) {
       setState(() => _commentError = 'Remarks are compulsory before forwarding.');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Remarks are compulsory before forwarding to the coordinator or administration.'),
+          content: Text('Remarks / comments are compulsory before forwarding this complaint.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -78,6 +87,9 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
     if (mounted) {
       Navigator.pop(context); // close loading
       if (success) {
+        ref.invalidate(adviserComplaintsProvider);
+        ref.invalidate(departmentComplaintsProvider);
+        ref.invalidate(allComplaintsProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Case transferred successfully!')),
         );
@@ -126,7 +138,10 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                   children: [
                     const Icon(Icons.swap_horiz, size: 18, color: Colors.black54),
                     const SizedBox(width: 8),
-                    Text('Transferring Complaint #${widget.complaint.id.substring(0, 6).toUpperCase()}', style: const TextStyle(color: Colors.black54, fontSize: 14)),
+                    Text(
+                      'Transferring Complaint #${widget.complaint.ticketNumber ?? (widget.complaint.id.length > 6 ? widget.complaint.id.substring(0, 6).toUpperCase() : widget.complaint.id)}',
+                      style: const TextStyle(color: Colors.black54, fontSize: 14),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -137,6 +152,9 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                 staffAsync.when(
                   data: (staffList) {
                     final currentUserId = ref.watch(authStateProvider).value?.id.toString() ?? '';
+                    final currentUserRole = ref.watch(authStateProvider).value?.role.toLowerCase() ?? '';
+                    final isBatchAdviser = currentUserRole.contains('adviser') || currentUserRole.contains('advisor');
+
                     final filteredStaff = staffList.where((staff) {
                       final staffId = staff['id'];
                       final roleStr = (staff['role'] as String).toLowerCase();
@@ -146,13 +164,45 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                         return false;
                       }
 
-                      // Students cannot be recipients of forwarded complaints
-                      if (roleStr.contains('student')) {
+                      // Students / CRs cannot be recipients of forwarded complaints
+                      if (roleStr.contains('student') || roleStr == 'cr' || roleStr.contains('representative')) {
                         return false;
+                      }
+
+                      // If current user is a Batch Adviser:
+                      // Allowed: Coordinator, Chairman, Admin, and future custom roles (e.g. Tour Incharge, etc.)
+                      // Excluded: Other Batch Advisers, Dean, VC, Office staff
+                      if (isBatchAdviser) {
+                        if (roleStr.contains('adviser') || roleStr.contains('advisor')) {
+                          return false;
+                        }
+                        if (roleStr.contains('dean')) {
+                          return false;
+                        }
+                        if (roleStr.contains('vice chancellor') || roleStr == 'vc') {
+                          return false;
+                        }
+                        if (roleStr.contains('office')) {
+                          return false;
+                        }
                       }
 
                       return true;
                     }).toList();
+
+                    filteredStaff.sort((a, b) {
+                      int priority(String r) {
+                        final lower = r.toLowerCase();
+                        if (lower.contains('coordinator')) return 1;
+                        if (lower.contains('chair')) return 2;
+                        if (lower.contains('admin')) return 3;
+                        return 4; // custom roles (e.g. Tour Incharge)
+                      }
+                      final pA = priority(a['role'] as String);
+                      final pB = priority(b['role'] as String);
+                      if (pA != pB) return pA.compareTo(pB);
+                      return (a['name'] as String).compareTo(b['name'] as String);
+                    });
 
                     if (filteredStaff.isEmpty) {
                       return const Padding(
@@ -242,7 +292,7 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                 const SizedBox(height: 12),
                 Row(
                   children: const [
-                    Text('ADDITIONAL COMMENTS ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black54, letterSpacing: 1.2)),
+                    Text('REMARKS / REASON FOR FORWARDING ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black54, letterSpacing: 1.2)),
                     Text('*', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red)),
                   ],
                 ),
@@ -256,7 +306,7 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                     }
                   },
                   decoration: InputDecoration(
-                    hintText: 'Add instructions, reasons for forwarding, or any contextual notes...',
+                    hintText: 'Enter compulsory remarks explaining why this complaint is being forwarded...',
                     errorText: _commentError,
                     filled: true,
                     fillColor: Colors.white,

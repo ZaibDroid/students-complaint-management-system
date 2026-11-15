@@ -18,6 +18,8 @@ class NoticeResource extends JsonResource
             'senderId' => (string)$this->sender_id,
             'sender_name' => $senderName,
             'senderName' => $senderName,
+            'sender_role' => $this->sender?->getRoleNames()->first() ?? '',
+            'senderRole' => $this->sender?->getRoleNames()->first() ?? '',
             'sender' => new UserResource($this->whenLoaded('sender')),
             'department_id' => $this->department_id ? (string)$this->department_id : null,
             'target_batch_id' => $this->target_batch_id ? (string)$this->target_batch_id : null,

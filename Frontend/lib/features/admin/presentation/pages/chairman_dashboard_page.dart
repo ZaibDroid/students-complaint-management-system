@@ -38,10 +38,10 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
     
     final pendingCount = complaints.where((c) => isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected').length;
     final processedCount = complaints.where((c) => c.status == 'resolved' || c.status == 'rejected').length;
-    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
+    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo, c.assignedToId) && (c.status == 'forwarded' || c.involvedStaffNames.any((name) {
       final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
       return involvedLower == myNameLower;
-    })).length;
+    })) && c.status != 'resolved' && c.status != 'rejected').length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF8FC),
@@ -128,27 +128,42 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
       if (_selectedFilter == 'pending') return isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected';
       if (_selectedFilter == 'processed') return c.status == 'resolved' || c.status == 'rejected';
       if (_selectedFilter == 'forwarded') {
-        return !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
+        return !isAssignedToMe(c.assignedTo, c.assignedToId) && (c.status == 'forwarded' || c.involvedStaffNames.any((name) {
           final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
           return involvedLower == myNameLower;
-        });
+        }));
       }
       return true;
     }).toList();
 
-    if (filtered.isEmpty) {
-      return const Center(child: Text('No complaints found in this category.', style: TextStyle(color: Colors.grey)));
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      itemCount: filtered.length,
-      itemBuilder: (context, index) {
-        final c = filtered[index];
-        final myNameLower = (ref.read(authStateProvider).value?.name ?? '').toLowerCase().replaceAll('dr.', '').trim();
-        final assignedToLower = (c.assignedTo ?? '').toLowerCase().replaceAll('dr.', '').trim();
-        final isAssignedToMe = assignedToLower == myNameLower;
-        final isPending = isAssignedToMe && c.status != 'resolved' && c.status != 'rejected';
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(departmentComplaintsProvider);
+        await ref.read(departmentComplaintsProvider.notifier).refresh();
+      },
+      child: filtered.isEmpty
+          ? LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Text('No complaints found in this category.', style: TextStyle(color: Colors.grey)),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              itemCount: filtered.length,
+              itemBuilder: (context, index) {
+                final c = filtered[index];
+                final isAssigned = isAssignedToMe(c.assignedTo, c.assignedToId);
+                final isPending = isAssigned && c.status != 'resolved' && c.status != 'rejected';
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: InkWell(
@@ -168,6 +183,7 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
           ),
         );
       },
+    ),
     );
   }
 

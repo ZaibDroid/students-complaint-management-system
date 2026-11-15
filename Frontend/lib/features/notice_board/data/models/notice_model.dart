@@ -44,6 +44,7 @@ class NoticeModel {
   final DateTime createdAt;
   final String senderId;
   final String senderName;
+  final String? senderRole;
   final String? targetYear;
   final List<String>? targetBatches;
   final List<String>? targetSections;
@@ -60,6 +61,7 @@ class NoticeModel {
     required this.createdAt,
     required this.senderId,
     required this.senderName,
+    this.senderRole,
     this.targetYear,
     this.targetBatches,
     this.targetSections,
@@ -78,6 +80,7 @@ class NoticeModel {
       'createdAt': createdAt.toIso8601String(),
       'senderId': senderId,
       'senderName': senderName,
+      'senderRole': senderRole,
       'targetYear': targetYear,
       'targetBatches': targetBatches,
       'targetSections': targetSections,
@@ -131,6 +134,7 @@ class NoticeModel {
               : DateTime.now()),
       senderId: (map['senderId'] ?? map['sender_id'] ?? '').toString(),
       senderName: (map['senderName'] ?? map['sender_name'] ?? '').toString(),
+      senderRole: (map['senderRole'] ?? map['sender_role'])?.toString(),
       targetYear: map['targetYear'] ?? map['target_year'],
       targetBatches: map['targetBatches'] != null
           ? List<String>.from(map['targetBatches'])

@@ -127,11 +127,15 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
     }
     
     final pendingCount = complaints.where((c) => isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected').length;
-    final resolvedCount = complaints.where((c) => c.status == 'resolved' && isAssignedToMe(c.assignedTo, c.assignedToId)).length;
-    final forwardedCount = complaints.where((c) => !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
-      final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
-      return involvedLower == myNameLower;
-    }) && c.status != 'resolved').length;
+    final resolvedCount = complaints.where((c) => (c.status == 'resolved' || c.status == 'rejected') && isAssignedToMe(c.assignedTo, c.assignedToId)).length;
+    final forwardedCount = complaints.where((c) => 
+      !isAssignedToMe(c.assignedTo, c.assignedToId) && 
+      (c.status == 'forwarded' || c.involvedStaffNames.any((name) {
+        final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
+        return involvedLower == myNameLower;
+      })) && 
+      c.status != 'resolved' && c.status != 'rejected'
+    ).length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF8FC),
@@ -281,16 +285,18 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
     return '$day $month $year • ${hour.toString().padLeft(2, '0')}:$minute $period';
   }
 
-  void _showActionDialog(BuildContext context, ComplaintModel c, String actionType) {
+  void _showActionDialog(ComplaintModel c, String actionType) {
     final commentController = TextEditingController();
     bool forwardToOffice = false;
     String? errorMessage;
+    bool isSubmitting = false;
     
     showDialog(
       context: context,
-      builder: (context) {
+      barrierDismissible: false,
+      builder: (dialogContext) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (dialogCtx, setDialogState) {
             return AlertDialog(
               title: Text('${actionType == 'resolved' ? 'Resolve' : 'Reject'} Complaint'),
               content: Column(
@@ -309,6 +315,7 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: commentController,
+                    enabled: !isSubmitting,
                     decoration: InputDecoration(
                       hintText: 'Enter mandatory remarks for this action...',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -317,7 +324,7 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
                     maxLines: 3,
                     onChanged: (val) {
                       if (errorMessage != null && val.trim().isNotEmpty) {
-                        setState(() => errorMessage = null);
+                        setDialogState(() => errorMessage = null);
                       }
                     },
                   ),
@@ -327,11 +334,13 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
                       children: [
                         Checkbox(
                           value: forwardToOffice,
-                          onChanged: (val) {
-                            setState(() {
-                              forwardToOffice = val ?? false;
-                            });
-                          },
+                          onChanged: isSubmitting
+                              ? null
+                              : (val) {
+                                  setDialogState(() {
+                                    forwardToOffice = val ?? false;
+                                  });
+                                },
                         ),
                         const Expanded(
                           child: Text('Forward to Office for manual notification'),
@@ -343,27 +352,69 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: isSubmitting ? null : () => Navigator.pop(dialogContext),
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    final comment = commentController.text.trim();
-                    if (comment.isEmpty) {
-                      setState(() {
-                        errorMessage = 'Remarks are compulsory to ${actionType == 'resolved' ? 'resolve' : 'reject'} this complaint.';
-                      });
-                      return;
-                    }
-                    
-                    final action = (actionType == 'resolved' && forwardToOffice) ? 'forwarded' : actionType;
-                    final assignedTo = (actionType == 'resolved' && forwardToOffice) ? 'Office' : null;
-                    
-                    ref.read(submitComplaintProvider.notifier).updateStatus(c.id, action, comment, assignedTo: assignedTo);
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red, foregroundColor: Colors.white),
-                  child: const Text('Confirm'),
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          final comment = commentController.text.trim();
+                          if (comment.isEmpty) {
+                            setDialogState(() {
+                              errorMessage = 'Remarks are compulsory to ${actionType == 'resolved' ? 'resolve' : 'reject'} this complaint.';
+                            });
+                            return;
+                          }
+
+                          setDialogState(() {
+                            isSubmitting = true;
+                            errorMessage = null;
+                          });
+                          
+                          final action = (actionType == 'resolved' && forwardToOffice) ? 'forwarded' : actionType;
+                          final assignedTo = (actionType == 'resolved' && forwardToOffice) ? 'Office' : null;
+                          
+                          final success = await ref.read(submitComplaintProvider.notifier).updateStatus(
+                            c.id, 
+                            action, 
+                            comment, 
+                            assignedTo: assignedTo,
+                          );
+
+                          if (dialogContext.mounted) {
+                            Navigator.pop(dialogContext);
+                          }
+                          if (mounted) {
+                            if (success) {
+                              ref.invalidate(adviserComplaintsProvider);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Complaint marked as ${actionType == 'resolved' ? 'Resolved' : 'Rejected'}.'),
+                                  backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to update complaint status. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: actionType == 'resolved' ? Colors.green : Colors.red, 
+                    foregroundColor: Colors.white,
+                  ),
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text('Confirm'),
                 ),
               ],
             );
@@ -387,50 +438,67 @@ class _AdviserDashboardPageState extends ConsumerState<AdviserDashboardPage> {
 
     var filtered = complaints.where((c) {
       if (_selectedFilter == 'pending') return isAssignedToMe(c.assignedTo, c.assignedToId) && c.status != 'resolved' && c.status != 'rejected';
-      if (_selectedFilter == 'resolved') return c.status == 'resolved' && isAssignedToMe(c.assignedTo, c.assignedToId);
+      if (_selectedFilter == 'resolved') return (c.status == 'resolved' || c.status == 'rejected') && isAssignedToMe(c.assignedTo, c.assignedToId);
       if (_selectedFilter == 'forwarded') {
-        return !isAssignedToMe(c.assignedTo, c.assignedToId) && c.involvedStaffNames.any((name) {
-          final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
-          return involvedLower == myNameLower;
-        });
+        return !isAssignedToMe(c.assignedTo, c.assignedToId) && 
+          (c.status == 'forwarded' || c.involvedStaffNames.any((name) {
+            final involvedLower = name.toLowerCase().replaceAll('dr.', '').trim();
+            return involvedLower == myNameLower;
+          }));
       }
       if (_selectedFilter == 'processed') return (c.status == 'resolved' || c.status == 'rejected') && isAssignedToMe(c.assignedTo, c.assignedToId);
       return true;
     }).toList();
 
-    if (filtered.isEmpty) {
-      return const Center(child: Text('No complaints found in this category.', style: TextStyle(color: Colors.grey)));
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      itemCount: filtered.length,
-      itemBuilder: (context, index) {
-        final c = filtered[index];
-        final myNameLower = (ref.read(authStateProvider).value?.name ?? '').toLowerCase().replaceAll('dr.', '').trim();
-        final assignedToLower = (c.assignedTo ?? '').toLowerCase().replaceAll('dr.', '').trim();
-        final isAssignedToMe = assignedToLower == myNameLower;
-        final isPending = isAssignedToMe && c.status != 'resolved' && c.status != 'rejected';
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            onTap: () => context.push('/complaint_details', extra: c),
-            borderRadius: BorderRadius.circular(16),
-            child: StaffComplaintCard(
-              studentName: c.studentName,
-              batch: c.studentBatch ?? 'N/A',
-              section: c.studentSection,
-              title: c.title,
-              status: c.status,
-              assignedTo: c.assignedTo,
-              date: _formatDateTime(c.createdAt),
-              onForward: isPending ? () => context.push('/select_recipient', extra: c) : null,
-              onResolve: isPending ? () => _showActionDialog(context, c, 'resolved') : null,
-              onReject: isPending ? () => _showActionDialog(context, c, 'rejected') : null,
-            ),
-          ),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(adviserComplaintsProvider);
+        ref.invalidate(adviserStudentsProvider);
       },
+      child: filtered.isEmpty
+          ? LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Text('No complaints found in this category.', style: TextStyle(color: Colors.grey)),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              itemCount: filtered.length,
+              itemBuilder: (context, index) {
+                final c = filtered[index];
+                final isAssigned = isAssignedToMe(c.assignedTo, c.assignedToId);
+                final isPending = isAssigned && c.status != 'resolved' && c.status != 'rejected';
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: InkWell(
+                    onTap: () => context.push('/complaint_details', extra: c),
+                    borderRadius: BorderRadius.circular(16),
+                    child: StaffComplaintCard(
+                      studentName: c.studentName,
+                      batch: c.studentBatch ?? 'N/A',
+                      section: c.studentSection,
+                      title: c.title,
+                      status: c.status,
+                      assignedTo: c.assignedTo,
+                      date: _formatDateTime(c.createdAt),
+                      onForward: isPending ? () => context.push('/select_recipient', extra: c) : null,
+                      onResolve: isPending ? () => _showActionDialog(c, 'resolved') : null,
+                      onReject: isPending ? () => _showActionDialog(c, 'rejected') : null,
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 
