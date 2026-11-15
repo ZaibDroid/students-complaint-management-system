@@ -164,11 +164,22 @@ class _ComplaintDetailsPageState extends ConsumerState<ComplaintDetailsPage> {
       return false;
     }
 
+    final currentUserRole = authState?.role.toLowerCase() ?? '';
+    final isBatchAdviser = currentUserRole.contains('adviser') || currentUserRole.contains('advisor');
     final isAssigned = isAssignedToMe();
-    final isActionable = (isAdmin || isAssigned) &&
+
+    bool isActionable = (isAdmin || isAssigned) &&
         _complaint.status != 'resolved' &&
         _complaint.status != 'rejected';
-    final currentUserRole = authState?.role.toLowerCase() ?? '';
+
+    // Once a complaint is forwarded to the Coordinator, the Batch Adviser has no access to reject or resolve it.
+    if (isBatchAdviser && _complaint.status == 'forwarded') {
+      isActionable = false;
+    }
+
+    if (!isAssigned && !isAdmin) {
+      isActionable = false;
+    }
     
     return Scaffold(
       backgroundColor: const Color(0xFFFBF8FC),
