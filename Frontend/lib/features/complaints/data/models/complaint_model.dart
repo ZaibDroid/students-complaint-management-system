@@ -132,7 +132,10 @@ class ComplaintModel {
           ? DateTime.tryParse(map['updatedAt'].toString())
           : (map['updated_at'] != null ? DateTime.tryParse(map['updated_at'].toString()) : null),
       attachments: List<String>.from(map['attachments'] ?? []),
-      remarks: List<Map<String, dynamic>>.from(map['remarks'] ?? []),
+      remarks: (map['remarks'] as List? ?? [])
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList(),
       involvedStaffNames: List<String>.from(map['involvedStaffNames'] ?? map['involved_staff_names'] ?? []),
     );
   }

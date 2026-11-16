@@ -154,6 +154,8 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                     final currentUserId = ref.watch(authStateProvider).value?.id.toString() ?? '';
                     final currentUserRole = ref.watch(authStateProvider).value?.role.toLowerCase() ?? '';
                     final isBatchAdviser = currentUserRole.contains('adviser') || currentUserRole.contains('advisor');
+                    final isCoordinator = currentUserRole.contains('coordinator');
+                    final isChairman = currentUserRole.contains('chairman') || currentUserRole.contains('chair');
 
                     final filteredStaff = staffList.where((staff) {
                       final staffId = staff['id'];
@@ -170,19 +172,58 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                       }
 
                       // If current user is a Batch Adviser:
-                      // Allowed: Coordinator, Chairman, Admin, and future custom roles (e.g. Tour Incharge, etc.)
-                      // Excluded: Other Batch Advisers, Dean, VC, Office staff
+                      // Allowed: Coordinator, Chairman
+                      // Excluded: Other Batch Advisers, Dean, VC, Office staff, Admin
                       if (isBatchAdviser) {
-                        if (roleStr.contains('adviser') || roleStr.contains('advisor')) {
+                        final isCoord = roleStr.contains('coordinator');
+                        final isChair = roleStr.contains('chairman') || roleStr.contains('chair');
+                        if (!isCoord && !isChair) {
                           return false;
                         }
-                        if (roleStr.contains('dean')) {
+                      }
+
+                      // If current user is a Coordinator:
+                      // Allowed:
+                      // 1. Batch Adviser who sent it (or batch advisers)
+                      // 2. Chairman
+                      // 3. Office of the Department (created by admin)
+                      // Excluded: Dean, VC, other Coordinators, Admin
+                      if (isCoordinator) {
+                        final isAdviserRole = roleStr.contains('adviser') || roleStr.contains('advisor');
+                        final isChairmanRole = roleStr.contains('chairman') || roleStr.contains('chair');
+                        final isOfficeRole = roleStr.contains('office');
+
+                        if (!isAdviserRole && !isChairmanRole && !isOfficeRole) {
                           return false;
                         }
-                        if (roleStr.contains('vice chancellor') || roleStr == 'vc') {
-                          return false;
+
+                        // If it's an adviser role, match the one who sent/handled this complaint
+                        if (isAdviserRole) {
+                          final involved = widget.complaint.involvedStaffNames;
+                          if (involved.isNotEmpty) {
+                            final staffNameClean = (staff['name'] as String).toLowerCase().replaceAll('dr.', '').trim();
+                            final hasInvolvedAdviser = staffList.any((s) {
+                              final sRole = (s['role'] as String).toLowerCase();
+                              final sName = (s['name'] as String).toLowerCase().replaceAll('dr.', '').trim();
+                              return (sRole.contains('adviser') || sRole.contains('advisor')) &&
+                                     involved.any((inv) => inv.toLowerCase().replaceAll('dr.', '').trim() == sName);
+                            });
+
+                            if (hasInvolvedAdviser) {
+                              final isSender = involved.any((inv) => inv.toLowerCase().replaceAll('dr.', '').trim() == staffNameClean);
+                              if (!isSender) return false;
+                            }
+                          }
                         }
-                        if (roleStr.contains('office')) {
+                      }
+
+                      // If current user is Chairman:
+                      // Allowed: Dean, Office of the Department, Coordinator
+                      if (isChairman) {
+                        final isDeanRole = roleStr.contains('dean');
+                        final isOfficeRole = roleStr.contains('office');
+                        final isCoord = roleStr.contains('coordinator');
+                        if (!isDeanRole && !isOfficeRole && !isCoord) {
                           return false;
                         }
                       }
@@ -193,10 +234,22 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                     filteredStaff.sort((a, b) {
                       int priority(String r) {
                         final lower = r.toLowerCase();
-                        if (lower.contains('coordinator')) return 1;
-                        if (lower.contains('chair')) return 2;
-                        if (lower.contains('admin')) return 3;
-                        return 4; // custom roles (e.g. Tour Incharge)
+                        if (isCoordinator) {
+                          if (lower.contains('adviser') || lower.contains('advisor')) return 1;
+                          if (lower.contains('chair')) return 2;
+                          if (lower.contains('office')) return 3;
+                          return 4;
+                        } else if (isBatchAdviser) {
+                          if (lower.contains('coordinator')) return 1;
+                          if (lower.contains('chair')) return 2;
+                          return 3;
+                        } else if (isChairman) {
+                          if (lower.contains('office')) return 1;
+                          if (lower.contains('dean')) return 2;
+                          if (lower.contains('coordinator')) return 3;
+                          return 4;
+                        }
+                        return 5;
                       }
                       final pA = priority(a['role'] as String);
                       final pB = priority(b['role'] as String);
@@ -213,9 +266,17 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                     
                     return Column(
                       children: filteredStaff.map((staff) {
-
-
                         final isSelected = _selectedStaffId == staff['id'];
+                        final isAdviserSendBack = isCoordinator && 
+                            ((staff['role'] as String).toLowerCase().contains('adviser') || (staff['role'] as String).toLowerCase().contains('advisor'));
+                        final isOffice = (staff['role'] as String).toLowerCase().contains('office');
+                        
+                        String roleLabel = staff['role'];
+                        if (isAdviserSendBack) {
+                          roleLabel = 'Batch Adviser (Send Back)';
+                        } else if (isOffice) {
+                          roleLabel = 'Department Office (${staff['role']})';
+                        }
                         
                         return GestureDetector(
                           onTap: () => setState(() {
@@ -242,8 +303,16 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                                 children: [
                                   CircleAvatar(
                                     radius: 28,
-                                    backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
-                                    child: Icon(Icons.person, color: theme.primaryColor, size: 28),
+                                    backgroundColor: isAdviserSendBack 
+                                        ? Colors.amber.shade50 
+                                        : theme.primaryColor.withValues(alpha: 0.1),
+                                    child: Icon(
+                                      isAdviserSendBack 
+                                          ? Icons.undo_rounded 
+                                          : (isOffice ? Icons.desk : Icons.person), 
+                                      color: isAdviserSendBack ? Colors.amber.shade800 : theme.primaryColor, 
+                                      size: 28,
+                                    ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
@@ -256,10 +325,26 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                                           runSpacing: 4,
                                           children: [
                                             Text(staff['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87)),
+                                            if (isAdviserSendBack)
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.amber.shade100,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                                child: Text(
+                                                  'Send Back',
+                                                  style: TextStyle(
+                                                    color: Colors.amber.shade900,
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
                                           ],
                                         ),
                                         const SizedBox(height: 4),
-                                        Text('${staff['role']}', style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w600, fontSize: 13)),
+                                        Text(roleLabel, style: TextStyle(color: isAdviserSendBack ? Colors.amber.shade800 : theme.primaryColor, fontWeight: FontWeight.w600, fontSize: 13)),
                                       ],
                                     ),
                                   ),

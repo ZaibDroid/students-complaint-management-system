@@ -190,26 +190,42 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
   void _showActionDialog(BuildContext context, ComplaintModel c, String actionType) {
     final commentController = TextEditingController();
     bool forwardToOffice = false;
+    String? errorMessage;
     
     showDialog(
       context: context,
       builder: (dialogContext) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (dialogContext, setDialogState) {
             return AlertDialog(
               title: Text('${actionType == 'resolved' ? 'Resolve' : 'Reject'} Complaint'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Please provide a comment for this action:'),
-                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Text(
+                        'Remarks / Comments ',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
+                      ),
+                      const Text('*', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: commentController,
                     decoration: InputDecoration(
-                      hintText: 'Enter comment...',
+                      hintText: 'Enter mandatory remarks...',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      errorText: errorMessage,
                     ),
                     maxLines: 3,
+                    onChanged: (val) {
+                      if (errorMessage != null && val.trim().isNotEmpty) {
+                        setDialogState(() => errorMessage = null);
+                      }
+                    },
                   ),
                   if (actionType == 'resolved') ...[
                     const SizedBox(height: 16),
@@ -218,7 +234,7 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
                         Checkbox(
                           value: forwardToOffice,
                           onChanged: (val) {
-                            setState(() {
+                            setDialogState(() {
                               forwardToOffice = val ?? false;
                             });
                           },
@@ -238,12 +254,13 @@ class _ChairmanDashboardPageState extends ConsumerState<ChairmanDashboardPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    final defaultResolvedComment = forwardToOffice 
-                        ? 'Issue resolved by Chairman (Forwarded to Office for notification)'
-                        : 'Issue resolved by Chairman';
-                    final comment = commentController.text.trim().isEmpty 
-                        ? (actionType == 'resolved' ? defaultResolvedComment : 'Returned by Chairman')
-                        : commentController.text.trim();
+                    final comment = commentController.text.trim();
+                    if (comment.isEmpty) {
+                      setDialogState(() {
+                        errorMessage = 'Remarks are compulsory to ${actionType == 'resolved' ? 'resolve' : 'reject'} this complaint.';
+                      });
+                      return;
+                    }
                     
                     final action = (actionType == 'resolved' && forwardToOffice) ? 'forwarded' : actionType;
                     final assignedTo = (actionType == 'resolved' && forwardToOffice) ? 'Office' : null;

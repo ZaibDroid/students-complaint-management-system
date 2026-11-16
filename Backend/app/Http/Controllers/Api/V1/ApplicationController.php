@@ -115,7 +115,7 @@ class ApplicationController extends BaseApiController
         $notes = $request->notes;
 
         if (in_array($status, [Application::STATUS_FORWARDED, Application::STATUS_RESOLVED, Application::STATUS_REJECTED])) {
-            if (($actor->hasAnyRole(['Batch Adviser', 'Batch Advisor']) || $status === Application::STATUS_FORWARDED) && empty(trim((string)$notes))) {
+            if (empty(trim((string)$notes))) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Remarks/comments are compulsory when forwarding, resolving, or rejecting a complaint.',
