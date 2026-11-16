@@ -204,6 +204,7 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
                 .toSet()
                 .toList() ??
             [];
+        sections.sort();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -359,7 +360,7 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
             if (batchVal != null && batchVal.isNotEmpty && sectionVal != null && sectionVal.isNotEmpty)
               {
                 'batch': batchVal,
-                if (batchId != null) 'batch_id': batchId,
+                if (batchId != null) ...{'batch_id': batchId},
                 'section': sectionVal,
               }
           ],

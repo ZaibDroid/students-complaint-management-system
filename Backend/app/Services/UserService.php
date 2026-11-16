@@ -80,7 +80,7 @@ class UserService implements UserServiceInterface
                 if (!$section) {
                     $section = \App\Models\Section::create([
                         'batch_id' => $batch->id,
-                        'name' => $longSec,
+                        'name' => $shortSec,
                     ]);
                 }
                 $data['section_id'] = $section->id;

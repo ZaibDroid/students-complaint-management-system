@@ -24,7 +24,6 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _batchController;
   late final TextEditingController _sectionController;
-  late final TextEditingController _semesterController;
 
   String? _selectedBatchId;
   String? _selectedSection;
@@ -37,7 +36,6 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
     _nameController = TextEditingController(text: widget.adviser.name);
     _batchController = TextEditingController(text: widget.adviser.batch ?? '');
     _sectionController = TextEditingController(text: widget.adviser.section ?? '');
-    _semesterController = TextEditingController(text: widget.adviser.semester ?? '');
     _selectedSection = widget.adviser.section;
   }
 
@@ -46,7 +44,6 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
     _nameController.dispose();
     _batchController.dispose();
     _sectionController.dispose();
-    _semesterController.dispose();
     super.dispose();
   }
 
@@ -93,14 +90,6 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
                 ),
                 const SizedBox(height: 16),
                 _buildBatchAndSectionSelectors(),
-                const SizedBox(height: 16),
-                AppTextField(
-                  controller: _semesterController,
-                  labelText: 'Semester',
-                  hintText: 'e.g. BSCS-1',
-                  prefixIcon: const Icon(Icons.class_),
-                  validator: (val) => val == null || val.trim().isEmpty ? 'Required' : null,
-                ),
               ],
             ),
           ),
@@ -166,6 +155,19 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
                 .toSet()
                 .toList() ??
             [];
+        sections.sort();
+
+        // Auto-match initial section if needed
+        if (_selectedSection != null && !sections.contains(_selectedSection)) {
+          final cleanCurrent = _selectedSection!.replaceAll(RegExp(r'^section\s+', caseSensitive: false), '').trim().toLowerCase();
+          for (final s in sections) {
+            final cleanS = s.replaceAll(RegExp(r'^section\s+', caseSensitive: false), '').trim().toLowerCase();
+            if (cleanS == cleanCurrent) {
+              _selectedSection = s;
+              break;
+            }
+          }
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -307,12 +309,12 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
           batch: batchVal.isNotEmpty ? batchVal : null,
           batchId: batchId,
           section: sectionVal.isNotEmpty ? sectionVal : null,
-          semester: _semesterController.text.trim(),
+          semester: widget.adviser.semester,
           assignedSections: [
             if (batchVal.isNotEmpty && sectionVal.isNotEmpty)
               {
                 'batch': batchVal,
-                if (batchId != null) 'batch_id': batchId,
+                if (batchId != null) ...{'batch_id': batchId},
                 'section': sectionVal,
               }
           ],

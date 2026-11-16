@@ -36,8 +36,34 @@ class AdvisersList extends StatelessWidget {
       itemCount: advisers.length,
       itemBuilder: (context, index) {
         final adviser = advisers[index];
-        final hasAssignedSections = adviser.assignedSections != null && adviser.assignedSections!.isNotEmpty;
-        final isAssigned = hasAssignedSections || (adviser.batch != null && adviser.batch!.isNotEmpty);
+        String batchDisplay = '';
+        String sectionDisplay = '';
+
+        if (adviser.assignedSections != null && adviser.assignedSections!.isNotEmpty) {
+          final batches = adviser.assignedSections!
+              .map((s) => s['batch']?.toString())
+              .where((b) => b != null && b.isNotEmpty && b != 'N/A')
+              .toSet()
+              .join(', ');
+          final sections = adviser.assignedSections!
+              .map((s) => s['section']?.toString())
+              .where((sec) => sec != null && sec.isNotEmpty && sec != 'N/A')
+              .toSet()
+              .join(', ');
+
+          batchDisplay = batches.isNotEmpty ? batches : (adviser.batch ?? '');
+          sectionDisplay = sections.isNotEmpty ? sections : (adviser.section ?? '');
+        } else {
+          batchDisplay = adviser.batch ?? '';
+          sectionDisplay = adviser.section ?? '';
+        }
+
+        batchDisplay = batchDisplay.replaceAll('Batch Batch', 'Batch').trim();
+        if (batchDisplay.isNotEmpty && !batchDisplay.toLowerCase().startsWith('batch')) {
+          batchDisplay = 'Batch $batchDisplay';
+        }
+
+        final isAssigned = batchDisplay.isNotEmpty || sectionDisplay.isNotEmpty;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
@@ -56,10 +82,12 @@ class AdvisersList extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Top Row: Avatar, Name, Email, and Assigned Status Pill
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    radius: 24,
+                    radius: 22,
                     backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
                     child: Icon(Icons.person, color: theme.primaryColor, size: 24),
                   ),
@@ -88,8 +116,7 @@ class AdvisersList extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    constraints: const BoxConstraints(maxWidth: 160),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: isAssigned ? Colors.green.shade50 : Colors.red.shade50,
                       borderRadius: BorderRadius.circular(20),
@@ -101,29 +128,17 @@ class AdvisersList extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isAssigned ? Icons.check_circle_outline : Icons.error_outline,
-                          size: 14,
+                          isAssigned ? Icons.check_circle : Icons.error_outline,
+                          size: 13,
                           color: isAssigned ? Colors.green.shade700 : Colors.red.shade700,
                         ),
                         const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            isAssigned 
-                                ? (hasAssignedSections 
-                                    ? adviser.assignedSections!.map((s) {
-                                        final b = (s['batch'] != null && s['batch'].toString().isNotEmpty && s['batch'] != 'N/A') ? 'Batch ${s['batch']}' : 'Batch';
-                                        final sec = (s['section'] != null && s['section'].toString().isNotEmpty && s['section'] != 'N/A') ? ' (${s['section']})' : '';
-                                        return '$b$sec';
-                                      }).join(', ')
-                                    : '${adviser.semester ?? adviser.batch ?? 'Assigned'} (${adviser.section ?? ''})')
-                                : 'Not Assigned',
-                            style: TextStyle(
-                              color: isAssigned ? Colors.green.shade700 : Colors.red.shade700,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                        Text(
+                          isAssigned ? 'Assigned' : 'Not Assigned',
+                          style: TextStyle(
+                            color: isAssigned ? Colors.green.shade700 : Colors.red.shade700,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
                           ),
                         ),
                       ],
@@ -132,12 +147,74 @@ class AdvisersList extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
+
+              // Batch row
+              Row(
+                children: [
+                  Icon(Icons.school_outlined, size: 16, color: Colors.grey.shade600),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Batch: ',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
+                  ),
+                  Text(
+                    batchDisplay.isNotEmpty ? batchDisplay : 'Not Assigned',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: batchDisplay.isNotEmpty ? const Color(0xFF010F32) : Colors.red.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+
+              // Section row
+              Row(
+                children: [
+                  Icon(Icons.view_module_outlined, size: 16, color: Colors.grey.shade600),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Section: ',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
+                  ),
+                  if (sectionDisplay.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: theme.primaryColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: theme.primaryColor.withValues(alpha: 0.2)),
+                      ),
+                      child: Text(
+                        sectionDisplay.toLowerCase().startsWith('section')
+                            ? sectionDisplay
+                            : 'Section $sectionDisplay',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor,
+                        ),
+                      ),
+                    )
+                  else
+                    Text(
+                      'Not Assigned',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red.shade700,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
               Divider(color: Colors.grey.shade100, height: 1),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Wrap(
                 alignment: WrapAlignment.end,
-                spacing: 8,
-                runSpacing: 8,
+                spacing: 4,
+                runSpacing: 4,
                 children: [
                   TextButton.icon(
                     onPressed: () {
@@ -149,7 +226,7 @@ class AdvisersList extends StatelessWidget {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.transfer_within_a_station, size: 18),
+                    icon: const Icon(Icons.transfer_within_a_station, size: 16),
                     label: const Text('Transfer'),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.orange.shade700,
@@ -163,7 +240,7 @@ class AdvisersList extends StatelessWidget {
                         builder: (context) => EditFacultyDialog(adviser: adviser),
                       );
                     },
-                    icon: const Icon(Icons.edit, size: 18),
+                    icon: const Icon(Icons.edit, size: 16),
                     label: const Text('Edit'),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue.shade700,
@@ -180,7 +257,7 @@ class AdvisersList extends StatelessWidget {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.delete, size: 18),
+                    icon: const Icon(Icons.delete, size: 16),
                     label: const Text('Delete'),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.red.shade700,
