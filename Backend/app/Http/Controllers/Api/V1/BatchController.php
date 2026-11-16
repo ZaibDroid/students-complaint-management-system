@@ -87,7 +87,26 @@ class BatchController extends BaseApiController
         }
 
         foreach (array_unique($sectionNames) as $sName) {
-            $batch->sections()->firstOrCreate(['name' => $sName]);
+            $existing = $batch->sections()->withTrashed()
+                ->where(function ($q) use ($sName) {
+                    $q->where('name', $sName)
+                      ->orWhere('name', 'Section ' . $sName);
+                })->first();
+
+            if ($existing) {
+                if ($existing->trashed()) {
+                    $existing->restore();
+                }
+                $existing->update([
+                    'name' => $sName,
+                    'is_active' => true,
+                ]);
+            } else {
+                $batch->sections()->create([
+                    'name' => $sName,
+                    'is_active' => true,
+                ]);
+            }
         }
 
         return $this->createdResponse(new BatchResource($batch->fresh(['sections'])), 'Batch created successfully');
@@ -117,8 +136,10 @@ class BatchController extends BaseApiController
                 foreach ($rawSections as $item) {
                     $clean = trim((string)$item);
                     if ($clean !== '') {
-                        $clean = str_ireplace('SECTION ', '', $clean);
-                        $incomingSections[] = $clean;
+                        $clean = trim(preg_replace('/^(section\s*|sec\s*)/i', '', $clean));
+                        if ($clean !== '') {
+                            $incomingSections[] = $clean;
+                        }
                     }
                 }
             }
@@ -128,11 +149,28 @@ class BatchController extends BaseApiController
             // 1. Delete sections that are no longer in incomingSections
             $batch->sections()->whereNotIn('name', $incomingSections)->delete();
 
-            // 2. Add sections that don't exist yet
+            // 2. Add or restore sections
             foreach ($incomingSections as $secName) {
-                $batch->sections()->firstOrCreate([
-                    'name' => $secName,
-                ]);
+                $existing = $batch->sections()->withTrashed()
+                    ->where(function ($q) use ($secName) {
+                        $q->where('name', $secName)
+                          ->orWhere('name', 'Section ' . $secName);
+                    })->first();
+
+                if ($existing) {
+                    if ($existing->trashed()) {
+                        $existing->restore();
+                    }
+                    $existing->update([
+                        'name' => $secName,
+                        'is_active' => true,
+                    ]);
+                } else {
+                    $batch->sections()->create([
+                        'name' => $secName,
+                        'is_active' => true,
+                    ]);
+                }
             }
         }
 

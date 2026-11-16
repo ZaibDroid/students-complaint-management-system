@@ -371,8 +371,9 @@ class _BatchManagementPortalPageState extends ConsumerState<BatchManagementPorta
                                               }
                                             } catch (e) {
                                               if (context.mounted) {
+                                                final errorMsg = e.toString().replaceFirst('Exception: ', '').split('\n').first;
                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(content: Text('Failed to add section: $e'), backgroundColor: Colors.red),
+                                                  SnackBar(content: Text('Failed to add section: $errorMsg'), backgroundColor: Colors.red),
                                                 );
                                               }
                                             }
@@ -484,8 +485,9 @@ class _BatchManagementPortalPageState extends ConsumerState<BatchManagementPorta
                                             }
                                           } catch (e) {
                                             if (context.mounted) {
+                                              final errorMsg = e.toString().replaceFirst('Exception: ', '').split('\n').first;
                                               ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text('Failed to remove section: $e'), backgroundColor: Colors.red),
+                                                SnackBar(content: Text('Failed to remove section: $errorMsg'), backgroundColor: Colors.red),
                                               );
                                             }
                                           }
