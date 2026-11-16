@@ -102,7 +102,39 @@ class BatchController extends BaseApiController
     {
         $this->authorize('update', $batch);
 
-        $this->batchService->update($batch->id, $request->validated());
+        $validated = $request->validated();
+        $hasSections = array_key_exists('sections', $validated);
+        $rawSections = $validated['sections'] ?? [];
+        unset($validated['sections']);
+
+        if (!empty($validated)) {
+            $this->batchService->update($batch->id, $validated);
+        }
+
+        if ($hasSections) {
+            $incomingSections = [];
+            if (is_array($rawSections)) {
+                foreach ($rawSections as $item) {
+                    $clean = trim((string)$item);
+                    if ($clean !== '') {
+                        $clean = str_ireplace('SECTION ', '', $clean);
+                        $incomingSections[] = $clean;
+                    }
+                }
+            }
+            $incomingSections = array_values(array_unique($incomingSections));
+
+            // Sync sections:
+            // 1. Delete sections that are no longer in incomingSections
+            $batch->sections()->whereNotIn('name', $incomingSections)->delete();
+
+            // 2. Add sections that don't exist yet
+            foreach ($incomingSections as $secName) {
+                $batch->sections()->firstOrCreate([
+                    'name' => $secName,
+                ]);
+            }
+        }
 
         return $this->successResponse(new BatchResource($batch->fresh(['sections'])), 'Batch updated successfully');
     }

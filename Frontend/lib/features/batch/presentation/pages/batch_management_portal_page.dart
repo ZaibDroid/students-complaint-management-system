@@ -336,26 +336,46 @@ class _BatchManagementPortalPageState extends ConsumerState<BatchManagementPorta
                                             title: const Text('Add Section'),
                                             content: TextField(
                                               controller: sectionController,
-                                              decoration: const InputDecoration(hintText: 'e.g., C'),
+                                              autofocus: true,
+                                              textCapitalization: TextCapitalization.characters,
+                                              decoration: const InputDecoration(
+                                                hintText: 'e.g., C',
+                                                labelText: 'Section Name',
+                                                border: OutlineInputBorder(),
+                                              ),
                                             ),
                                             actions: [
                                               TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(context, sectionController.text.trim()), 
+                                              ElevatedButton(
+                                                onPressed: () => Navigator.pop(context, sectionController.text.trim().toUpperCase()), 
                                                 child: const Text('Add')
                                               ),
                                             ],
                                           ),
                                         );
                                         if (newSection != null && newSection.isNotEmpty) {
-                                          if (batch.sections.contains(newSection)) {
+                                          final cleanSec = newSection.replaceAll(RegExp(r'^SECTION\s+', caseSensitive: false), '').trim();
+                                          if (batch.sections.any((s) => s.toUpperCase() == cleanSec || s.toUpperCase() == 'SECTION $cleanSec')) {
                                             if (context.mounted) {
                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Section already exists')));
                                             }
                                           } else {
-                                            final updatedBatch = BatchModel(id: batch.id, name: batch.name, sections: [...batch.sections, newSection]);
-                                            await ref.read(batchRepositoryProvider).updateBatch(updatedBatch);
-                                            ref.invalidate(batchesStreamProvider);
+                                            try {
+                                              final updatedBatch = BatchModel(id: batch.id, name: batch.name, sections: [...batch.sections, cleanSec]);
+                                              await ref.read(batchRepositoryProvider).updateBatch(updatedBatch);
+                                              ref.invalidate(batchesStreamProvider);
+                                              if (context.mounted) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text('Section $cleanSec added successfully!'), backgroundColor: Colors.green),
+                                                );
+                                              }
+                                            } catch (e) {
+                                              if (context.mounted) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text('Failed to add section: $e'), backgroundColor: Colors.red),
+                                                );
+                                              }
+                                            }
                                           }
                                         }
                                       },
@@ -443,14 +463,32 @@ class _BatchManagementPortalPageState extends ConsumerState<BatchManagementPorta
                                             content: Text('Remove section $section from batch ${batch.name}?'),
                                             actions: [
                                               TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-                                              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                                onPressed: () => Navigator.pop(context, true), 
+                                                child: const Text('Delete')
+                                              ),
                                             ],
                                           ),
                                         );
                                         if (confirm == true) {
-                                          final newSections = batch.sections.where((s) => s != section).toList();
-                                          final updatedBatch = BatchModel(id: batch.id, name: batch.name, sections: newSections);
-                                          await ref.read(batchRepositoryProvider).updateBatch(updatedBatch);
+                                          try {
+                                            final newSections = batch.sections.where((s) => s != section).toList();
+                                            final updatedBatch = BatchModel(id: batch.id, name: batch.name, sections: newSections);
+                                            await ref.read(batchRepositoryProvider).updateBatch(updatedBatch);
+                                            ref.invalidate(batchesStreamProvider);
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('Section $section removed successfully.'), backgroundColor: Colors.orange),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('Failed to remove section: $e'), backgroundColor: Colors.red),
+                                              );
+                                            }
+                                          }
                                         }
                                       },
                                       child: const Icon(Icons.remove_circle_outline, color: Color(0xFFEF4444), size: 18),

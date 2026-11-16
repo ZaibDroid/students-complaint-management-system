@@ -13,6 +13,8 @@ class UpdateBatchRequest extends BaseApiRequest
             'start_year' => ['sometimes', 'integer', 'digits:4'],
             'end_year' => ['sometimes', 'integer', 'digits:4'],
             'is_active' => ['sometimes', 'boolean'],
+            'sections' => ['sometimes', 'array'],
+            'sections.*' => ['string', 'max:50'],
         ];
     }
 }

@@ -50,7 +50,7 @@ class BatchAndSectionSeeder extends Seeder
                 ]
             );
 
-            foreach (['A', 'B'] as $secName) {
+            foreach (['A', 'B', 'C'] as $secName) {
                 Section::firstOrCreate(
                     ['batch_id' => $batch->id, 'name' => $secName]
                 );

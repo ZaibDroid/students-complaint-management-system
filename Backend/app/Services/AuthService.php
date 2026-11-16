@@ -106,7 +106,7 @@ class AuthService implements AuthServiceInterface
                 if (!$section) {
                     $section = \App\Models\Section::create([
                         'batch_id' => $batchId,
-                        'name' => $longSec,
+                        'name' => $shortSec ?: $secName,
                     ]);
                 }
                 $data['section_id'] = $section->id;
