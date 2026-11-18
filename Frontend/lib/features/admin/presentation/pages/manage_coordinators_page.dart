@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/coordinator_provider.dart';
-import '../widgets/advisers_list.dart';
+import '../widgets/coordinators_list.dart';
 import '../widgets/add_faculty_dialog.dart';
 import '../widgets/chairman_adviser_table.dart';
 
@@ -84,8 +84,8 @@ class ManageCoordinatorsPage extends ConsumerWidget {
                   style: TextStyle(color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
-                AdvisersList(
-                  advisers: coordinators,
+                CoordinatorsList(
+                  coordinators: coordinators,
                   emptyMessage: 'No department coordinators registered yet.',
                 ),
                 const SizedBox(height: 80),

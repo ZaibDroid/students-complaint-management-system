@@ -26,10 +26,22 @@ class UserService implements UserServiceInterface
 
         unset($data['batch'], $data['section']);
 
-        if ($batchName !== null && $batchName !== '') {
+        $batch = null;
+        if (!empty($data['batch_id']) && is_numeric($data['batch_id'])) {
+            $batch = \App\Models\Batch::find((int)$data['batch_id']);
+        }
+
+        if (!$batch && $batchName !== null && $batchName !== '') {
             $rawStr = trim((string)$batchName);
             $batchYear = 0;
-            if (is_numeric($rawStr)) {
+            $startYear = null;
+            $endYear = null;
+
+            if (preg_match('#(20\d{2})\s*[-–—/]\s*(20\d{2})#', $rawStr, $rangeMatches)) {
+                $startYear = (int)$rangeMatches[1];
+                $endYear = (int)$rangeMatches[2];
+                $batchYear = $startYear;
+            } else if (is_numeric($rawStr)) {
                 $num = (int)$rawStr;
                 if ($num >= 2000) {
                     $batchYear = $num;
@@ -47,21 +59,33 @@ class UserService implements UserServiceInterface
                 $batchYear = (int)date('Y');
             }
 
-            $canonicalName = (string)$batchYear; // e.g. "2023"
+            $canonicalName = ($startYear && $endYear) ? "{$startYear}-{$endYear}" : (is_numeric($rawStr) ? (string)$batchYear : $rawStr);
 
-            $batch = \App\Models\Batch::where('name', $canonicalName)
+            $batch = \App\Models\Batch::where('name', (string)$batchYear)
+                ->orWhere('name', $canonicalName)
                 ->orWhere('name', $rawStr)
+                ->orWhere('name', 'Batch ' . $canonicalName)
+                ->orWhere('name', 'Batch ' . $rawStr)
+                ->orWhere(function ($q) use ($startYear, $endYear) {
+                    if ($startYear && $endYear) {
+                        $q->where('start_year', $startYear)->where('end_year', $endYear);
+                    }
+                })
                 ->orWhere('start_year', $batchYear)
                 ->first();
 
             if (!$batch) {
+                $batchDeptId = $data['department_id'] ?? \App\Models\Department::first()?->id;
                 $batch = \App\Models\Batch::create([
                     'name' => $canonicalName,
-                    'start_year' => $batchYear,
-                    'end_year' => $batchYear + 4,
+                    'start_year' => $startYear ?: $batchYear,
+                    'end_year' => $endYear ?: ($batchYear + 4),
+                    'department_id' => $batchDeptId,
                 ]);
             }
+        }
 
+        if ($batch) {
             $data['batch_id'] = $batch->id;
 
             if ($sectionName !== null && $sectionName !== '') {
@@ -69,13 +93,18 @@ class UserService implements UserServiceInterface
                 $shortSec = str_ireplace('SECTION ', '', $secName);
                 $longSec = 'Section ' . $shortSec;
 
-                $section = \App\Models\Section::where('batch_id', $batch->id)
+                $section = \App\Models\Section::withTrashed()
+                    ->where('batch_id', $batch->id)
                     ->where(function ($q) use ($secName, $shortSec, $longSec) {
                         $q->where('name', $secName)
                           ->orWhere('name', $shortSec)
                           ->orWhere('name', $longSec);
                     })
                     ->first();
+
+                if ($section && $section->trashed()) {
+                    $section->restore();
+                }
 
                 if (!$section) {
                     $section = \App\Models\Section::create([
@@ -93,6 +122,9 @@ class UserService implements UserServiceInterface
     public function createStaff(array $data): User
     {
         return DB::transaction(function () use ($data) {
+            if (isset($data['password'])) {
+                $data['assigned_password'] = $data['password'];
+            }
             $data['password'] = Hash::make($data['password']);
             $data['status'] = 'approved';
 
@@ -146,6 +178,7 @@ class UserService implements UserServiceInterface
     {
         return DB::transaction(function () use ($user, $data) {
             if (isset($data['password']) && !empty($data['password'])) {
+                $data['assigned_password'] = $data['password'];
                 $data['password'] = Hash::make($data['password']);
             } else {
                 unset($data['password']);

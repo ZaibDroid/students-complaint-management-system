@@ -32,10 +32,12 @@ class User extends Authenticatable
         'status',
         'phone',
         'profile_image_url',
+        'assigned_password',
     ];
 
     protected $hidden = [
         'password',
+        'assigned_password',
         'remember_token',
     ];
 

@@ -29,11 +29,13 @@ class AdviserAssignmentRepository {
     String? adviserId,
     required String semester,
     required String section,
+    String? sectionId,
   }) async {
-    if (adviserId != null && adviserId.isNotEmpty) {
-      await _apiClient.post('/sections/$section/adviser', body: {
-        'adviser_id': adviserId,
-      });
-    }
+    final target = (sectionId != null && sectionId.isNotEmpty) ? sectionId : section;
+    await _apiClient.post('/sections/$target/adviser', body: {
+      'adviser_id': adviserId,
+      'batch': semester,
+      'semester': semester,
+    });
   }
 }

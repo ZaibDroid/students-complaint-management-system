@@ -133,6 +133,7 @@ class AdviserAssignmentNotifier extends AsyncNotifier<void> {
     String? adviserId,
     required String semester,
     required String section,
+    String? sectionId,
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -140,7 +141,10 @@ class AdviserAssignmentNotifier extends AsyncNotifier<void> {
         adviserId: adviserId,
         semester: semester,
         section: section,
+        sectionId: sectionId,
       );
+      ref.invalidate(batchAdvisersStreamProvider);
+      ref.invalidate(batchesStreamProvider);
       state = const AsyncValue.data(null);
       return true;
     } catch (e, stack) {

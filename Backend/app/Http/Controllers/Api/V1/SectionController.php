@@ -79,7 +79,12 @@ class SectionController extends BaseApiController
     {
         $this->authorize('assignAdviser', Section::class);
 
-        $updatedSection = $this->sectionService->assignAdviserToSection($section, $request->adviser_id);
+        if (empty($request->adviser_id)) {
+            $section->assignedStaff()->detach();
+            $updatedSection = $section->fresh(['batch', 'assignedStaff']);
+        } else {
+            $updatedSection = $this->sectionService->assignAdviserToSection($section, (int)$request->adviser_id);
+        }
 
         return $this->successResponse(new SectionResource($updatedSection), 'Adviser assigned to section successfully');
     }

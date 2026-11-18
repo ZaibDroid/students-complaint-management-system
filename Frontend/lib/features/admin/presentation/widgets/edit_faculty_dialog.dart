@@ -22,6 +22,10 @@ class EditFacultyDialog extends ConsumerStatefulWidget {
 class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _startYearController;
+  late final TextEditingController _endYearController;
   late final TextEditingController _batchController;
   late final TextEditingController _sectionController;
 
@@ -30,32 +34,72 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
   bool _isLoading = false;
   bool _initializedDefaults = false;
 
+  bool get _isCoordinator => widget.adviser.role.trim().toLowerCase() == 'coordinator';
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.adviser.name);
-    _batchController = TextEditingController(text: widget.adviser.batch ?? '');
+    _emailController = TextEditingController(text: widget.adviser.email);
+    final initialPass = widget.adviser.assignedPassword ?? '123456';
+    _passwordController = TextEditingController(text: initialPass);
+
+    final rawBatch = (widget.adviser.batch ?? '').replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+    _batchController = TextEditingController(text: rawBatch);
     _sectionController = TextEditingController(text: widget.adviser.section ?? '');
     _selectedSection = widget.adviser.section;
+
+    // Parse starting and ending years for coordinator
+    String startVal = '';
+    String endVal = '';
+    if (rawBatch.isNotEmpty) {
+      final parts = rawBatch.split(RegExp(r'[-–—/]'));
+      if (parts.isNotEmpty && parts[0].trim().isNotEmpty) {
+        startVal = parts[0].trim();
+      }
+      if (parts.length > 1 && parts[1].trim().isNotEmpty) {
+        endVal = parts[1].trim();
+      } else if (startVal.isNotEmpty) {
+        final s = int.tryParse(startVal);
+        if (s != null) endVal = (s + 4).toString();
+      }
+    }
+    _startYearController = TextEditingController(text: startVal);
+    _endYearController = TextEditingController(text: endVal);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _startYearController.dispose();
+    _endYearController.dispose();
     _batchController.dispose();
     _sectionController.dispose();
     super.dispose();
   }
 
   void _matchInitialBatch(List<BatchModel> batches) {
-    if (_initializedDefaults || batches.isEmpty) return;
+    if (_initializedDefaults || batches.isEmpty || _isCoordinator) return;
     _initializedDefaults = true;
 
-    final target = (widget.adviser.batch ?? '').trim().toLowerCase();
+    if (widget.adviser.batchId != null && widget.adviser.batchId!.isNotEmpty) {
+      if (batches.any((b) => b.id == widget.adviser.batchId)) {
+        _selectedBatchId = widget.adviser.batchId;
+        return;
+      }
+    }
+
+    final target = (widget.adviser.batch ?? '')
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'^batch\s+', caseSensitive: false), '');
     if (target.isEmpty) return;
 
     for (var b in batches) {
-      if (b.id == target || b.name.toLowerCase() == target || b.name.toLowerCase().contains(target)) {
+      final cleanName = b.name.toLowerCase().replaceAll(RegExp(r'^batch\s+', caseSensitive: false), '').trim();
+      if (b.id == target || cleanName == target || cleanName.contains(target) || target.contains(cleanName)) {
         _selectedBatchId = b.id;
         break;
       }
@@ -66,11 +110,14 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Row(
+      title: Row(
         children: [
-          Icon(Icons.edit, color: Colors.blue),
-          SizedBox(width: 10),
-          Text('Edit Batch Adviser', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Icon(Icons.edit, color: Colors.blue),
+          const SizedBox(width: 10),
+          Text(
+            _isCoordinator ? 'Edit Coordinator' : 'Edit Batch Adviser',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ],
       ),
       content: SizedBox(
@@ -89,7 +136,42 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
                   validator: (val) => val == null || val.trim().isEmpty ? 'Name is required' : null,
                 ),
                 const SizedBox(height: 16),
-                _buildBatchAndSectionSelectors(),
+                AppTextField(
+                  controller: _emailController,
+                  labelText: 'Email Address',
+                  prefixIcon: const Icon(Icons.email),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) return 'Email is required';
+                    if (!val.contains('@uetmardan.edu.pk')) {
+                      return 'Use official email e.g., name@uetmardan.edu.pk';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: _passwordController,
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  isPassword: true,
+                  helperText: 'Click the eye icon to view or change the password',
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) {
+                      return 'Password is required';
+                    }
+                    if (val.trim().length < 6) {
+                      return 'Min 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                // For Coordinator: only Start Year & End Year (NO batch dropdown, NO section)
+                if (_isCoordinator)
+                  _buildCoordinatorBatchYearFields()
+                else
+                  _buildBatchAndSectionSelectors(),
               ],
             ),
           ),
@@ -107,6 +189,68 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
             isLoading: _isLoading,
             onPressed: _isLoading ? null : _submit,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCoordinatorBatchYearFields() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Batch Duration',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF172548)),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: AppTextField(
+                controller: _startYearController,
+                labelText: 'Starting Year',
+                hintText: 'e.g. 2022',
+                prefixIcon: const Icon(Icons.calendar_today),
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  final trimmed = val.trim();
+                  if (trimmed.length == 4) {
+                    final num = int.tryParse(trimmed);
+                    if (num != null && _endYearController.text.trim().isEmpty) {
+                      _endYearController.text = (num + 4).toString();
+                    }
+                  }
+                },
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) return 'Required';
+                  final num = int.tryParse(val.trim());
+                  if (num == null || num < 2000 || num > 2100) return 'Invalid year';
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: AppTextField(
+                controller: _endYearController,
+                labelText: 'Ending Year',
+                hintText: 'e.g. 2026',
+                prefixIcon: const Icon(Icons.event),
+                keyboardType: TextInputType.number,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) return 'Required';
+                  final num = int.tryParse(val.trim());
+                  if (num == null || num < 2000 || num > 2100) return 'Invalid year';
+                  final start = int.tryParse(_startYearController.text.trim());
+                  if (start != null && num <= start) {
+                    return 'Must be > start';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -177,12 +321,14 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
               isExpanded: true,
               initialValue: batches.any((b) => b.id == _selectedBatchId) ? _selectedBatchId : null,
               decoration: const InputDecoration(
-                labelText: 'Select Batch',
+                labelText: 'Select Batch Year',
                 prefixIcon: Icon(Icons.school),
               ),
-              hint: const Text('Choose Batch'),
+              hint: const Text('Choose Batch Year'),
               items: batches.map((batch) {
                 final secCount = batch.sections.length;
+                final cleanBatchYear = batch.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+
                 return DropdownMenuItem<String>(
                   value: batch.id,
                   child: Row(
@@ -190,7 +336,7 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
                     children: [
                       Expanded(
                         child: Text(
-                          batch.name,
+                          cleanBatchYear,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
@@ -218,10 +364,19 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
               },
               validator: (val) {
                 if (val == null || val.isEmpty) {
-                  return 'Please select a batch';
+                  if (_batchController.text.trim().isEmpty) {
+                    return 'Please select a batch';
+                  }
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 10),
+            AppTextField(
+              controller: _batchController,
+              labelText: 'Or Enter Batch Year (e.g. 2022-2026)',
+              prefixIcon: const Icon(Icons.numbers),
+              keyboardType: TextInputType.text,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
@@ -250,8 +405,8 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
                       });
                     },
               validator: (val) {
-                if (selectedBatch == null) return 'Please select a batch';
-                if (sections.isNotEmpty && (val == null || val.isEmpty)) {
+                if (selectedBatch == null && _batchController.text.trim().isEmpty) return 'Please select a batch';
+                if (sections.isNotEmpty && (val == null || val.isEmpty) && _sectionController.text.trim().isEmpty) {
                   return 'Please select a section';
                 }
                 return null;
@@ -271,7 +426,7 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
           child: AppTextField(
             controller: _batchController,
             labelText: 'Batch No.',
-            hintText: 'e.g. 2023',
+            hintText: 'e.g. 2022-2026',
             prefixIcon: const Icon(Icons.numbers),
             validator: (val) => val == null || val.trim().isEmpty ? 'Required' : null,
           ),
@@ -297,27 +452,52 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
 
       setState(() => _isLoading = true);
       try {
-        final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
-        final selectedBatch = batches.where((b) => b.id == _selectedBatchId).firstOrNull;
-        final batchVal = selectedBatch?.name ?? _batchController.text.trim();
-        final batchId = selectedBatch?.id;
-        final sectionVal = _selectedSection ?? _sectionController.text.trim();
+        String? batchVal;
+        String? batchId;
+        String? sectionVal;
+
+        if (_isCoordinator) {
+          final start = _startYearController.text.trim();
+          final end = _endYearController.text.trim();
+          batchVal = '$start-$end';
+
+          final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
+          final matchingBatch = batches.where((b) {
+            final clean = b.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+            return clean == batchVal || b.name == batchVal;
+          }).firstOrNull;
+          batchId = matchingBatch?.id;
+        } else {
+          final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
+          final selectedBatch = batches.where((b) => b.id == _selectedBatchId).firstOrNull;
+          batchVal = selectedBatch != null
+              ? selectedBatch.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim()
+              : _batchController.text.trim().replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+          batchId = selectedBatch?.id;
+          sectionVal = _selectedSection ?? _sectionController.text.trim();
+        }
+
+        final newPassword = _passwordController.text.trim();
 
         await ref.read(apiAuthRepositoryProvider).updateStaffAccount(
           widget.adviser.id,
           name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: newPassword.isNotEmpty ? newPassword : null,
           batch: batchVal.isNotEmpty ? batchVal : null,
           batchId: batchId,
-          section: sectionVal.isNotEmpty ? sectionVal : null,
+          section: (sectionVal != null && sectionVal.isNotEmpty) ? sectionVal : null,
           semester: widget.adviser.semester,
-          assignedSections: [
-            if (batchVal.isNotEmpty && sectionVal.isNotEmpty)
-              {
-                'batch': batchVal,
-                if (batchId != null) ...{'batch_id': batchId},
-                'section': sectionVal,
-              }
-          ],
+          assignedSections: _isCoordinator
+              ? null
+              : [
+                  if (batchVal.isNotEmpty && sectionVal != null && sectionVal.isNotEmpty)
+                    {
+                      'batch': batchVal,
+                      if (batchId != null) ...{'batch_id': batchId},
+                      'section': sectionVal,
+                    }
+                ],
         );
 
         ref.invalidate(coordinatorsStreamProvider);
@@ -327,8 +507,8 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
 
         navigator.pop();
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text('Faculty details updated successfully!'),
+          SnackBar(
+            content: Text(_isCoordinator ? 'Coordinator details updated successfully!' : 'Batch Adviser details updated successfully!'),
             backgroundColor: Colors.green,
           ),
         );

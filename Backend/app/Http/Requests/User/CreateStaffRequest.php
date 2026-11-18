@@ -25,6 +25,17 @@ class CreateStaffRequest extends BaseApiRequest
                 $this->merge(['department_id' => $user->department_id]);
             }
         }
+
+        if (!$this->has('department_id') && $this->has('department') && !empty($this->input('department'))) {
+            $deptStr = trim((string)$this->input('department'));
+            $cleanName = trim(preg_replace('/^(department\s*of\s*|dept\s*of\s*)/i', '', $deptStr));
+            $dept = \App\Models\Department::where('name', $deptStr)
+                ->orWhere('name', 'LIKE', "%{$cleanName}%")
+                ->first();
+            if ($dept) {
+                $this->merge(['department_id' => $dept->id]);
+            }
+        }
     }
 
     public function rules(): array
@@ -35,6 +46,7 @@ class CreateStaffRequest extends BaseApiRequest
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', 'string', 'exists:roles,name'],
             'department_id' => ['nullable', 'exists:departments,id'],
+            'department' => ['nullable', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
             'batch' => ['nullable', 'string'],
             'batch_id' => ['nullable'],

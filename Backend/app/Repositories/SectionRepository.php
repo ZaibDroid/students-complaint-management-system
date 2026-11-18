@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\Repositories\SectionRepositoryInterface;
 use App\Models\Section;
+use App\Models\User;
 
 class SectionRepository extends BaseRepository implements SectionRepositoryInterface
 {
@@ -14,7 +15,14 @@ class SectionRepository extends BaseRepository implements SectionRepositoryInter
 
     public function assignAdviserToSection(Section $section, int $adviserId): void
     {
-        $section->assignedStaff()->syncWithoutDetaching([$adviserId]);
+        $section->assignedStaff()->sync([$adviserId]);
+        $adviser = User::find($adviserId);
+        if ($adviser) {
+            $adviser->update([
+                'batch_id' => $section->batch_id,
+                'section_id' => $section->id,
+            ]);
+        }
     }
 
     public function removeAdviserFromSection(Section $section, int $adviserId): void

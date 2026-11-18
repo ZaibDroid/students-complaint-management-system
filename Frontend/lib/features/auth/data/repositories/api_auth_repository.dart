@@ -77,6 +77,9 @@ class ApiAuthRepository {
     required String email,
     required String password,
     required String role,
+    String? phone,
+    String? department,
+    String? departmentId,
     String? batch,
     String? batchId,
     String? section,
@@ -90,6 +93,9 @@ class ApiAuthRepository {
       'password': password,
       'role': role,
     };
+    if (phone != null) body['phone'] = phone;
+    if (department != null) body['department'] = department;
+    if (departmentId != null) body['department_id'] = departmentId;
     if (batch != null) body['batch'] = batch;
     if (batchId != null) body['batch_id'] = batchId;
     if (section != null) body['section'] = section;
@@ -105,6 +111,8 @@ class ApiAuthRepository {
     String? email,
     String? role,
     String? phone,
+    String? department,
+    String? departmentId,
     String? password,
     String? batch,
     String? batchId,
@@ -118,6 +126,15 @@ class ApiAuthRepository {
     if (email != null) body['email'] = email;
     if (role != null) body['role'] = role;
     if (phone != null) body['phone'] = phone;
+    if (department != null) body['department'] = department;
+    if (departmentId != null) body['department_id'] = departmentId;
+    if (password != null && password.isNotEmpty) body['password'] = password;
+    if (batch != null) body['batch'] = batch;
+    if (batchId != null) body['batch_id'] = batchId;
+    if (section != null) body['section'] = section;
+    if (sectionId != null) body['section_id'] = sectionId;
+    if (semester != null) body['semester'] = semester;
+    if (assignedSections != null) body['assigned_sections'] = assignedSections;
     if (password != null && password.isNotEmpty) body['password'] = password;
     if (batch != null) body['batch'] = batch;
     if (batchId != null) body['batch_id'] = batchId;

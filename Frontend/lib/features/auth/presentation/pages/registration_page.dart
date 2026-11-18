@@ -20,12 +20,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   
-  String? _selectedYear;
   final TextEditingController _batchController = TextEditingController();
   String? _selectedSection;
   final bool _isCR = false;
 
-  final List<String> _years = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6', 'Semester 7', 'Semester 8'];
   final List<String> _sections = ['A', 'B', 'C', 'D', 'E', 'F', 'Artificial Intelligence', 'Cloud Computing', 'Data Science', 'Computer Science'];
 
   @override
@@ -40,9 +38,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
-      if (_selectedYear == null || _selectedSection == null) {
+      if (_selectedSection == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select all academic details')),
+          const SnackBar(content: Text('Please select your section')),
         );
         return;
       }
@@ -52,7 +50,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         name: _nameController.text.trim(),
         email: formattedEmail,
         password: _passwordController.text,
-        year: _selectedYear,
+        year: null,
         batch: _batchController.text.trim(),
         section: _selectedSection,
         phone: _phoneController.text.trim(),
@@ -171,8 +169,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: _buildDropdown('Semester', _years, _selectedYear, (val) => setState(() => _selectedYear = val))),
-                    const SizedBox(width: 16),
                     Expanded(
                       child: AppTextField(
                         controller: _batchController,
@@ -182,10 +178,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                         validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                       ),
                     ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildDropdown('Section', _sections, _selectedSection, (val) => setState(() => _selectedSection = val)),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                _buildDropdown('Section', _sections, _selectedSection, (val) => setState(() => _selectedSection = val)),
                 const SizedBox(height: 32),
                 PrimaryButton(
                   text: "Register",

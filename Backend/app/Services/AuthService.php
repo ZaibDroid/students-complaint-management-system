@@ -53,7 +53,14 @@ class AuthService implements AuthServiceInterface
         if ($batchName !== null && $batchName !== '') {
             $rawStr = trim((string)$batchName);
             $batchYear = 0;
-            if (is_numeric($rawStr)) {
+            $startYear = null;
+            $endYear = null;
+
+            if (preg_match('#(20\d{2})\s*[-–—/]\s*(20\d{2})#', $rawStr, $rangeMatches)) {
+                $startYear = (int)$rangeMatches[1];
+                $endYear = (int)$rangeMatches[2];
+                $batchYear = $startYear;
+            } else if (is_numeric($rawStr)) {
                 $num = (int)$rawStr;
                 if ($num >= 2000) {
                     $batchYear = $num;
@@ -71,18 +78,28 @@ class AuthService implements AuthServiceInterface
                 $batchYear = (int)date('Y');
             }
 
-            $canonicalName = (string)$batchYear;
+            $canonicalName = ($startYear && $endYear) ? "{$startYear}-{$endYear}" : (is_numeric($rawStr) ? (string)$batchYear : $rawStr);
 
-            $batch = \App\Models\Batch::where('name', $canonicalName)
+            $batch = \App\Models\Batch::where('name', (string)$batchYear)
+                ->orWhere('name', $canonicalName)
                 ->orWhere('name', $rawStr)
+                ->orWhere('name', 'Batch ' . $canonicalName)
+                ->orWhere('name', 'Batch ' . $rawStr)
+                ->orWhere(function ($q) use ($startYear, $endYear) {
+                    if ($startYear && $endYear) {
+                        $q->where('start_year', $startYear)->where('end_year', $endYear);
+                    }
+                })
                 ->orWhere('start_year', $batchYear)
                 ->first();
 
             if (!$batch) {
+                $batchDeptId = $data['department_id'] ?? \App\Models\Department::first()?->id;
                 $batch = \App\Models\Batch::create([
                     'name' => $canonicalName,
-                    'start_year' => $batchYear,
-                    'end_year' => $batchYear + 4,
+                    'start_year' => $startYear ?: $batchYear,
+                    'end_year' => $endYear ?: ($batchYear + 4),
+                    'department_id' => $batchDeptId,
                 ]);
             }
 
@@ -95,13 +112,18 @@ class AuthService implements AuthServiceInterface
             $shortSec = trim(preg_replace('/^(section\s*|sec\s*)/i', '', $secName));
             $longSec = 'Section ' . $shortSec;
             if ($batchId) {
-                $section = \App\Models\Section::where('batch_id', $batchId)
+                $section = \App\Models\Section::withTrashed()
+                    ->where('batch_id', $batchId)
                     ->where(function ($q) use ($secName, $shortSec, $longSec) {
                         $q->where('name', $secName)
                           ->orWhere('name', $shortSec)
                           ->orWhere('name', $longSec);
                     })
                     ->first();
+
+                if ($section && $section->trashed()) {
+                    $section->restore();
+                }
 
                 if (!$section) {
                     $section = \App\Models\Section::create([

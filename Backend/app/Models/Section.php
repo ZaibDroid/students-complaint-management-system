@@ -39,4 +39,30 @@ class Section extends Model
         return $this->belongsToMany(User::class, 'user_assigned_sections')
             ->withTimestamps();
     }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if (is_numeric($value)) {
+            return $this->where('id', $value)->first() ?? abort(404);
+        }
+
+        $batch = request('batch') ?? request('batch_id') ?? request('semester');
+        $query = $this->where(function ($q) use ($value) {
+            $q->where('name', $value)
+              ->orWhere('name', 'Section ' . $value)
+              ->orWhere('name', str_replace('Section ', '', $value));
+        });
+
+        if ($batch) {
+            $query->whereHas('batch', function ($q) use ($batch) {
+                if (is_numeric($batch)) {
+                    $q->where('id', $batch)->orWhere('name', (string)$batch)->orWhere('start_year', (int)$batch);
+                } else {
+                    $q->where('name', $batch);
+                }
+            });
+        }
+
+        return $query->first() ?? $this->where('name', $value)->first() ?? abort(404);
+    }
 }

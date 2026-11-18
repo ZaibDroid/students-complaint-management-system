@@ -5,11 +5,13 @@ class AppTextField extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
   final String? hintText;
+  final String? helperText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final bool isPassword;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
 
   const AppTextField({
@@ -17,11 +19,13 @@ class AppTextField extends StatefulWidget {
     required this.controller,
     required this.labelText,
     this.hintText,
+    this.helperText,
     this.prefixIcon,
     this.suffixIcon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.onChanged,
     this.inputFormatters,
   });
 
@@ -61,10 +65,12 @@ class _AppTextFieldState extends State<AppTextField> {
       obscureText: _obscureText,
       keyboardType: widget.keyboardType,
       validator: widget.validator,
+      onChanged: widget.onChanged,
       inputFormatters: widget.inputFormatters,
       decoration: InputDecoration(
         labelText: widget.labelText,
         hintText: widget.hintText,
+        helperText: widget.helperText,
         prefixIcon: widget.prefixIcon,
         suffixIcon: finalSuffixIcon,
       ),

@@ -23,7 +23,7 @@ class BatchController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $perPage = (int) $request->get('per_page', 15);
-        $paginator = $this->batchService->getPaginated($perPage, ['sections'], $request->all());
+        $paginator = $this->batchService->getPaginated($perPage, ['sections.assignedStaff'], $request->all());
 
         return response()->json([
             'success' => true,

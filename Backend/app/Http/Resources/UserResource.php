@@ -29,13 +29,36 @@ class UserResource extends JsonResource
             ]];
         }
 
-        $deptName = $this->department?->name ?? ($this->relationLoaded('department') ? $this->department?->name : null);
+        $deptName = $this->department?->name ?? ($this->relationLoaded('department') ? $this->department?->name : null) ?? $this->batch?->department?->name ?? 'Department of Computer Science';
         $batchName = $this->batch?->name ?? $this->batch_display;
         $sectionName = $this->section?->name ?? $this->section_display;
-        $adviserName = $this->adviser?->name ?? ($this->relationLoaded('adviser') ? $this->adviser?->name : null);
+
+        if ($roleName === 'Batch Adviser' || $this->hasRole('Batch Adviser')) {
+            if (empty($batchName) || $batchName === 'N/A') {
+                $batchName = $assignedSectionsList[0]['batch'] ?? $batchName;
+            }
+            if (empty($sectionName) || $sectionName === 'N/A') {
+                $sectionName = $assignedSectionsList[0]['section'] ?? $sectionName;
+            }
+        }
+
+        $sectionAdviser = (!$this->adviser_id && $this->section) ? $this->section->assignedStaff?->first() : null;
+        $adviserName = $this->adviser?->name ?? ($this->relationLoaded('adviser') ? $this->adviser?->name : null) ?? $sectionAdviser?->name;
+        $adviserIdVal = $this->adviser_id ? (string)$this->adviser_id : ($sectionAdviser ? (string)$sectionAdviser->id : null);
 
         $yearStr = $this->year ?? ($this->current_semester ? "Semester {$this->current_semester}" : ($this->semester ?? null));
         $semesterStr = $this->semester ?? ($this->current_semester ? "Semester {$this->current_semester}" : null);
+
+        $resolvedAssignedPassword = $this->assigned_password;
+        if (!$resolvedAssignedPassword && $this->password) {
+            foreach (['112233', '123456', 'Password123!', 'password', '12345678', 'admin123', 'admin', 'coordinator'] as $candidate) {
+                if (\Illuminate\Support\Facades\Hash::check($candidate, $this->password)) {
+                    $resolvedAssignedPassword = $candidate;
+                    \Illuminate\Support\Facades\DB::table('users')->where('id', $this->id)->update(['assigned_password' => $candidate]);
+                    break;
+                }
+            }
+        }
 
         return [
             'id' => (string)$this->id,
@@ -80,16 +103,18 @@ class UserResource extends JsonResource
             'currentSemester' => $this->current_semester,
             'year' => $yearStr,
             'semester' => $semesterStr,
-            'adviser_id' => $this->adviser_id ? (string)$this->adviser_id : null,
-            'adviserId' => $this->adviser_id ? (string)$this->adviser_id : null,
+            'adviser_id' => $adviserIdVal,
+            'adviserId' => $adviserIdVal,
             'adviser' => $adviserName,
-            'adviser_details' => $this->whenLoaded('adviser', function () {
-                return [
-                    'id' => $this->adviser->id,
-                    'name' => $this->adviser->name,
-                    'email' => $this->adviser->email,
-                ];
-            }),
+            'adviser_details' => $this->adviser ? [
+                'id' => (string)$this->adviser->id,
+                'name' => $this->adviser->name,
+                'email' => $this->adviser->email,
+            ] : ($sectionAdviser ? [
+                'id' => (string)$sectionAdviser->id,
+                'name' => $sectionAdviser->name,
+                'email' => $sectionAdviser->email,
+            ] : null),
             'is_cr' => (bool)$this->is_cr,
             'isCR' => (bool)$this->is_cr,
             'status' => $this->status,
@@ -98,6 +123,8 @@ class UserResource extends JsonResource
             'profileImageUrl' => $this->profile_image_url,
             'assigned_sections' => $assignedSectionsList,
             'assignedSections' => $assignedSectionsList,
+            'assigned_password' => $resolvedAssignedPassword ?: $this->assigned_password,
+            'assignedPassword' => $resolvedAssignedPassword ?: $this->assigned_password,
             'created_at' => $this->created_at?->toIso8601String(),
             'createdAt' => $this->created_at?->toIso8601String(),
         ];
