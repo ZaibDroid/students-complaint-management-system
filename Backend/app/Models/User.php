@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -123,6 +124,45 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Section::class, 'user_assigned_sections')
             ->withTimestamps();
+    }
+
+    public function coordinatedBatch(): HasOne
+    {
+        return $this->hasOne(Batch::class, 'coordinator_id');
+    }
+
+    public function coordinatedBatches(): HasMany
+    {
+        return $this->hasMany(Batch::class, 'coordinator_id');
+    }
+
+    /**
+     * Get all batch IDs assigned to the user.
+     *
+     * For users with the Coordinator role, authorized batch IDs are retrieved
+     * EXCLUSIVELY from batches.coordinator_id (the single source of truth).
+     * This prevents authorization bypass via stale users.batch_id or assignedSections.
+     *
+     * For other roles (Student, Batch Adviser, etc.), existing resolution behavior is preserved.
+     *
+     * @return array<int>
+     */
+    public function getAssignedBatchIds(): array
+    {
+        if ($this->hasRole('Coordinator')) {
+            return Batch::where('coordinator_id', $this->id)->pluck('id')->map(fn($id) => (int)$id)->all();
+        }
+
+        $batchIds = [];
+        if (!empty($this->batch_id)) {
+            $batchIds[] = (int)$this->batch_id;
+        }
+
+        $assignedBatchIds = $this->relationLoaded('assignedSections')
+            ? $this->assignedSections->pluck('batch_id')->filter()->map(fn($id) => (int)$id)->all()
+            : $this->assignedSections()->pluck('batch_id')->filter()->map(fn($id) => (int)$id)->all();
+
+        return array_values(array_unique(array_merge($batchIds, $assignedBatchIds)));
     }
 
     public function ApplicationsSubmitted(): HasMany

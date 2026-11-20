@@ -18,6 +18,9 @@ class ComplaintModel {
   final List<String> attachments; // URLs of uploaded files
   final List<Map<String, dynamic>> remarks; // History of remarks
   final List<String> involvedStaffNames;
+  final String? assignedCoordinatorId;
+  final String? assignedCoordinatorName;
+  final String? studentBatchId;
 
   ComplaintModel({
     required this.id,
@@ -39,6 +42,9 @@ class ComplaintModel {
     this.attachments = const [],
     this.remarks = const [],
     this.involvedStaffNames = const [],
+    this.assignedCoordinatorId,
+    this.assignedCoordinatorName,
+    this.studentBatchId,
   });
 
   ComplaintModel copyWith({
@@ -61,6 +67,9 @@ class ComplaintModel {
     List<String>? attachments,
     List<Map<String, dynamic>>? remarks,
     List<String>? involvedStaffNames,
+    String? assignedCoordinatorId,
+    String? assignedCoordinatorName,
+    String? studentBatchId,
   }) {
     return ComplaintModel(
       id: id ?? this.id,
@@ -82,6 +91,9 @@ class ComplaintModel {
       attachments: attachments ?? this.attachments,
       remarks: remarks ?? this.remarks,
       involvedStaffNames: involvedStaffNames ?? this.involvedStaffNames,
+      assignedCoordinatorId: assignedCoordinatorId ?? this.assignedCoordinatorId,
+      assignedCoordinatorName: assignedCoordinatorName ?? this.assignedCoordinatorName,
+      studentBatchId: studentBatchId ?? this.studentBatchId,
     );
   }
 
@@ -106,6 +118,9 @@ class ComplaintModel {
       'attachments': attachments,
       'remarks': remarks,
       'involvedStaffNames': involvedStaffNames,
+      'assignedCoordinatorId': assignedCoordinatorId,
+      'assignedCoordinatorName': assignedCoordinatorName,
+      'studentBatchId': studentBatchId,
     };
   }
 
@@ -137,6 +152,9 @@ class ComplaintModel {
           .map((e) => Map<String, dynamic>.from(e))
           .toList(),
       involvedStaffNames: List<String>.from(map['involvedStaffNames'] ?? map['involved_staff_names'] ?? []),
+      assignedCoordinatorId: (map['assignedCoordinatorId'] ?? map['assigned_coordinator_id'])?.toString(),
+      assignedCoordinatorName: map['assignedCoordinatorName'] ?? map['assigned_coordinator_name'],
+      studentBatchId: (map['studentBatchId'] ?? map['student_batch_id'])?.toString(),
     );
   }
 }

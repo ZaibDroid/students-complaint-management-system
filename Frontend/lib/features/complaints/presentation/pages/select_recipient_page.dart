@@ -16,10 +16,14 @@ final availableStaffProvider = StreamProvider.autoDispose<List<Map<String, dynam
     if (data is List) {
       final staffList = data.map((item) {
         final map = item as Map<String, dynamic>;
+        final coordBatchIds = (map['coordinated_batch_ids'] as List? ?? [])
+            .map((e) => e.toString())
+            .toList();
         return {
           'id': (map['id'] ?? '').toString(),
           'name': map['name'] ?? 'Unknown',
           'role': map['role']?.toString() ?? 'Staff',
+          'coordinated_batch_ids': coordBatchIds,
         };
       }).where((staff) => staff['id']!.isNotEmpty && !staff['id']!.startsWith('mock_')).toList();
 
@@ -46,6 +50,16 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
   String? _selectedStaffName;
   final TextEditingController _commentController = TextEditingController();
   String? _commentError;
+
+  @override
+  void initState() {
+    super.initState();
+    final coordId = widget.complaint.assignedCoordinatorId;
+    if (coordId != null && coordId.isNotEmpty) {
+      _selectedStaffId = coordId;
+      _selectedStaffName = widget.complaint.assignedCoordinatorName ?? 'Assigned Coordinator';
+    }
+  }
 
   void _confirmTransfer() async {
     if (_selectedStaffId == null || _selectedStaffName == null) {
@@ -157,6 +171,38 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                     final isCoordinator = currentUserRole.contains('coordinator');
                     final isChairman = currentUserRole.contains('chairman') || currentUserRole.contains('chair');
 
+                    // Resolve authoritative assigned coordinator for this complaint
+                    String? targetCoordId = widget.complaint.assignedCoordinatorId;
+                    if ((targetCoordId == null || targetCoordId.isEmpty) && widget.complaint.studentBatchId != null) {
+                      for (final s in staffList) {
+                        final sRole = (s['role'] as String).toLowerCase();
+                        if (sRole.contains('coordinator')) {
+                          final bIds = s['coordinated_batch_ids'] as List<String>? ?? [];
+                          if (bIds.contains(widget.complaint.studentBatchId)) {
+                            targetCoordId = s['id'];
+                            break;
+                          }
+                        }
+                      }
+                    }
+
+                    final hasAssignedCoordinator = targetCoordId != null && targetCoordId.isNotEmpty;
+
+                    // Automatically pre-select the assigned Coordinator when present
+                    if (isBatchAdviser && _selectedStaffId == null && hasAssignedCoordinator) {
+                      final match = staffList.where((s) => s['id'] == targetCoordId).firstOrNull;
+                      if (match != null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted && _selectedStaffId == null) {
+                            setState(() {
+                              _selectedStaffId = match['id'];
+                              _selectedStaffName = match['name'];
+                            });
+                          }
+                        });
+                      }
+                    }
+
                     final filteredStaff = staffList.where((staff) {
                       final staffId = staff['id'];
                       final roleStr = (staff['role'] as String).toLowerCase();
@@ -172,13 +218,21 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                       }
 
                       // If current user is a Batch Adviser:
-                      // Allowed: Coordinator, Chairman
-                      // Excluded: Other Batch Advisers, Dean, VC, Office staff, Admin
+                      // Allowed: ONLY the Coordinator assigned to this complaint's batch, plus Chairman
+                      // Excluded: Coordinators of other batches, other Batch Advisers, Dean, VC, Office staff, Admin
                       if (isBatchAdviser) {
                         final isCoord = roleStr.contains('coordinator');
                         final isChair = roleStr.contains('chairman') || roleStr.contains('chair');
                         if (!isCoord && !isChair) {
                           return false;
+                        }
+
+                        if (isCoord) {
+                          // Display ONLY the Coordinator assigned to this complaint's batch
+                          // NEVER display Coordinators of other batches
+                          if (!hasAssignedCoordinator || staffId != targetCoordId) {
+                            return false;
+                          }
                         }
                       }
 
@@ -257,15 +311,42 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                       return (a['name'] as String).compareTo(b['name'] as String);
                     });
 
-                    if (filteredStaff.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text('No staff members available for forwarding.'),
-                      );
-                    }
-                    
                     return Column(
-                      children: filteredStaff.map((staff) {
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (isBatchAdviser && !hasAssignedCoordinator)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFFBEB),
+                              border: Border.all(color: const Color(0xFFFDE68A)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.info_outline, color: Color(0xFFD97706), size: 22),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'No Coordinator is currently assigned to this batch.',
+                                    style: TextStyle(
+                                      color: Color(0xFF92400E),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (filteredStaff.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text('No staff members available for forwarding.'),
+                          )
+                        else
+                          ...filteredStaff.map((staff) {
                         final isSelected = _selectedStaffId == staff['id'];
                         final isAdviserSendBack = isCoordinator && 
                             ((staff['role'] as String).toLowerCase().contains('adviser') || (staff['role'] as String).toLowerCase().contains('advisor'));
@@ -365,7 +446,8 @@ class _SelectRecipientPageState extends ConsumerState<SelectRecipientPage> {
                               ),
                             ),
                           );
-                        }).toList(),
+                          }),
+                      ],
                     );
                   },
                   loading: () => const Center(child: CircularProgressIndicator()),

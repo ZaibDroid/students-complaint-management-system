@@ -22,17 +22,47 @@ class BatchController extends BaseApiController
 
     public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->get('per_page', 15);
-        $paginator = $this->batchService->getPaginated($perPage, ['sections.assignedStaff'], $request->all());
+        $user = $request->user() ?? auth('sanctum')->user();
+        $isStaff = $user && $user->hasAnyRole(['Chairman', 'Admin', 'Department Office', 'Coordinator', 'Batch Advisor', 'Batch Adviser']);
+        $forRegistration = !$isStaff || $request->boolean('for_registration') || $request->boolean('has_coordinator') || ($user && $user->hasRole('Student'));
+
+        $defaultPerPage = ($user && $user->hasRole('Coordinator')) ? 15 : 100;
+        $perPage = (int) $request->get('per_page', $defaultPerPage);
+        $filters = $request->all();
+
+        if ($user && $user->hasRole('Coordinator')) {
+            $coordinatorBatchIds = $user->getAssignedBatchIds();
+            $filters['id'] = !empty($coordinatorBatchIds) ? $coordinatorBatchIds : [-1];
+        }
+
+        if ($forRegistration) {
+            // For public / registration: strictly active batches with active assigned coordinators and active sections
+            $filters['is_active'] = 1;
+            $filters['hasActiveCoordinator'] = true;
+            $withRelations = [
+                'sections' => fn($q) => $q->where('is_active', true),
+            ];
+        } else {
+            $withRelations = ['sections.assignedStaff', 'coordinator'];
+        }
+
+        $paginator = $this->batchService->getPaginated($perPage, $withRelations, $filters);
+
+        // De-duplicate canonical batch entries so each batch appears only once
+        $items = collect($paginator->items())->unique(function ($b) {
+            return ($b->start_year && $b->end_year)
+                ? "{$b->start_year}-{$b->end_year}"
+                : trim(str_ireplace('batch', '', (string)$b->name));
+        })->values();
 
         return response()->json([
             'success' => true,
             'message' => 'Batches retrieved successfully',
-            'data' => BatchResource::collection($paginator->items()),
+            'data' => BatchResource::collection($items),
             'meta' => [
                 'pagination' => [
-                    'total' => $paginator->total(),
-                    'count' => $paginator->count(),
+                    'total' => $items->count(),
+                    'count' => $items->count(),
                     'per_page' => $paginator->perPage(),
                     'current_page' => $paginator->currentPage(),
                     'total_pages' => $paginator->lastPage(),

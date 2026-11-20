@@ -9,6 +9,7 @@ use App\Http\Requests\Section\CreateSectionRequest;
 use App\Http\Requests\Section\UpdateSectionRequest;
 use App\Http\Resources\SectionResource;
 use App\Models\Section;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -23,8 +24,31 @@ class SectionController extends BaseApiController
 
     public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->get('per_page', 15);
-        $paginator = $this->sectionService->getPaginated($perPage, ['batch', 'assignedStaff'], $request->all());
+        $user = $request->user() ?? auth('sanctum')->user();
+        $defaultPerPage = ($user && $user->hasRole('Coordinator')) ? 15 : 100;
+        $perPage = (int) $request->get('per_page', $defaultPerPage);
+        $filters = $request->all();
+
+        if ($user && $user->hasRole('Coordinator')) {
+            $coordinatorBatchIds = $user->getAssignedBatchIds();
+            if (isset($filters['batch_id']) && is_numeric($filters['batch_id'])) {
+                if (!in_array((int)$filters['batch_id'], $coordinatorBatchIds, true)) {
+                    $filters['batch_id'] = -1;
+                }
+            } else {
+                $filters['batch_id'] = !empty($coordinatorBatchIds) ? $coordinatorBatchIds : [-1];
+            }
+        }
+
+        $withRelations = ['batch'];
+        if ($user && $user->hasAnyRole(['Chairman', 'Admin', 'Department Office', 'Coordinator', 'Batch Advisor', 'Batch Adviser'])) {
+            $withRelations[] = 'assignedStaff';
+        } else {
+            // For public / registration: only active sections
+            $filters['is_active'] = 1;
+        }
+
+        $paginator = $this->sectionService->getPaginated($perPage, $withRelations, $filters);
 
         return response()->json([
             'success' => true,
@@ -77,12 +101,28 @@ class SectionController extends BaseApiController
 
     public function assignAdviser(AssignSectionAdviserRequest $request, Section $section): JsonResponse
     {
-        $this->authorize('assignAdviser', Section::class);
+        $this->authorize('assignAdviser', $section);
 
         if (empty($request->adviser_id)) {
             $section->assignedStaff()->detach();
             $updatedSection = $section->fresh(['batch', 'assignedStaff']);
         } else {
+            $adviser = User::find((int)$request->adviser_id);
+            if (!$adviser || !$adviser->hasAnyRole(['Batch Adviser', 'Batch Advisor'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The selected user is not a valid Batch Adviser.',
+                ], 422);
+            }
+
+            $sectionDeptId = $section->batch?->department_id;
+            if ($sectionDeptId && $adviser->department_id && (int)$adviser->department_id !== (int)$sectionDeptId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The selected adviser belongs to a different department.',
+                ], 422);
+            }
+
             $updatedSection = $this->sectionService->assignAdviserToSection($section, (int)$request->adviser_id);
         }
 
@@ -91,7 +131,7 @@ class SectionController extends BaseApiController
 
     public function removeAdviser(Request $request, Section $section, int $adviserId): JsonResponse
     {
-        $this->authorize('assignAdviser', Section::class);
+        $this->authorize('assignAdviser', $section);
 
         $updatedSection = $this->sectionService->removeAdviserFromSection($section, $adviserId);
 

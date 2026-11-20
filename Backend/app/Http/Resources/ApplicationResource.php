@@ -74,6 +74,9 @@ class ApplicationResource extends JsonResource
 
         $involvedStaffNamesList = $involvedStaffNames->filter()->unique()->values()->all();
 
+        $assignedCoordinator = $this->getAssignedCoordinator();
+        $studentBatchId = $this->student?->batch_id ?: $this->student?->section?->batch_id;
+
         return [
             'id' => (string)$this->id,
             'ticket_number' => $this->ticket_number,
@@ -96,6 +99,12 @@ class ApplicationResource extends JsonResource
             'assignedTo' => $assignedToName,
             'assigned_to_id' => $this->assigned_to_id ? (string)$this->assigned_to_id : null,
             'assignedToId' => $this->assigned_to_id ? (string)$this->assigned_to_id : null,
+            'assigned_coordinator_id' => $assignedCoordinator ? (string)$assignedCoordinator->id : null,
+            'assigned_coordinator_name' => $assignedCoordinator?->name,
+            'assignedCoordinatorId' => $assignedCoordinator ? (string)$assignedCoordinator->id : null,
+            'assignedCoordinatorName' => $assignedCoordinator?->name,
+            'student_batch_id' => $studentBatchId ? (string)$studentBatchId : null,
+            'studentBatchId' => $studentBatchId ? (string)$studentBatchId : null,
             'student_batch' => $this->student?->batch?->name,
             'studentBatch' => $this->student?->batch?->name,
             'student_section' => $this->student?->section?->name,

@@ -195,6 +195,100 @@ class _EditFacultyDialogState extends ConsumerState<EditFacultyDialog> {
   }
 
   Widget _buildCoordinatorBatchYearFields() {
+    final batchesAsync = ref.watch(batchesStreamProvider);
+
+    return batchesAsync.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+            SizedBox(width: 8),
+            Text('Loading batches...', style: TextStyle(fontSize: 13, color: Colors.grey)),
+          ],
+        ),
+      ),
+      error: (error, stack) => _buildManualCoordinatorYearFields(),
+      data: (batches) {
+        final availableBatches = batches.where((b) {
+          final isCurrent = (b.coordinatorId != null && b.coordinatorId == widget.adviser.id) ||
+              (widget.adviser.batch != null && (b.name == widget.adviser.batch || b.name == 'Batch ${widget.adviser.batch}'));
+          return isCurrent || !b.isCoordinatorAssigned;
+        }).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (availableBatches.isNotEmpty) ...[
+              DropdownButtonFormField<String>(
+                key: ValueKey('edit_coord_batch_$_selectedBatchId'),
+                isExpanded: true,
+                initialValue: availableBatches.any((b) => b.id == _selectedBatchId) ? _selectedBatchId : null,
+                decoration: const InputDecoration(
+                  labelText: 'Select Batch Assignment',
+                  prefixIcon: Icon(Icons.school),
+                ),
+                hint: const Text('Choose Batch'),
+                items: availableBatches.map((batch) {
+                  final isCurrent = (batch.coordinatorId != null && batch.coordinatorId == widget.adviser.id);
+                  return DropdownMenuItem<String>(
+                    value: batch.id,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            batch.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        if (isCurrent)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade50,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Current',
+                              style: TextStyle(fontSize: 11, color: Colors.green.shade800, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    _selectedBatchId = val;
+                    final b = availableBatches.firstWhere((x) => x.id == val);
+                    final clean = b.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+                    final parts = clean.split(RegExp(r'[-–—/]'));
+                    if (parts.isNotEmpty && parts[0].trim().isNotEmpty) {
+                      _startYearController.text = parts[0].trim();
+                    }
+                    if (parts.length > 1 && parts[1].trim().isNotEmpty) {
+                      _endYearController.text = parts[1].trim();
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Or specify batch years manually:',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
+            ],
+            _buildManualCoordinatorYearFields(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildManualCoordinatorYearFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

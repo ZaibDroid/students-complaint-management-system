@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class AuthService implements AuthServiceInterface
 {
@@ -49,8 +50,12 @@ class AuthService implements AuthServiceInterface
         }
 
         $batchId = $data['batch_id'] ?? ($user ? $user->batch_id : null);
+        $batch = null;
+        if (!empty($batchId) && is_numeric($batchId)) {
+            $batch = \App\Models\Batch::find((int)$batchId);
+        }
 
-        if ($batchName !== null && $batchName !== '') {
+        if (!$batch && $batchName !== null && $batchName !== '') {
             $rawStr = trim((string)$batchName);
             $batchYear = 0;
             $startYear = null;
@@ -92,47 +97,45 @@ class AuthService implements AuthServiceInterface
                 })
                 ->orWhere('start_year', $batchYear)
                 ->first();
+        }
 
-            if (!$batch) {
-                $batchDeptId = $data['department_id'] ?? \App\Models\Department::first()?->id;
-                $batch = \App\Models\Batch::create([
-                    'name' => $canonicalName,
-                    'start_year' => $startYear ?: $batchYear,
-                    'end_year' => $endYear ?: ($batchYear + 4),
-                    'department_id' => $batchDeptId,
+        if ($batchId || ($batchName !== null && $batchName !== '')) {
+            if (!$batch || !$batch->is_active || !$batch->hasActiveCoordinator()) {
+                throw ValidationException::withMessages([
+                    'batch_id' => ['The selected batch is invalid, inactive, or has no assigned Coordinator.'],
                 ]);
             }
-
             $batchId = $batch->id;
             $data['batch_id'] = $batchId;
         }
 
-        if ($sectionName !== null && $sectionName !== '') {
+        $sectionId = $data['section_id'] ?? ($user ? $user->section_id : null);
+        $section = null;
+        if (!empty($sectionId) && is_numeric($sectionId) && $batchId) {
+            $section = \App\Models\Section::where('id', (int)$sectionId)->where('batch_id', $batchId)->first();
+        }
+
+        if (!$section && $sectionName !== null && $sectionName !== '' && $batchId) {
             $secName = strtoupper(trim((string)$sectionName));
             $shortSec = trim(preg_replace('/^(section\s*|sec\s*)/i', '', $secName));
             $longSec = 'Section ' . $shortSec;
-            if ($batchId) {
-                $section = \App\Models\Section::withTrashed()
-                    ->where('batch_id', $batchId)
-                    ->where(function ($q) use ($secName, $shortSec, $longSec) {
-                        $q->where('name', $secName)
-                          ->orWhere('name', $shortSec)
-                          ->orWhere('name', $longSec);
-                    })
-                    ->first();
 
-                if ($section && $section->trashed()) {
-                    $section->restore();
-                }
+            $section = \App\Models\Section::where('batch_id', $batchId)
+                ->where(function ($q) use ($secName, $shortSec, $longSec) {
+                    $q->where('name', $secName)
+                      ->orWhere('name', $shortSec)
+                      ->orWhere('name', $longSec);
+                })
+                ->first();
+        }
 
-                if (!$section) {
-                    $section = \App\Models\Section::create([
-                        'batch_id' => $batchId,
-                        'name' => $shortSec ?: $secName,
-                    ]);
-                }
-                $data['section_id'] = $section->id;
+        if ($sectionId || ($sectionName !== null && $sectionName !== '')) {
+            if (!$section || !$section->is_active) {
+                throw ValidationException::withMessages([
+                    'section_id' => ['The selected section does not belong to the selected batch or is unavailable.'],
+                ]);
             }
+            $data['section_id'] = $section->id;
         }
 
         $yearInput = $data['year'] ?? $data['semester'] ?? $data['current_semester'] ?? null;
@@ -227,7 +230,30 @@ class AuthService implements AuthServiceInterface
 
     public function updateProfile(User $user, array $data): User
     {
-        if ($user->hasRole('Batch Adviser')) {
+        if ($user->hasRole('Coordinator')) {
+            if (isset($data['batch_id']) || isset($data['batch'])) {
+                $batchId = $data['batch_id'] ?? null;
+                $batchStr = $data['batch'] ?? null;
+                $coordinatedBatchIds = \App\Models\Batch::where('coordinator_id', $user->id)->pluck('id')->all();
+
+                $isUnauthorized = false;
+                if ($batchId && !in_array((int)$batchId, $coordinatedBatchIds, true)) {
+                    $isUnauthorized = true;
+                } elseif ($batchStr) {
+                    $b = \App\Models\Batch::where('name', $batchStr)->orWhere('name', 'Batch ' . $batchStr)->first();
+                    if (!$b || !in_array((int)$b->id, $coordinatedBatchIds, true)) {
+                        $isUnauthorized = true;
+                    }
+                }
+
+                if ($isUnauthorized) {
+                    throw ValidationException::withMessages([
+                        'batch_id' => ['Coordinators cannot modify their assigned batch through self-service profile updates.'],
+                    ]);
+                }
+            }
+            unset($data['batch'], $data['batch_id'], $data['section'], $data['section_id']);
+        } elseif ($user->hasRole('Batch Adviser')) {
             unset($data['batch'], $data['batch_id'], $data['section'], $data['section_id']);
         }
         $this->resolveBatchSectionAndAdviser($data, $user);

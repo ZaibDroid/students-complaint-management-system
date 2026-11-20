@@ -93,6 +93,13 @@ class UserResource extends JsonResource
             'section_id' => $this->section_id ? (string)$this->section_id : null,
             'sectionId' => $this->section_id ? (string)$this->section_id : null,
             'section' => $sectionName,
+            'coordinated_batch_ids' => $this->hasRole('Coordinator') ? array_map('strval', $this->getAssignedBatchIds()) : [],
+            'coordinated_batches' => $this->hasRole('Coordinator') ? $this->coordinatedBatches->map(fn($b) => [
+                'id' => (string)$b->id,
+                'name' => $b->name,
+                'start_year' => $b->start_year,
+                'end_year' => $b->end_year,
+            ])->values()->all() : [],
             'section_details' => $this->whenLoaded('section', function () {
                 return [
                     'id' => $this->section->id,

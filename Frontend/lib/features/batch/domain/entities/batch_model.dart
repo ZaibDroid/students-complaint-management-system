@@ -33,12 +33,18 @@ class BatchModel {
   final String name;
   final List<String> sections;
   final List<BatchSectionItem> sectionItems;
+  final String? coordinatorId;
+  final String? coordinatorName;
+  final bool isCoordinatorAssigned;
 
   BatchModel({
     required this.id,
     required this.name,
     required this.sections,
     this.sectionItems = const [],
+    this.coordinatorId,
+    this.coordinatorName,
+    this.isCoordinatorAssigned = false,
   });
 
   factory BatchModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +62,9 @@ class BatchModel {
       name: (json['name'] ?? '').toString(),
       sections: rawSections,
       sectionItems: items,
+      coordinatorId: json['coordinator_id']?.toString(),
+      coordinatorName: json['coordinator_name']?.toString(),
+      isCoordinatorAssigned: json['is_coordinator_assigned'] == true,
     );
   }
 
@@ -64,6 +73,7 @@ class BatchModel {
       'id': id,
       'name': name,
       'sections': sections,
+      if (coordinatorId != null) 'coordinator_id': coordinatorId,
     };
   }
 

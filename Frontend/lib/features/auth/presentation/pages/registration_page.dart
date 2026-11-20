@@ -5,6 +5,8 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/utils/validators.dart';
 import '../providers/auth_provider.dart';
+import '../../../../features/batch/presentation/providers/batch_provider.dart';
+import '../../../../features/batch/domain/entities/batch_model.dart';
 
 class RegistrationPage extends ConsumerStatefulWidget {
   const RegistrationPage({super.key});
@@ -20,11 +22,11 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   
-  final TextEditingController _batchController = TextEditingController();
-  String? _selectedSection;
+  String? _selectedBatchId;
+  BatchModel? _selectedBatch;
+  String? _selectedSectionId;
+  String? _selectedSectionName;
   final bool _isCR = false;
-
-  final List<String> _sections = ['A', 'B', 'C', 'D', 'E', 'F', 'Artificial Intelligence', 'Cloud Computing', 'Data Science', 'Computer Science'];
 
   @override
   void dispose() {
@@ -32,13 +34,18 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
-    _batchController.dispose();
     super.dispose();
   }
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
-      if (_selectedSection == null) {
+      if (_selectedBatch == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select your batch')),
+        );
+        return;
+      }
+      if (_selectedSectionName == null && _selectedSectionId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select your section')),
         );
@@ -51,8 +58,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         email: formattedEmail,
         password: _passwordController.text,
         year: null,
-        batch: _batchController.text.trim(),
-        section: _selectedSection,
+        batch: _selectedBatch!.name,
+        batchId: _selectedBatch!.id,
+        section: _selectedSectionName,
+        sectionId: _selectedSectionId,
         phone: _phoneController.text.trim(),
         isCR: _isCR,
       );
@@ -76,28 +85,199 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     }
   }
 
-  Widget _buildDropdown(String label, List<String> items, String? value, ValueChanged<String?> onChanged) {
-    return DropdownButtonFormField<String>(
-      isExpanded: true,
-      initialValue: value,
-      items: items
-          .map(
-            (e) => DropdownMenuItem(
-              value: e,
+  Widget _buildBatchDropdown(AsyncValue<List<BatchModel>> batchesAsync) {
+    return batchesAsync.when(
+      loading: () => Container(
+        height: 58,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 10),
+            Expanded(
               child: Text(
-                e,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+                'Loading batches...',
+                style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
             ),
-          )
-          .toList(),
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
+          ],
+        ),
       ),
-      validator: (val) => val == null ? 'Required' : null,
+      error: (err, stack) => Container(
+        height: 58,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.red.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 20),
+            const SizedBox(width: 6),
+            const Expanded(
+              child: Text(
+                'Failed to load',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh, size: 18),
+              onPressed: () => ref.invalidate(batchesStreamProvider),
+              tooltip: 'Retry',
+            ),
+          ],
+        ),
+      ),
+      data: (batches) {
+        if (batches.isEmpty) {
+          return DropdownButtonFormField<String>(
+            isExpanded: true,
+            items: const [],
+            onChanged: null,
+            decoration: const InputDecoration(
+              labelText: 'Batch',
+              hintText: 'No batches',
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            ),
+            validator: (val) => 'No batches available',
+          );
+        }
+
+        return DropdownButtonFormField<String>(
+          isExpanded: true,
+          initialValue: _selectedBatchId,
+          decoration: const InputDecoration(
+            labelText: 'Batch',
+            hintText: 'Select Batch',
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          ),
+          items: batches.map((batch) {
+            return DropdownMenuItem<String>(
+              value: batch.id,
+              child: Text(
+                batch.name,
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList(),
+          onChanged: (val) {
+            if (val != _selectedBatchId) {
+              setState(() {
+                _selectedBatchId = val;
+                _selectedBatch = batches.firstWhere((b) => b.id == val);
+                // Reset section when batch changes
+                _selectedSectionId = null;
+                _selectedSectionName = null;
+              });
+            }
+          },
+          validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        );
+      },
     );
+  }
+
+  Widget _buildSectionDropdown() {
+    if (_selectedBatch == null) {
+      return DropdownButtonFormField<String>(
+        isExpanded: true,
+        items: const [],
+        onChanged: null,
+        decoration: const InputDecoration(
+          labelText: 'Section',
+          hintText: 'Select batch',
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        ),
+        validator: (val) => _selectedBatch == null ? 'Select batch first' : null,
+      );
+    }
+
+    final sectionItems = _selectedBatch!.sectionItems;
+    final sectionNames = _selectedBatch!.sections;
+
+    if (sectionItems.isEmpty && sectionNames.isEmpty) {
+      return DropdownButtonFormField<String>(
+        isExpanded: true,
+        items: const [],
+        onChanged: null,
+        decoration: const InputDecoration(
+          labelText: 'Section',
+          hintText: 'No sections',
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        ),
+        validator: (val) => 'No sections available',
+      );
+    }
+
+    if (sectionItems.isNotEmpty) {
+      final sortedItems = List<BatchSectionItem>.from(sectionItems)
+        ..sort((a, b) => a.name.compareTo(b.name));
+
+      return DropdownButtonFormField<String>(
+        key: ValueKey('sec_items_${_selectedBatch!.id}_$_selectedSectionId'),
+        isExpanded: true,
+        initialValue: _selectedSectionId,
+        decoration: const InputDecoration(
+          labelText: 'Section',
+          hintText: 'Select Section',
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        ),
+        items: sortedItems.map((item) {
+          return DropdownMenuItem<String>(
+            value: item.id,
+            child: Text(
+              item.name,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        }).toList(),
+        onChanged: (val) {
+          final chosen = sortedItems.firstWhere((s) => s.id == val);
+          setState(() {
+            _selectedSectionId = val;
+            _selectedSectionName = chosen.name;
+          });
+        },
+        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+      );
+    } else {
+      final sortedNames = List<String>.from(sectionNames)..sort();
+      return DropdownButtonFormField<String>(
+        key: ValueKey('sec_names_${_selectedBatch!.id}_$_selectedSectionName'),
+        isExpanded: true,
+        initialValue: _selectedSectionName,
+        decoration: const InputDecoration(
+          labelText: 'Section',
+          hintText: 'Select Section',
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        ),
+        items: sortedNames.map((name) {
+          return DropdownMenuItem<String>(
+            value: name,
+            child: Text(
+              name,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        }).toList(),
+        onChanged: (val) {
+          setState(() {
+            _selectedSectionId = null;
+            _selectedSectionName = val;
+          });
+        },
+        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+      );
+    }
   }
 
   @override
@@ -105,6 +285,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     final theme = Theme.of(context);
     final authState = ref.watch(authStateProvider);
     final isLoading = authState.isLoading;
+    final batchesAsync = ref.watch(batchesStreamProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -166,23 +347,30 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: AppTextField(
-                        controller: _batchController,
-                        labelText: 'Batch Year',
-                        hintText: 'e.g. 2024',
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildDropdown('Section', _sections, _selectedSection, (val) => setState(() => _selectedSection = val)),
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth < 280) {
+                      return Column(
+                        children: [
+                          _buildBatchDropdown(batchesAsync),
+                          const SizedBox(height: 16),
+                          _buildSectionDropdown(),
+                        ],
+                      );
+                    }
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildBatchDropdown(batchesAsync),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildSectionDropdown(),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 32),
                 PrimaryButton(

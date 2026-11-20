@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserService implements UserServiceInterface
 {
@@ -88,6 +89,17 @@ class UserService implements UserServiceInterface
         if ($batch) {
             $data['batch_id'] = $batch->id;
 
+            if (!empty($data['section_id']) && is_numeric($data['section_id'])) {
+                $section = \App\Models\Section::withTrashed()->where('id', (int)$data['section_id'])->first();
+                if ($section && (int)$section->batch_id === (int)$batch->id) {
+                    if ($section->trashed()) {
+                        $section->restore();
+                    }
+                    $data['section_id'] = $section->id;
+                    return $section->id;
+                }
+            }
+
             if ($sectionName !== null && $sectionName !== '') {
                 $secName = strtoupper(trim((string)$sectionName));
                 $shortSec = str_ireplace('SECTION ', '', $secName);
@@ -138,11 +150,25 @@ class UserService implements UserServiceInterface
             $assignedSections = $data['assigned_sections'] ?? [];
             unset($data['assigned_sections']);
 
+            $isCoordinator = ($role === 'Coordinator');
             $createdSectionId = $this->resolveBatchAndSection($data);
+
+            if ($isCoordinator && !empty($data['batch_id'])) {
+                $targetBatch = \App\Models\Batch::where('id', $data['batch_id'])->lockForUpdate()->first();
+                if ($targetBatch && $targetBatch->coordinator_id !== null) {
+                    throw ValidationException::withMessages([
+                        'batch_id' => ['This batch is already assigned to another coordinator.'],
+                    ]);
+                }
+            }
 
             /** @var User $user */
             $user = $this->userRepository->create($data);
             $user->assignRole($role);
+
+            if ($isCoordinator && !empty($data['batch_id'])) {
+                \App\Models\Batch::where('id', $data['batch_id'])->update(['coordinator_id' => $user->id]);
+            }
 
             $resolvedSectionIds = [];
             if ($createdSectionId) {
@@ -168,6 +194,12 @@ class UserService implements UserServiceInterface
             $resolvedSectionIds = array_values(array_unique(array_filter($resolvedSectionIds)));
             if (!empty($resolvedSectionIds)) {
                 $user->assignedSections()->sync($resolvedSectionIds);
+
+                if (in_array($role, ['Batch Adviser', 'Batch Advisor'], true)) {
+                    foreach ($resolvedSectionIds as $sId) {
+                        \App\Models\Section::where('id', $sId)->first()?->assignedStaff()->sync([$user->id]);
+                    }
+                }
             }
 
             return $user->load(['department', 'batch', 'section', 'roles', 'assignedSections.batch']);
@@ -184,6 +216,7 @@ class UserService implements UserServiceInterface
                 unset($data['password']);
             }
 
+            $effectiveRole = isset($data['role']) ? $data['role'] : ($user->roles->first()?->name ?? '');
             if (isset($data['role'])) {
                 $user->syncRoles([$data['role']]);
                 unset($data['role']);
@@ -192,7 +225,57 @@ class UserService implements UserServiceInterface
             $assignedSections = $data['assigned_sections'] ?? null;
             unset($data['assigned_sections']);
 
+            $isCoordinator = ($effectiveRole === 'Coordinator');
             $createdSectionId = $this->resolveBatchAndSection($data);
+
+            if ($isCoordinator) {
+                if (array_key_exists('batch_ids', $data) && is_array($data['batch_ids'])) {
+                    $targetBatchIds = array_filter(array_map('intval', $data['batch_ids']));
+                    unset($data['batch_ids']);
+
+                    foreach ($targetBatchIds as $bId) {
+                        $tb = \App\Models\Batch::where('id', $bId)->lockForUpdate()->first();
+                        if ($tb && $tb->coordinator_id !== null && (int)$tb->coordinator_id !== (int)$user->id) {
+                            throw ValidationException::withMessages([
+                                'batch_id' => ["Batch {$tb->name} is already assigned to another coordinator."],
+                            ]);
+                        }
+                    }
+                    // Release batches not in the new list
+                    \App\Models\Batch::where('coordinator_id', $user->id)->whereNotIn('id', $targetBatchIds)->update(['coordinator_id' => null]);
+                    // Assign new batches
+                    if (!empty($targetBatchIds)) {
+                        \App\Models\Batch::whereIn('id', $targetBatchIds)->update(['coordinator_id' => $user->id]);
+                        $data['batch_id'] = $targetBatchIds[0];
+                    } else {
+                        $data['batch_id'] = null;
+                    }
+                } elseif (array_key_exists('batch_id', $data)) {
+                    $newBatchId = $data['batch_id'];
+                    if (!empty($newBatchId)) {
+                        $targetBatch = \App\Models\Batch::where('id', $newBatchId)->lockForUpdate()->first();
+                        if ($targetBatch && $targetBatch->coordinator_id !== null && (int)$targetBatch->coordinator_id !== (int)$user->id) {
+                            throw ValidationException::withMessages([
+                                'batch_id' => ['This batch is already assigned to another coordinator.'],
+                            ]);
+                        }
+                        $keepExisting = !empty($data['keep_existing_batches']);
+                        unset($data['keep_existing_batches']);
+                        if (!$keepExisting) {
+                            \App\Models\Batch::where('coordinator_id', $user->id)->where('id', '!=', $newBatchId)->update(['coordinator_id' => null]);
+                        }
+                        if ($targetBatch) {
+                            $targetBatch->update(['coordinator_id' => $user->id]);
+                        }
+                    } else {
+                        // Batch released
+                        \App\Models\Batch::where('coordinator_id', $user->id)->update(['coordinator_id' => null]);
+                    }
+                }
+            } else {
+                // If role changed from Coordinator to another role, release any coordinator batch
+                \App\Models\Batch::where('coordinator_id', $user->id)->update(['coordinator_id' => null]);
+            }
 
             $this->userRepository->update($user->id, $data);
 
@@ -227,6 +310,7 @@ class UserService implements UserServiceInterface
 
     public function deleteStaff(User $user): void
     {
+        \App\Models\Batch::where('coordinator_id', $user->id)->update(['coordinator_id' => null]);
         $user->tokens()->delete();
         if (method_exists($user, 'roles')) {
             $user->roles()->detach();
@@ -251,6 +335,13 @@ class UserService implements UserServiceInterface
 
     public function assignRoles(User $user, array $roles): User
     {
+        $hasCoordinator = in_array('Coordinator', $roles, true);
+        $hadCoordinator = $user->hasRole('Coordinator');
+
+        if ($hadCoordinator && !$hasCoordinator) {
+            \App\Models\Batch::where('coordinator_id', $user->id)->update(['coordinator_id' => null]);
+        }
+
         $user->syncRoles($roles);
         return $user->fresh(['roles']);
     }

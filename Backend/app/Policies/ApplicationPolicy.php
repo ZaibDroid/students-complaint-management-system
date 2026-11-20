@@ -32,8 +32,13 @@ class ApplicationPolicy
             return (int)$application->student_id === (int)$user->id;
         }
 
-        // Chairman, Coordinator, Office Staff are scoped to their department or complaints assigned to them
-        if ($user->hasAnyRole(['Chairman', 'Coordinator', 'Office Staff'])) {
+        // Coordinator: strictly isolated to complaints belonging to their assigned batch
+        if ($user->hasRole('Coordinator')) {
+            return $this->isCoordinatorAuthorized($user, $application);
+        }
+
+        // Chairman and Office Staff are scoped to their department or complaints assigned to them
+        if ($user->hasAnyRole(['Chairman', 'Office Staff'])) {
             if ((int)$application->assigned_to_id === (int)$user->id) {
                 return true;
             }
@@ -82,8 +87,13 @@ class ApplicationPolicy
             return in_array($application->status, [Application::STATUS_PENDING, Application::STATUS_RETURNED]);
         }
 
-        // Chairman, Coordinator, Office Staff: must match department
-        if ($user->hasAnyRole(['Chairman', 'Coordinator', 'Office Staff'])) {
+        // Coordinator: strictly isolated to complaints belonging to their assigned batch
+        if ($user->hasRole('Coordinator')) {
+            return $this->isCoordinatorAuthorized($user, $application);
+        }
+
+        // Chairman, Office Staff: must match department
+        if ($user->hasAnyRole(['Chairman', 'Office Staff'])) {
             return !empty($user->department_id) 
                 && !empty($application->department_id) 
                 && (int)$application->department_id === (int)$user->department_id;
@@ -118,8 +128,13 @@ class ApplicationPolicy
             return true;
         }
 
-        // Chairman and Coordinator: complaints assigned to them or in their department
-        if ($user->hasAnyRole(['Chairman', 'Coordinator'])) {
+        // Coordinator: can modify status (forward, resolve, reject, return) ONLY within their assigned batch
+        if ($user->hasRole('Coordinator')) {
+            return $this->isCoordinatorAuthorized($user, $application);
+        }
+
+        // Chairman: complaints assigned to them or in their department
+        if ($user->hasRole('Chairman')) {
             if ((int)$application->assigned_to_id === (int)$user->id) {
                 return true;
             }
@@ -127,9 +142,10 @@ class ApplicationPolicy
             return !empty($application->department_id) && (int)$application->department_id === (int)$userDeptId;
         }
 
-        // Batch Adviser: must be currently assigned to them
+        // Batch Adviser: must be currently assigned to them AND authorized for their assigned sections
         if ($user->hasAnyRole(['Batch Adviser', 'Batch Advisor'])) {
-            return (int)$application->assigned_to_id === (int)$user->id;
+            return (int)$application->assigned_to_id === (int)$user->id
+                && $application->isAdviserAuthorized($user);
         }
 
         // Student: only self, and only if resolved (e.g. feedback/acknowledgement)
@@ -155,8 +171,40 @@ class ApplicationPolicy
         return $application->student_id === $user->id && $application->status === Application::STATUS_PENDING;
     }
 
+    public function reject(User $user, Application $application): bool
+    {
+        return $this->updateStatus($user, $application);
+    }
+
+    public function return(User $user, Application $application): bool
+    {
+        return $this->updateStatus($user, $application);
+    }
+
     public function addRemark(User $user, Application $application): bool
     {
         return $this->view($user, $application);
+    }
+
+    /**
+     * Determine if a coordinator is authorized for the given application's batch.
+     */
+    protected function isCoordinatorAuthorized(User $user, Application $application): bool
+    {
+        $student = $application->student;
+        if (!$student || empty($student->batch_id)) {
+            return false;
+        }
+
+        $coordinatorBatchIds = $user->getAssignedBatchIds();
+        if (empty($coordinatorBatchIds) || !in_array((int)$student->batch_id, $coordinatorBatchIds, true)) {
+            return false;
+        }
+
+        if (!empty($user->department_id) && !empty($application->department_id) && (int)$application->department_id !== (int)$user->department_id) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -105,6 +105,77 @@ class Application extends Model
         return $this->hasMany(ApplicationTimeline::class);
     }
 
+    /**
+     * Resolve the authoritative assigned Coordinator for this complaint.
+     * Complaint -> Student -> Section -> Batch -> Coordinator (batches.coordinator_id)
+     */
+    public function getAssignedCoordinator(): ?User
+    {
+        $student = $this->relationLoaded('student')
+            ? $this->student
+            : $this->student()->with(['section.batch.coordinator', 'batch.coordinator'])->first();
+
+        if (!$student) {
+            return null;
+        }
+
+        // 1. Through student's assigned section -> batch -> coordinator
+        if ($student->section_id) {
+            $section = $student->relationLoaded('section') ? $student->section : $student->section()->with('batch.coordinator')->first();
+            if ($section && $section->batch_id) {
+                $secBatch = $section->relationLoaded('batch') ? $section->batch : $section->batch()->with('coordinator')->first();
+                if ($secBatch && $secBatch->coordinator_id) {
+                    $coord = $secBatch->relationLoaded('coordinator') ? $secBatch->coordinator : User::find($secBatch->coordinator_id);
+                    if ($coord && !$coord->trashed() && $coord->hasRole('Coordinator')) {
+                        return $coord;
+                    }
+                }
+            }
+        }
+
+        // 2. Through student's direct batch_id -> batch -> coordinator
+        if ($student->batch_id) {
+            $batch = $student->relationLoaded('batch') ? $student->batch : Batch::with('coordinator')->find($student->batch_id);
+            if ($batch && $batch->coordinator_id) {
+                $coord = $batch->relationLoaded('coordinator') ? $batch->coordinator : User::find($batch->coordinator_id);
+                if ($coord && !$coord->trashed() && $coord->hasRole('Coordinator')) {
+                    return $coord;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determine if a Batch Adviser is authorized for this complaint.
+     * Adviser must be assigned to complaint OR student belongs to adviser's assigned sections.
+     */
+    public function isAdviserAuthorized(User $adviser): bool
+    {
+        $student = $this->relationLoaded('student') ? $this->student : $this->student()->first();
+        if (!$student) {
+            return false;
+        }
+
+        // Section match via assignedSections or direct section_id
+        if (!empty($student->section_id)) {
+            if (!empty($adviser->section_id) && (int)$student->section_id === (int)$adviser->section_id) {
+                return true;
+            }
+            if ($adviser->assignedSections()->where('sections.id', $student->section_id)->exists()) {
+                return true;
+            }
+        }
+
+        // Explicit adviser link
+        if (!empty($student->adviser_id) && (int)$student->adviser_id === (int)$adviser->id) {
+            return true;
+        }
+
+        return false;
+    }
+
     // Scopes
     public function scopePending($query)
     {

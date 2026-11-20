@@ -15,6 +15,7 @@ class Batch extends Model
 
     protected $fillable = [
         'department_id',
+        'coordinator_id',
         'name',
         'start_year',
         'end_year',
@@ -22,6 +23,7 @@ class Batch extends Model
     ];
 
     protected $casts = [
+        'coordinator_id' => 'integer',
         'start_year' => 'integer',
         'end_year' => 'integer',
         'is_active' => 'boolean',
@@ -30,6 +32,11 @@ class Batch extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function coordinator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'coordinator_id');
     }
 
     public function sections(): HasMany
@@ -45,5 +52,43 @@ class Batch extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeUnassignedCoordinator($query)
+    {
+        return $query->whereNull('coordinator_id');
+    }
+
+    public function scopeHasActiveCoordinator($query)
+    {
+        return $query->whereNotNull('coordinator_id')
+            ->whereHas('coordinator', function ($q) {
+                $q->whereNull('deleted_at')
+                  ->whereHas('roles', function ($rq) {
+                      $rq->where('name', 'Coordinator');
+                  });
+            });
+    }
+
+    public function hasActiveCoordinator(): bool
+    {
+        if (empty($this->coordinator_id)) {
+            return false;
+        }
+        $coord = $this->relationLoaded('coordinator') ? $this->coordinator : $this->coordinator()->first();
+        if (!$coord || $coord->trashed()) {
+            return false;
+        }
+        return $coord->hasRole('Coordinator');
+    }
+
+    public function scopeAvailableForCoordinator($query, $coordinatorUserId = null)
+    {
+        return $query->where(function ($q) use ($coordinatorUserId) {
+            $q->whereNull('coordinator_id');
+            if (!empty($coordinatorUserId) && is_numeric($coordinatorUserId)) {
+                $q->orWhere('coordinator_id', (int)$coordinatorUserId);
+            }
+        });
     }
 }

@@ -75,6 +75,60 @@ class CreateStaffRequest extends BaseApiRequest
                 if ($this->has('department_id') && (int)$this->input('department_id') !== (int)$user->department_id) {
                     $validator->errors()->add('department_id', 'Coordinators can only create staff within their own department.');
                 }
+
+                $coordinatorBatchIds = $user->getAssignedBatchIds();
+
+                // 1. Validate batch_id if provided
+                if ($this->has('batch_id') && !empty($this->input('batch_id'))) {
+                    $batchId = (int)$this->input('batch_id');
+                    if (!in_array($batchId, $coordinatorBatchIds, true)) {
+                        $validator->errors()->add('batch_id', 'You are not authorized to create or assign advisers to this batch.');
+                    }
+                }
+
+                // 2. Validate batch string if provided
+                if ($this->has('batch') && !empty($this->input('batch'))) {
+                    $raw = trim((string)$this->input('batch'));
+                    $batch = \App\Models\Batch::where('name', $raw)
+                        ->orWhere('name', 'Batch ' . $raw)
+                        ->first();
+                    if ($batch && !in_array((int)$batch->id, $coordinatorBatchIds, true)) {
+                        $validator->errors()->add('batch', 'You are not authorized to create or assign advisers to this batch.');
+                    }
+                }
+
+                // 3. Validate section_id if provided
+                if ($this->has('section_id') && !empty($this->input('section_id'))) {
+                    $section = \App\Models\Section::find((int)$this->input('section_id'));
+                    if (!$section || !in_array((int)$section->batch_id, $coordinatorBatchIds, true)) {
+                        $validator->errors()->add('section_id', 'You are not authorized to create or assign advisers to this section.');
+                    }
+                }
+
+                // 4. Validate assigned_sections if provided
+                if ($this->has('assigned_sections') && is_array($this->input('assigned_sections'))) {
+                    foreach ($this->input('assigned_sections') as $secItem) {
+                        if (is_numeric($secItem)) {
+                            $sec = \App\Models\Section::find((int)$secItem);
+                            if (!$sec || !in_array((int)$sec->batch_id, $coordinatorBatchIds, true)) {
+                                $validator->errors()->add('assigned_sections', 'One or more assigned sections do not belong to your coordinated batch.');
+                                break;
+                            }
+                        } elseif (is_array($secItem)) {
+                            if (!empty($secItem['section_id'])) {
+                                $sec = \App\Models\Section::find((int)$secItem['section_id']);
+                                if (!$sec || !in_array((int)$sec->batch_id, $coordinatorBatchIds, true)) {
+                                    $validator->errors()->add('assigned_sections', 'One or more assigned sections do not belong to your coordinated batch.');
+                                    break;
+                                }
+                            }
+                            if (!empty($secItem['batch_id']) && !in_array((int)$secItem['batch_id'], $coordinatorBatchIds, true)) {
+                                $validator->errors()->add('assigned_sections', 'One or more assigned sections do not belong to your coordinated batch.');
+                                break;
+                            }
+                        }
+                    }
+                }
             } elseif ($user->hasRole('Chairman')) {
                 $allowed = ['Coordinator', 'Batch Adviser', 'Batch Advisor', 'Office Staff'];
                 if (!in_array($requestedRole, $allowed, true)) {
@@ -85,6 +139,36 @@ class CreateStaffRequest extends BaseApiRequest
                 }
             } elseif (!$user->hasRole('Admin')) {
                 $validator->errors()->add('role', 'You are not authorized to create staff accounts.');
+            }
+
+            if ($requestedRole === 'Coordinator') {
+                $batchId = $this->input('batch_id');
+                $batchStr = $this->input('batch');
+
+                $batch = null;
+                if ($batchId) {
+                    $batch = \App\Models\Batch::find($batchId);
+                } elseif (!empty($batchStr)) {
+                    $raw = trim((string)$batchStr);
+                    $startYear = null;
+                    $endYear = null;
+                    if (preg_match('#(20\d{2})\s*[-–—/]\s*(20\d{2})#', $raw, $m)) {
+                        $startYear = (int)$m[1];
+                        $endYear = (int)$m[2];
+                    }
+                    $batch = \App\Models\Batch::where('name', $raw)
+                        ->orWhere('name', 'Batch ' . $raw)
+                        ->when($startYear && $endYear, function ($q) use ($startYear, $endYear) {
+                            $q->orWhere(function ($sub) use ($startYear, $endYear) {
+                                $sub->where('start_year', $startYear)->where('end_year', $endYear);
+                            });
+                        })
+                        ->first();
+                }
+
+                if ($batch && $batch->coordinator_id !== null) {
+                    $validator->errors()->add('batch_id', 'This batch is already assigned to another coordinator.');
+                }
             }
         });
     }

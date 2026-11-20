@@ -12,11 +12,17 @@ import '../../../../features/batch/domain/entities/batch_model.dart';
 class AddFacultyDialog extends ConsumerStatefulWidget {
   final String defaultRole;
   final String? initialBatchYear;
+  final String? initialBatchId;
+  final String? initialSection;
+  final String? initialSectionId;
 
   const AddFacultyDialog({
     super.key,
     this.defaultRole = 'Batch Adviser',
     this.initialBatchYear,
+    this.initialBatchId,
+    this.initialSection,
+    this.initialSectionId,
   });
 
   @override
@@ -38,10 +44,18 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
   bool _isLoading = false;
 
   bool get _isCoordinator => widget.defaultRole == 'Coordinator';
+  bool get _isSectionContext => widget.initialSection != null && widget.initialSection!.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
+    if (widget.initialBatchId != null) {
+      _selectedBatchId = widget.initialBatchId;
+    }
+    if (widget.initialSection != null) {
+      _selectedSection = widget.initialSection;
+      _sectionController.text = widget.initialSection!;
+    }
     if (widget.initialBatchYear != null) {
       final raw = widget.initialBatchYear!.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
       final parts = raw.split(RegExp(r'[-–—/]'));
@@ -78,11 +92,24 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
         children: [
           const Icon(Icons.person_add, color: Colors.blue),
           const SizedBox(width: 10),
-          Text(
-            _isCoordinator
-                ? 'Add Coordinator'
-                : (widget.defaultRole == 'Batch Adviser' ? 'Add Batch Adviser' : 'Add New Faculty'),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _isCoordinator
+                      ? 'Add Coordinator'
+                      : (widget.defaultRole == 'Batch Adviser' ? 'Add Batch Adviser' : 'Add New Faculty'),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                if (_isSectionContext)
+                  Text(
+                    'Batch ${widget.initialBatchYear ?? ''} • Section ${widget.initialSection}',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.normal),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
@@ -127,7 +154,7 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
                 // For Coordinator: only enter Start Year and End Year (NO batch dropdown)
                 if (_isCoordinator)
                   _buildCoordinatorBatchYearFields()
-                else if (widget.defaultRole == 'Batch Adviser')
+                else if (widget.defaultRole == 'Batch Adviser' && !_isSectionContext)
                   _buildBatchAndSectionSelectors(),
               ],
             ),
@@ -152,6 +179,10 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
   }
 
   Widget _buildCoordinatorBatchYearFields() {
+    return _buildManualCoordinatorYearFields();
+  }
+
+  Widget _buildManualCoordinatorYearFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -410,13 +441,28 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
           }).firstOrNull;
           batchId = matchingBatch?.id;
         } else if (widget.defaultRole == 'Batch Adviser') {
-          final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
-          final selectedBatch = batches.where((b) => b.id == _selectedBatchId).firstOrNull;
-          batchVal = (selectedBatch != null && selectedBatch.name.isNotEmpty)
-              ? selectedBatch.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim()
-              : _batchController.text.trim();
-          batchId = selectedBatch?.id;
-          sectionVal = _selectedSection ?? _sectionController.text.trim();
+          if (_isSectionContext) {
+            batchVal = widget.initialBatchYear?.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+            batchId = widget.initialBatchId;
+            sectionVal = widget.initialSection;
+
+            if (batchId == null || batchId.isEmpty) {
+              final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
+              final matchingBatch = batches.where((b) {
+                final clean = b.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+                return clean == batchVal || b.name == batchVal;
+              }).firstOrNull;
+              batchId = matchingBatch?.id;
+            }
+          } else {
+            final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
+            final selectedBatch = batches.where((b) => b.id == _selectedBatchId).firstOrNull;
+            batchVal = (selectedBatch != null && selectedBatch.name.isNotEmpty)
+                ? selectedBatch.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim()
+                : _batchController.text.trim();
+            batchId = selectedBatch?.id;
+            sectionVal = _selectedSection ?? _sectionController.text.trim();
+          }
         }
 
         await ref.read(apiAuthRepositoryProvider).createStaffAccount(
@@ -427,6 +473,7 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
           batch: (batchVal != null && batchVal.isNotEmpty) ? batchVal : null,
           batchId: batchId,
           section: (sectionVal != null && sectionVal.isNotEmpty) ? sectionVal : null,
+          sectionId: _isSectionContext ? widget.initialSectionId : null,
           assignedSections: _isCoordinator
               ? null
               : [
@@ -435,6 +482,8 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
                       'batch': batchVal,
                       if (batchId != null) ...{'batch_id': batchId},
                       'section': sectionVal,
+                      if (_isSectionContext && widget.initialSectionId != null)
+                        ...{'section_id': widget.initialSectionId},
                     }
                 ],
         );
@@ -444,7 +493,7 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
         ref.invalidate(batchesStreamProvider);
         ref.invalidate(staffAccountsProvider);
 
-        navigator.pop();
+        navigator.pop(true);
         messenger.showSnackBar(
           SnackBar(
             content: Text('${widget.defaultRole} registered successfully!'),

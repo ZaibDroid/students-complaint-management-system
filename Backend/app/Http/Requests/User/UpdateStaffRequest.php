@@ -81,6 +81,72 @@ class UpdateStaffRequest extends BaseApiRequest
                     $validator->errors()->add('department_id', 'You cannot reassign staff members outside your department.');
                 }
             }
+
+            if ($user->hasRole('Coordinator')) {
+                $coordinatorBatchIds = $user->getAssignedBatchIds();
+
+                if ($this->has('batch_id') && !empty($this->input('batch_id'))) {
+                    $batchId = (int)$this->input('batch_id');
+                    if (!in_array($batchId, $coordinatorBatchIds, true)) {
+                        $validator->errors()->add('batch_id', 'You are not authorized to assign staff to batches outside your coordination.');
+                    }
+                }
+
+                if ($this->has('section_id') && !empty($this->input('section_id'))) {
+                    $section = \App\Models\Section::find((int)$this->input('section_id'));
+                    if (!$section || !in_array((int)$section->batch_id, $coordinatorBatchIds, true)) {
+                        $validator->errors()->add('section_id', 'You are not authorized to assign staff to sections outside your coordination.');
+                    }
+                }
+
+                if ($this->has('assigned_sections') && is_array($this->input('assigned_sections'))) {
+                    foreach ($this->input('assigned_sections') as $secItem) {
+                        if (is_numeric($secItem)) {
+                            $sec = \App\Models\Section::find((int)$secItem);
+                            if (!$sec || !in_array((int)$sec->batch_id, $coordinatorBatchIds, true)) {
+                                $validator->errors()->add('assigned_sections', 'One or more assigned sections do not belong to your coordinated batch.');
+                                break;
+                            }
+                        } elseif (is_array($secItem)) {
+                            if (!empty($secItem['section_id'])) {
+                                $sec = \App\Models\Section::find((int)$secItem['section_id']);
+                                if (!$sec || !in_array((int)$sec->batch_id, $coordinatorBatchIds, true)) {
+                                    $validator->errors()->add('assigned_sections', 'One or more assigned sections do not belong to your coordinated batch.');
+                                    break;
+                                }
+                            }
+                            if (!empty($secItem['batch_id']) && !in_array((int)$secItem['batch_id'], $coordinatorBatchIds, true)) {
+                                $validator->errors()->add('assigned_sections', 'One or more assigned sections do not belong to your coordinated batch.');
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $targetUser = $this->route('user');
+            $requestedRole = (string)$this->input('role', $targetUser?->roles->first()?->name ?? '');
+
+            if ($requestedRole === 'Coordinator') {
+                if ($this->has('batch_id') || $this->has('batch')) {
+                    $batchId = $this->input('batch_id');
+                    $batchStr = $this->input('batch');
+
+                    $batch = null;
+                    if ($batchId) {
+                        $batch = \App\Models\Batch::find($batchId);
+                    } elseif (!empty($batchStr)) {
+                        $raw = trim((string)$batchStr);
+                        $batch = \App\Models\Batch::where('name', $raw)
+                            ->orWhere('name', 'Batch ' . $raw)
+                            ->first();
+                    }
+
+                    if ($batch && $batch->coordinator_id !== null && $targetUser && (int)$batch->coordinator_id !== (int)$targetUser->id) {
+                        $validator->errors()->add('batch_id', 'This batch is already assigned to another coordinator.');
+                    }
+                }
+            }
         });
     }
 }

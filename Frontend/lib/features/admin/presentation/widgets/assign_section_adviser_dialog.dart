@@ -8,6 +8,7 @@ class AssignSectionAdviserDialog extends ConsumerStatefulWidget {
   final String sectionName;
   final String? currentAdviserId;
   final String? sectionId;
+  final String? batchId;
 
   const AssignSectionAdviserDialog({
     super.key,
@@ -15,6 +16,7 @@ class AssignSectionAdviserDialog extends ConsumerStatefulWidget {
     required this.sectionName,
     this.currentAdviserId,
     this.sectionId,
+    this.batchId,
   });
 
   @override
@@ -119,17 +121,23 @@ class _AssignSectionAdviserDialogState extends ConsumerState<AssignSectionAdvise
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
-                    onPressed: () {
-                      showDialog(
+                    onPressed: () async {
+                      final created = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AddFacultyDialog(
                           defaultRole: 'Batch Adviser',
                           initialBatchYear: widget.batchName,
+                          initialBatchId: widget.batchId,
+                          initialSection: widget.sectionName,
+                          initialSectionId: widget.sectionId,
                         ),
                       );
+                      if (created == true && context.mounted) {
+                        Navigator.pop(context);
+                      }
                     },
                     icon: const Icon(Icons.add, size: 16),
-                    label: const Text('Add New Faculty Adviser', style: TextStyle(fontSize: 12)),
+                    label: const Text('Add Another', style: TextStyle(fontSize: 12)),
                   ),
                 ),
               ],

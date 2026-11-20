@@ -157,6 +157,9 @@ Route::prefix('v1')->group(function () {
 
             // Timeline History
             Route::get('/{application}/timeline', [ApplicationTimelineController::class, 'index']);
+
+            // Forward Recipients
+            Route::get('/{application}/recipients', [ApplicationController::class, 'forwardRecipients']);
         });
 
         // Complaints Route Aliases (Frontend Compatibility)
@@ -178,6 +181,9 @@ Route::prefix('v1')->group(function () {
 
             // Timeline History
             Route::get('/{application}/timeline', [ApplicationTimelineController::class, 'index']);
+
+            // Forward Recipients
+            Route::get('/{application}/recipients', [ApplicationController::class, 'forwardRecipients']);
         });
 
         // Departments Admin CRUD

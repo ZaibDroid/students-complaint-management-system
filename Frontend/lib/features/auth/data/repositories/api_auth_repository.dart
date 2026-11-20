@@ -45,21 +45,27 @@ class ApiAuthRepository {
     required String password,
     String? year,
     String? batch,
+    String? batchId,
     String? section,
+    String? sectionId,
     String? adviser,
     String? phone,
     bool isCR = false,
   }) async {
-    final response = await _apiClient.post(ApiConfig.register, body: {
+    final body = <String, dynamic>{
       'name': name,
       'email': email,
       'password': password,
-      'year': year,
-      'batch': batch,
-      'section': section,
-      'adviser': adviser,
-      'phone': phone,
-    });
+    };
+    if (year != null) body['year'] = year;
+    if (batch != null) body['batch'] = batch;
+    if (batchId != null) body['batch_id'] = batchId;
+    if (section != null) body['section'] = section;
+    if (sectionId != null) body['section_id'] = sectionId;
+    if (adviser != null) body['adviser'] = adviser;
+    if (phone != null) body['phone'] = phone;
+
+    final response = await _apiClient.post(ApiConfig.register, body: body);
 
     if (response is Map<String, dynamic>) {
       final token = response['token'] as String?;

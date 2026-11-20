@@ -181,30 +181,6 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        // Locked Batch Year indicator
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white24),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.lock, size: 13, color: Colors.amberAccent),
-                              SizedBox(width: 5),
-                              Text(
-                                'Year Fixed',
-                                style: TextStyle(
-                                  color: Colors.amberAccent,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -251,7 +227,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                               const Icon(Icons.table_chart_outlined, color: Color(0xFF172548), size: 20),
                               const SizedBox(width: 8),
                               Text(
-                                'Sections & Batch Advisers',
+                                'Sections',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -317,7 +293,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                                 ),
                                 SizedBox(width: 14),
                                 Expanded(
-                                  child: Text('ASSIGNED BATCH ADVISER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
+                                  child: Text('BATCH ADVISER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
                                 ),
                                 Text('ACTIONS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
                               ],
@@ -432,6 +408,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                                                   sectionName: section,
                                                   currentAdviserId: currentAdviserId.toString(),
                                                   sectionId: secDetail?.id,
+                                                  batchId: batch.id,
                                                 ),
                                               );
                                             },
@@ -446,7 +423,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                             ),
                                           )
-                                        : ElevatedButton.icon(
+                                        : IconButton(
                                             onPressed: () {
                                               showDialog(
                                                 context: context,
@@ -455,18 +432,18 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                                                   sectionName: section,
                                                   currentAdviserId: null,
                                                   sectionId: secDetail?.id,
+                                                  batchId: batch.id,
                                                 ),
                                               );
                                             },
-                                            icon: const Icon(Icons.person_add_alt_1, size: 14),
-                                            label: const Text('Assign', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                                            style: ElevatedButton.styleFrom(
+                                            icon: const Icon(Icons.person_add_alt_1, size: 16),
+                                            tooltip: 'Assign',
+                                            style: IconButton.styleFrom(
                                               backgroundColor: const Color(0xFF172548),
                                               foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                                              padding: const EdgeInsets.all(7),
                                               minimumSize: Size.zero,
                                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              elevation: 0,
                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                             ),
                                           ),

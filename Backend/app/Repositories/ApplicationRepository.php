@@ -62,7 +62,20 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
                     });
                 }
             });
-        } elseif ($user->hasAnyRole(['Coordinator', 'Chairman', 'Office Staff'])) {
+        } elseif ($user->hasRole('Coordinator')) {
+            $coordinatorBatchIds = $user->getAssignedBatchIds();
+            if (empty($coordinatorBatchIds)) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereHas('student', function ($sq) use ($coordinatorBatchIds) {
+                    $sq->whereIn('batch_id', $coordinatorBatchIds)
+                       ->whereNotNull('batch_id');
+                });
+                if (!empty($user->department_id)) {
+                    $query->where('department_id', $user->department_id);
+                }
+            }
+        } elseif ($user->hasAnyRole(['Chairman', 'Office Staff'])) {
             $deptId = $user->department_id ?: \App\Models\Department::first()?->id;
             $query->where(function ($q) use ($user, $deptId) {
                 $q->where('assigned_to_id', $user->id);

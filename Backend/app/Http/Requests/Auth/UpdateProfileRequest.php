@@ -21,4 +21,32 @@ class UpdateProfileRequest extends BaseApiRequest
             'department_id' => ['sometimes', 'nullable', 'exists:departments,id'],
         ];
     }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $user = $this->user();
+            if (!$user) {
+                return;
+            }
+
+            if ($user->hasRole('Coordinator')) {
+                if ($this->has('batch_id') || $this->has('batch')) {
+                    $batchId = $this->input('batch_id');
+                    $batchStr = $this->input('batch');
+
+                    $coordinatedBatchIds = \App\Models\Batch::where('coordinator_id', $user->id)->pluck('id')->all();
+
+                    if ($batchId && !in_array((int)$batchId, $coordinatedBatchIds, true)) {
+                        $validator->errors()->add('batch_id', 'Coordinators cannot modify their assigned batch through self-service profile updates.');
+                    } elseif (!empty($batchStr)) {
+                        $batch = \App\Models\Batch::where('name', $batchStr)->orWhere('name', 'Batch ' . $batchStr)->first();
+                        if (!$batch || !in_array((int)$batch->id, $coordinatedBatchIds, true)) {
+                            $validator->errors()->add('batch', 'Coordinators cannot modify their assigned batch through self-service profile updates.');
+                        }
+                    }
+                }
+            }
+        });
+    }
 }

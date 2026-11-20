@@ -129,6 +129,24 @@ class ApplicationController extends BaseApiController
                     return response()->json(['success' => false, 'message' => 'assigned_to_id is required for forwarding'], 422);
                 }
                 $assignTo = \App\Models\User::findOrFail($request->assigned_to_id);
+
+                if ($actor->hasAnyRole(['Batch Adviser', 'Batch Advisor']) && $assignTo->hasRole('Coordinator')) {
+                    $assignedCoordinator = $application->getAssignedCoordinator();
+                    if (!$assignedCoordinator) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No Coordinator is currently assigned to this batch.',
+                        ], 422);
+                    }
+
+                    if ((int)$assignTo->id !== (int)$assignedCoordinator->id) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Complaints can only be forwarded to the Coordinator assigned to this batch.',
+                        ], 422);
+                    }
+                }
+
                 $updated = $this->applicationService->forward($actor, $application, $assignTo, $notes);
                 break;
             case Application::STATUS_RESOLVED:
@@ -154,5 +172,72 @@ class ApplicationController extends BaseApiController
         $this->applicationService->delete($application->id);
 
         return $this->successResponse(null, 'Application deleted successfully');
+    }
+
+    public function forwardRecipients(Request $request, Application $application): JsonResponse
+    {
+        $actor = $request->user();
+        $this->authorize('view', $application);
+
+        $assignedCoord = $application->getAssignedCoordinator();
+        $deptId = $application->department_id ?: $actor->department_id;
+
+        $recipients = collect([]);
+
+        if ($actor->hasAnyRole(['Batch Adviser', 'Batch Advisor'])) {
+            if (!$application->isAdviserAuthorized($actor)) {
+                abort(403, 'Unauthorized access to complaint');
+            }
+
+            if ($assignedCoord) {
+                $recipients->push([
+                    'id' => (string)$assignedCoord->id,
+                    'name' => $assignedCoord->name,
+                    'role' => 'Coordinator',
+                    'is_assigned_coordinator' => true,
+                ]);
+            }
+
+            // Chairman
+            $chairman = \App\Models\User::role('Chairman')->where('department_id', $deptId)->first() ?? \App\Models\User::role('Chairman')->first();
+            if ($chairman && (int)$chairman->id !== (int)$actor->id) {
+                $recipients->push([
+                    'id' => (string)$chairman->id,
+                    'name' => $chairman->name,
+                    'role' => 'Chairman',
+                    'is_assigned_coordinator' => false,
+                ]);
+            }
+        } elseif ($actor->hasRole('Coordinator')) {
+            $deptOffice = \App\Models\User::role('Department Office')->where('department_id', $deptId)->first();
+            if ($deptOffice) {
+                $recipients->push([
+                    'id' => (string)$deptOffice->id,
+                    'name' => $deptOffice->name,
+                    'role' => 'Department Office',
+                ]);
+            }
+            $chairman = \App\Models\User::role('Chairman')->where('department_id', $deptId)->first() ?? \App\Models\User::role('Chairman')->first();
+            if ($chairman && (int)$chairman->id !== (int)$actor->id) {
+                $recipients->push([
+                    'id' => (string)$chairman->id,
+                    'name' => $chairman->name,
+                    'role' => 'Chairman',
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'recipients' => $recipients->values()->all(),
+                'has_assigned_coordinator' => $assignedCoord !== null,
+                'assigned_coordinator' => $assignedCoord ? [
+                    'id' => (string)$assignedCoord->id,
+                    'name' => $assignedCoord->name,
+                ] : null,
+                'message' => $assignedCoord === null ? 'No Coordinator is currently assigned to this batch.' : null,
+            ],
+        ]);
     }
 }

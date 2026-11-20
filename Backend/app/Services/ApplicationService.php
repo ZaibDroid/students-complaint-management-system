@@ -228,6 +228,22 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
 
     public function forward(User $actor, Application $application, User $assignTo, ?string $notes = null): Application
     {
+        if ($actor->hasAnyRole(['Batch Adviser', 'Batch Advisor'])) {
+            if (!$application->isAdviserAuthorized($actor)) {
+                throw new \App\Exceptions\ApiException('Unauthorized: You are not authorized to forward complaints for this section or batch.', 403);
+            }
+
+            if ($assignTo->hasRole('Coordinator')) {
+                $assignedCoordinator = $application->getAssignedCoordinator();
+                if (!$assignedCoordinator) {
+                    throw new \App\Exceptions\ApiException('No Coordinator is currently assigned to this batch.', 422);
+                }
+                if ((int)$assignTo->id !== (int)$assignedCoordinator->id) {
+                    throw new \App\Exceptions\ApiException('Complaints can only be forwarded to the Coordinator assigned to this batch.', 422);
+                }
+            }
+        }
+
         return DB::transaction(function () use ($actor, $application, $assignTo, $notes) {
             $lockedApplication = $this->repository->lockForUpdate($application->id);
             if (!$lockedApplication->isValidTransition(Application::STATUS_FORWARDED)) {

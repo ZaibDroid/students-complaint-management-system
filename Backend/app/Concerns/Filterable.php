@@ -24,6 +24,8 @@ trait Filterable
 
             if (method_exists($this, 'scope' . ucfirst($field))) {
                 $query->{$field}($value);
+            } elseif (is_array($value)) {
+                $query->whereIn($field, $value);
             } else {
                 $query->where($field, $value);
             }
