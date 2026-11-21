@@ -23,6 +23,7 @@ class BatchResource extends JsonResource
             'section_details' => SectionResource::collection($this->whenLoaded('sections')),
             'start_year' => $this->start_year,
             'end_year' => $this->end_year,
+            'department_id' => $this->department_id ? (string)$this->department_id : null,
             'is_active' => (bool)$this->is_active,
             'created_at' => $this->created_at?->toIso8601String(),
         ];

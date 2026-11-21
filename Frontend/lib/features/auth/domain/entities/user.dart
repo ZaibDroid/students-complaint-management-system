@@ -5,6 +5,7 @@ class User {
   final String? registrationNumber;
   final String role; // e.g. Student, Chairman, etc.
   final String? department;
+  final String? departmentId;
   final String? year;
   final String? batch;
   final String? batchId;
@@ -26,6 +27,7 @@ class User {
     this.registrationNumber,
     this.role = 'Student',
     this.department,
+    this.departmentId,
     this.year,
     this.batch,
     this.batchId,
@@ -77,6 +79,7 @@ class User {
       registrationNumber: json['registrationNumber'] ?? json['registration_number'] ?? json['reg_no'] ?? derivedRegNo,
       role: json['role'] ?? 'Student',
       department: json['department'] ?? json['department_name'] ?? json['departmentName'] ?? (json['department_details'] is Map ? json['department_details']['name'] : null),
+      departmentId: (json['department_id'] ?? json['departmentId'] ?? (json['department_details'] is Map ? json['department_details']['id'] : null))?.toString(),
       year: json['year'] ?? json['semester'] ?? (json['current_semester'] != null ? 'Semester ${json['current_semester']}' : null),
       batch: parsedBatch,
       batchId: (json['batch_id'] ?? (json['batch_details'] is Map ? json['batch_details']['id'] : null))?.toString(),

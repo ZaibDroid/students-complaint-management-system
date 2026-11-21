@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/departments.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -37,6 +38,7 @@ class _EditStaffBottomSheetState extends ConsumerState<EditStaffBottomSheet> {
   late final TextEditingController _passwordController;
 
   String? _selectedRole;
+  String? _selectedDepartmentId;
   bool _isLoading = false;
 
   @override
@@ -50,6 +52,17 @@ class _EditStaffBottomSheetState extends ConsumerState<EditStaffBottomSheet> {
     _selectedRole = widget.account['role'];
     if (!kStaffRoles.contains(_selectedRole)) {
       _selectedRole = kStaffRoles.first;
+    }
+
+    final rawDeptId = widget.account['department_id'] ?? widget.account['departmentId'];
+    if (rawDeptId != null) {
+      _selectedDepartmentId = rawDeptId.toString();
+    } else if (widget.account['department'] != null) {
+      final deptName = widget.account['department'].toString();
+      final match = kOfficialDepartments.where((d) => d.name == deptName || deptName.contains(d.code)).firstOrNull;
+      if (match != null) {
+        _selectedDepartmentId = match.id;
+      }
     }
   }
 
@@ -74,12 +87,15 @@ class _EditStaffBottomSheetState extends ConsumerState<EditStaffBottomSheet> {
 
     try {
       final userId = (widget.account['id'] ?? '').toString();
+      final deptObj = kOfficialDepartments.where((d) => d.id == _selectedDepartmentId).firstOrNull;
       await ref.read(apiAuthRepositoryProvider).updateStaffAccount(
         userId,
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         role: _selectedRole!,
-        phone: _phoneController.text.trim().isNotEmpty ? _phoneController.text.trim() : null,
+        phone: _selectedRole == 'Chairman' ? null : (_phoneController.text.trim().isNotEmpty ? _phoneController.text.trim() : null),
+        departmentId: _selectedRole == 'Chairman' ? _selectedDepartmentId : null,
+        department: _selectedRole == 'Chairman' ? deptObj?.name : null,
         password: _passwordController.text.isNotEmpty ? _passwordController.text : null,
       );
 
@@ -177,13 +193,32 @@ class _EditStaffBottomSheetState extends ConsumerState<EditStaffBottomSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              AppTextField(
-                controller: _phoneController,
-                labelText: "Phone Number (Optional)",
-                keyboardType: TextInputType.phone,
-                prefixIcon: const Icon(Icons.phone_outlined),
-              ),
+              if (_selectedRole == 'Chairman') ...[
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  initialValue: _selectedDepartmentId,
+                  items: kOfficialDepartments.map((dept) => DropdownMenuItem(
+                    value: dept.id,
+                    child: Text(dept.name, overflow: TextOverflow.ellipsis),
+                  )).toList(),
+                  onChanged: (val) => setState(() => _selectedDepartmentId = val),
+                  decoration: const InputDecoration(
+                    labelText: 'Department',
+                    prefixIcon: Icon(Icons.business_outlined),
+                  ),
+                  validator: (val) => _selectedRole == 'Chairman' && val == null ? 'Department is required for Chairman' : null,
+                ),
+              ],
+              if (_selectedRole != 'Chairman') ...[
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: _phoneController,
+                  labelText: "Phone Number (Optional)",
+                  keyboardType: TextInputType.phone,
+                  prefixIcon: const Icon(Icons.phone_outlined),
+                ),
+              ],
               const SizedBox(height: 16),
               AppTextField(
                 controller: _passwordController,

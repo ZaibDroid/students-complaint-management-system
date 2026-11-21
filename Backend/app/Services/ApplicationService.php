@@ -179,7 +179,7 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
 
             $data['student_id'] = $student->id;
             if (\Illuminate\Support\Facades\Schema::hasColumn('applications', 'department_id')) {
-                $data['department_id'] = $student->department_id ?? \App\Models\Department::value('id');
+                $data['department_id'] = $student->department_id;
             }
             $data['status'] = 'pending';
             $data['assigned_to_id'] = $adviserId;
@@ -228,6 +228,12 @@ class ApplicationService extends BaseService implements ApplicationServiceInterf
 
     public function forward(User $actor, Application $application, User $assignTo, ?string $notes = null): Application
     {
+        if (!empty($application->department_id) && !empty($assignTo->department_id)) {
+            if ((int)$application->department_id !== (int)$assignTo->department_id && !$assignTo->hasAnyRole(['Admin', 'Dean', 'Vice Chancellor'])) {
+                throw new \App\Exceptions\ApiException('Complaints cannot be forwarded across departments.', 422);
+            }
+        }
+
         if ($actor->hasAnyRole(['Batch Adviser', 'Batch Advisor'])) {
             if (!$application->isAdviserAuthorized($actor)) {
                 throw new \App\Exceptions\ApiException('Unauthorized: You are not authorized to forward complaints for this section or batch.', 403);

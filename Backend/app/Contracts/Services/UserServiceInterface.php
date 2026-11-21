@@ -26,4 +26,12 @@ interface UserServiceInterface
     public function assignSections(User $user, array $sectionIds): User;
 
     public function updateCrStatus(User $user, bool $isCr): User;
+
+    public function replaceChairman(User $oldChairman, User $replacementChairman): void;
+
+    public function getChairmanReplacementCandidates(User $chairman): array;
+
+    public function updateStudent(User $student, array $data): User;
+
+    public function deleteStudent(User $student): void;
 }

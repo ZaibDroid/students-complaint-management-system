@@ -6,6 +6,7 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/registration_page.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/admin/presentation/pages/admin_access_page.dart';
+import '../../features/admin/presentation/pages/student_accounts_page.dart';
 import '../../features/admin/presentation/pages/chairman_dashboard_page.dart';
 import '../../features/admin/presentation/pages/adviser_dashboard_page.dart';
 import '../../features/dashboard/presentation/pages/student_dashboard_page.dart';
@@ -103,6 +104,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/dashboard/admin/access',
             builder: (context, state) => const AdminAccessPage(),
+          ),
+          GoRoute(
+            path: '/dashboard/admin/students',
+            builder: (context, state) => const StudentAccountsPage(),
           ),
           GoRoute(
             path: '/dashboard/admin/notices',

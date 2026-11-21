@@ -199,7 +199,7 @@ class ApplicationController extends BaseApiController
             }
 
             // Chairman
-            $chairman = \App\Models\User::role('Chairman')->where('department_id', $deptId)->first() ?? \App\Models\User::role('Chairman')->first();
+            $chairman = $deptId ? \App\Models\User::role('Chairman')->where('department_id', $deptId)->first() : null;
             if ($chairman && (int)$chairman->id !== (int)$actor->id) {
                 $recipients->push([
                     'id' => (string)$chairman->id,
@@ -209,7 +209,7 @@ class ApplicationController extends BaseApiController
                 ]);
             }
         } elseif ($actor->hasRole('Coordinator')) {
-            $deptOffice = \App\Models\User::role('Department Office')->where('department_id', $deptId)->first();
+            $deptOffice = $deptId ? \App\Models\User::role('Department Office')->where('department_id', $deptId)->first() : null;
             if ($deptOffice) {
                 $recipients->push([
                     'id' => (string)$deptOffice->id,
@@ -217,7 +217,7 @@ class ApplicationController extends BaseApiController
                     'role' => 'Department Office',
                 ]);
             }
-            $chairman = \App\Models\User::role('Chairman')->where('department_id', $deptId)->first() ?? \App\Models\User::role('Chairman')->first();
+            $chairman = $deptId ? \App\Models\User::role('Chairman')->where('department_id', $deptId)->first() : null;
             if ($chairman && (int)$chairman->id !== (int)$actor->id) {
                 $recipients->push([
                     'id' => (string)$chairman->id,

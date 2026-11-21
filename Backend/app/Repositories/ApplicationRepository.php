@@ -76,11 +76,13 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
                 }
             }
         } elseif ($user->hasAnyRole(['Chairman', 'Office Staff'])) {
-            $deptId = $user->department_id ?: \App\Models\Department::first()?->id;
+            $deptId = $user->department_id;
             $query->where(function ($q) use ($user, $deptId) {
                 $q->where('assigned_to_id', $user->id);
                 if ($deptId) {
                     $q->orWhere('department_id', $deptId);
+                } else {
+                    $q->whereRaw('1 = 0');
                 }
             });
         }

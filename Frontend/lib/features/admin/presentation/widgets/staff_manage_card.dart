@@ -5,12 +5,14 @@ class StaffManageCard extends StatelessWidget {
   final Map<String, dynamic> account;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final bool showDelete;
 
   const StaffManageCard({
     super.key,
     required this.account,
     required this.onEdit,
     required this.onDelete,
+    this.showDelete = true,
   });
 
   @override
@@ -98,17 +100,19 @@ class StaffManageCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton.icon(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete_outline, size: 16),
-                  label: const Text('Delete'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                if (showDelete) ...[
+                  const SizedBox(width: 10),
+                  ElevatedButton.icon(
+                    onPressed: onDelete,
+                    icon: const Icon(Icons.delete_outline, size: 16),
+                    label: const Text('Delete'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ],

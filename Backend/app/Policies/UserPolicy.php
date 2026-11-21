@@ -8,6 +8,10 @@ class UserPolicy
 {
     public function before(User $authenticatedUser, string $ability): ?bool
     {
+        if (in_array($ability, ['delete', 'deleteStaff', 'destroy', 'deleteStudent'], true)) {
+            return null;
+        }
+
         if ($authenticatedUser->hasRole('Admin')) {
             return true;
         }
@@ -67,7 +71,36 @@ class UserPolicy
             return false;
         }
 
+        // Admin can delete staff, but not the last active Admin account
+        if ($authenticatedUser->hasRole('Admin')) {
+            if ($targetUser->hasRole('Admin')) {
+                $activeAdminCount = User::role('Admin')->count();
+                if ($activeAdminCount <= 1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         return $this->updateStaff($authenticatedUser, $targetUser);
+    }
+
+    public function deleteStudent(User $authenticatedUser, User $targetUser): bool
+    {
+        if (!$authenticatedUser->hasRole('Admin')) {
+            return false;
+        }
+
+        return $targetUser->hasRole('Student');
+    }
+
+    public function updateStudent(User $authenticatedUser, User $targetUser): bool
+    {
+        if (!$authenticatedUser->hasRole('Admin')) {
+            return false;
+        }
+
+        return $targetUser->hasRole('Student');
     }
 
     public function assignRole(User $authenticatedUser): bool

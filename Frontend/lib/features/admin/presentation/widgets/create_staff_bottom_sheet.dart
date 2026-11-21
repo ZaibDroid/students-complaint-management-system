@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/departments.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -31,6 +32,7 @@ class _CreateStaffBottomSheetState extends ConsumerState<CreateStaffBottomSheet>
   final _passwordController = TextEditingController();
 
   String? _selectedRole;
+  String? _selectedDepartmentId;
   bool _isLoading = false;
 
   @override
@@ -57,11 +59,14 @@ class _CreateStaffBottomSheetState extends ConsumerState<CreateStaffBottomSheet>
     setState(() => _isLoading = true);
 
     try {
+      final deptObj = kOfficialDepartments.where((d) => d.id == _selectedDepartmentId).firstOrNull;
       await ref.read(apiAuthRepositoryProvider).createStaffAccount(
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text,
         role: _selectedRole!,
+        departmentId: _selectedRole == 'Chairman' ? _selectedDepartmentId : null,
+        department: _selectedRole == 'Chairman' ? deptObj?.name : null,
       );
 
       ref.invalidate(staffAccountsProvider);
@@ -139,6 +144,23 @@ class _CreateStaffBottomSheetState extends ConsumerState<CreateStaffBottomSheet>
                     ),
                     validator: (val) => val == null ? 'Role is required' : null,
                   ),
+                  if (_selectedRole == 'Chairman') ...[
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      initialValue: _selectedDepartmentId,
+                      items: kOfficialDepartments.map((dept) => DropdownMenuItem(
+                        value: dept.id,
+                        child: Text(dept.name, overflow: TextOverflow.ellipsis),
+                      )).toList(),
+                      onChanged: (val) => setState(() => _selectedDepartmentId = val),
+                      decoration: const InputDecoration(
+                        labelText: 'Department *',
+                        prefixIcon: Icon(Icons.business_outlined),
+                      ),
+                      validator: (val) => _selectedRole == 'Chairman' && val == null ? 'Department is required for Chairman' : null,
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   AppTextField(
                     controller: _nameController,

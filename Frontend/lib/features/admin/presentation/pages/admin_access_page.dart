@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../providers/staff_accounts_provider.dart';
 import '../widgets/create_staff_bottom_sheet.dart';
@@ -58,6 +59,11 @@ class _AdminAccessPageState extends ConsumerState<AdminAccessPage>
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.school_outlined),
+            tooltip: 'Student Accounts',
+            onPressed: () => context.push('/dashboard/admin/students'),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Reload Accounts',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../auth/presentation/providers/auth_provider.dart';
 import '../../providers/staff_accounts_provider.dart';
 import '../delete_staff_dialog.dart';
 import '../edit_staff_bottom_sheet.dart';
@@ -15,6 +16,8 @@ class ManageAccountsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(authStateProvider).value;
+
     return RefreshIndicator(
       onRefresh: () async {
         ref.invalidate(staffAccountsProvider);
@@ -48,10 +51,12 @@ class ManageAccountsTab extends ConsumerWidget {
               itemCount: allAccounts.length,
               itemBuilder: (context, index) {
                 final account = allAccounts[index];
+                final isSelf = currentUser != null && account['id']?.toString() == currentUser.id.toString();
                 return StaffManageCard(
                   account: account,
+                  showDelete: !isSelf,
                   onEdit: () => showEditStaffBottomSheet(context, account),
-                  onDelete: () => showDeleteStaffDialog(
+                  onDelete: isSelf ? () {} : () => showDeleteStaffDialog(
                     context: context,
                     ref: ref,
                     account: account,

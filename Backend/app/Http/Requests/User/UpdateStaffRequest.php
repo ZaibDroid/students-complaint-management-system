@@ -127,6 +127,18 @@ class UpdateStaffRequest extends BaseApiRequest
             $targetUser = $this->route('user');
             $requestedRole = (string)$this->input('role', $targetUser?->roles->first()?->name ?? '');
 
+            if ($targetUser && $targetUser->hasRole('Chairman') && $this->has('department_id')) {
+                $newDeptId = (int)$this->input('department_id');
+                if ($targetUser->department_id && (int)$targetUser->department_id !== $newDeptId) {
+                    $hasActiveRecords = \App\Models\Application::where('assigned_to_id', $targetUser->id)
+                        ->whereNotIn('status', ['resolved', 'rejected'])
+                        ->exists();
+                    if ($hasActiveRecords) {
+                        $validator->errors()->add('department_id', 'Cannot change department for a Chairman with active assigned complaints. Resolve or reassign complaints first.');
+                    }
+                }
+            }
+
             if ($requestedRole === 'Coordinator') {
                 if ($this->has('batch_id') || $this->has('batch')) {
                     $batchId = $this->input('batch_id');

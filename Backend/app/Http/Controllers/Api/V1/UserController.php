@@ -179,4 +179,45 @@ class UserController extends BaseApiController
 
         return $this->successResponse(new UserResource($user), 'User status updated successfully');
     }
+
+    public function replaceChairman(Request $request, User $user): JsonResponse
+    {
+        $this->authorize('deleteStaff', $user);
+
+        $validated = $request->validate([
+            'replacement_chairman_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        $replacementUser = User::findOrFail($validated['replacement_chairman_id']);
+        $this->userService->replaceChairman($user, $replacementUser);
+
+        return $this->successResponse(null, 'Chairman replaced and leadership transferred successfully');
+    }
+
+    public function getChairmanReplacementCandidates(User $user): JsonResponse
+    {
+        $this->authorize('view', $user);
+
+        $candidates = $this->userService->getChairmanReplacementCandidates($user);
+
+        return $this->successResponse($candidates, 'Replacement candidates retrieved successfully');
+    }
+
+    public function updateStudent(Request $request, User $user): JsonResponse
+    {
+        $this->authorize('updateStudent', $user);
+
+        $updatedStudent = $this->userService->updateStudent($user, $request->all());
+
+        return $this->successResponse(new UserResource($updatedStudent), 'Student account updated successfully');
+    }
+
+    public function deleteStudent(User $user): JsonResponse
+    {
+        $this->authorize('deleteStudent', $user);
+
+        $this->userService->deleteStudent($user);
+
+        return $this->successResponse(null, 'Student account deleted successfully');
+    }
 }

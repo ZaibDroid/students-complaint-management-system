@@ -45,7 +45,12 @@ class NoticeRepository extends BaseRepository implements NoticeRepositoryInterfa
                           }
                       });
                   });
-        } elseif (!$user->hasRole('Admin')) {
+        } elseif ($user->hasRole('Admin')) {
+            // Admin must only see university-wide or admin-specific notices, NOT Chairman departmental notices
+            $query->whereDoesntHave('sender', function ($sq) {
+                $sq->role('Chairman');
+            });
+        } else {
             if ($user->department_id) {
                 $query->where(function ($q) use ($user) {
                     $q->whereNull('department_id')

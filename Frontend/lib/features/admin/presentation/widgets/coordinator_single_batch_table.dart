@@ -6,7 +6,12 @@ import '../../../../features/batch/data/repositories/batch_repository.dart';
 import '../../../../features/batch/domain/entities/batch_model.dart';
 import '../providers/adviser_assignment_provider.dart';
 import 'assign_section_adviser_dialog.dart';
+import 'coordinator_batch_summary_card.dart';
+import 'coordinator_section_row.dart';
+import 'uninitialized_batch_view.dart';
+import 'add_section_dialog.dart';
 
+/// Modular Coordinator Single Batch Table (My Batch view)
 class CoordinatorSingleBatchTable extends ConsumerWidget {
   const CoordinatorSingleBatchTable({super.key});
 
@@ -55,10 +60,12 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
           }).firstOrNull;
         }
 
-        // Fallback: If coordinator has only one batch in system or user has no batch assigned
+        // Coordinator has an assigned batch name, but no matching BatchModel yet in DB
         if (myBatch == null && user?.batch != null && user!.batch!.isNotEmpty) {
-          // Coordinator has an assigned batch name, but no matching BatchModel yet in DB
-          return _buildUninitializedBatchView(context, ref, user.batch!);
+          return UninitializedBatchView(
+            batchYear: user.batch!,
+            onInitialize: () => _initializeBatch(context, ref, user.batch!),
+          );
         }
 
         if (myBatch == null) {
@@ -126,75 +133,11 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             children: [
-              // Header Summary Card
-              Container(
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF172548), Color(0xFF253B73)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(Icons.school, color: Colors.white, size: 22),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'ASSIGNED BATCH',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                Text(
-                                  'Batch $cleanBatchYear',
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        _buildSummaryItem('Total Sections', '$totalSections', Icons.grid_view_rounded),
-                        Container(width: 1, height: 32, color: Colors.white24, margin: const EdgeInsets.symmetric(horizontal: 16)),
-                        _buildSummaryItem('Advisers Assigned', '$assignedCount', Icons.check_circle_outline),
-                        Container(width: 1, height: 32, color: Colors.white24, margin: const EdgeInsets.symmetric(horizontal: 16)),
-                        _buildSummaryItem('Unassigned', '${totalSections - assignedCount}', Icons.warning_amber_rounded),
-                      ],
-                    ),
-                  ],
-                ),
+              CoordinatorBatchSummaryCard(
+                batchYear: cleanBatchYear,
+                totalSections: totalSections,
+                assignedCount: assignedCount,
+                unassignedCount: totalSections - assignedCount,
               ),
               const SizedBox(height: 24),
 
@@ -237,7 +180,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                             ],
                           ),
                           ElevatedButton.icon(
-                            onPressed: () => _showAddSectionDialog(context, ref, batch),
+                            onPressed: () => _showAddSection(context, ref, batch),
                             icon: const Icon(Icons.add, size: 16),
                             label: const Text('Add Section', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                             style: ElevatedButton.styleFrom(
@@ -267,7 +210,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                               ),
                               const SizedBox(height: 8),
                               TextButton.icon(
-                                onPressed: () => _showAddSectionDialog(context, ref, batch),
+                                onPressed: () => _showAddSection(context, ref, batch),
                                 icon: const Icon(Icons.add),
                                 label: const Text('Add First Section'),
                               ),
@@ -278,7 +221,7 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                     else
                       Column(
                         children: [
-                          // Subheader: Table Column Headers
+                          // Column Headers
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
@@ -330,135 +273,25 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
                                 adviserEmail = adviserUser?.email;
                               }
 
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                color: sIdx.isEven ? Colors.white : const Color(0xFFFBFBFD),
-                                child: Row(
-                                  children: [
-                                    // Section Badge
-                                    Container(
-                                      width: 44,
-                                      padding: const EdgeInsets.symmetric(vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF172548).withValues(alpha: 0.08),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: const Color(0xFF172548).withValues(alpha: 0.15)),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        section,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF172548),
-                                        ),
-                                      ),
+                              return CoordinatorSectionRow(
+                                section: section,
+                                isAssigned: isAssigned,
+                                adviserName: adviserName,
+                                adviserEmail: adviserEmail,
+                                isEvenRow: sIdx.isEven,
+                                onAssignOrChange: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AssignSectionAdviserDialog(
+                                      batchName: cleanBatchYear,
+                                      sectionName: section,
+                                      currentAdviserId: isAssigned ? currentAdviserId.toString() : null,
+                                      sectionId: secDetail?.id,
+                                      batchId: batch.id,
                                     ),
-                                    const SizedBox(width: 14),
-
-                                    // Adviser Details
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                isAssigned ? Icons.check_circle : Icons.warning_amber_rounded,
-                                                size: 15,
-                                                color: isAssigned ? Colors.green.shade600 : Colors.orange.shade700,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Expanded(
-                                                child: Text(
-                                                  adviserName,
-                                                  style: TextStyle(
-                                                    fontWeight: isAssigned ? FontWeight.bold : FontWeight.w500,
-                                                    fontSize: 14,
-                                                    color: isAssigned ? const Color(0xFF0F172A) : Colors.orange.shade800,
-                                                    fontStyle: isAssigned ? FontStyle.normal : FontStyle.italic,
-                                                  ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          if (isAssigned && adviserEmail != null && adviserEmail.isNotEmpty)
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 21, top: 2),
-                                              child: Text(
-                                                adviserEmail,
-                                                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-
-                                    // Action Button: Assign / Change
-                                    isAssigned
-                                        ? OutlinedButton.icon(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (ctx) => AssignSectionAdviserDialog(
-                                                  batchName: cleanBatchYear,
-                                                  sectionName: section,
-                                                  currentAdviserId: currentAdviserId.toString(),
-                                                  sectionId: secDetail?.id,
-                                                  batchId: batch.id,
-                                                ),
-                                              );
-                                            },
-                                            icon: const Icon(Icons.edit_outlined, size: 14),
-                                            label: const Text('Change', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                                            style: OutlinedButton.styleFrom(
-                                              foregroundColor: const Color(0xFF172548),
-                                              side: BorderSide(color: Colors.grey.shade300),
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                            ),
-                                          )
-                                        : IconButton(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (ctx) => AssignSectionAdviserDialog(
-                                                  batchName: cleanBatchYear,
-                                                  sectionName: section,
-                                                  currentAdviserId: null,
-                                                  sectionId: secDetail?.id,
-                                                  batchId: batch.id,
-                                                ),
-                                              );
-                                            },
-                                            icon: const Icon(Icons.person_add_alt_1, size: 16),
-                                            tooltip: 'Assign',
-                                            style: IconButton.styleFrom(
-                                              backgroundColor: const Color(0xFF172548),
-                                              foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.all(7),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                            ),
-                                          ),
-
-                                    // Remove Section Button
-                                    const SizedBox(width: 4),
-                                    IconButton(
-                                      icon: Icon(Icons.delete_outline, size: 18, color: Colors.red.shade400),
-                                      tooltip: 'Remove Section $section',
-                                      onPressed: () => _confirmRemoveSection(context, ref, batch, section),
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                                    ),
-                                  ],
-                                ),
+                                  );
+                                },
+                                onRemoveSection: () => _confirmRemoveSection(context, ref, batch, section),
                               );
                             },
                           ),
@@ -474,120 +307,26 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryItem(String label, String value, IconData icon) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: Colors.white70),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(fontSize: 10, color: Colors.white70, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ],
-      ),
-    );
+  void _initializeBatch(BuildContext context, WidgetRef ref, String batchYear) async {
+    try {
+      await ref.read(batchRepositoryProvider).addBatch(name: batchYear, sections: ['A', 'B']);
+      ref.invalidate(batchesStreamProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Batch $batchYear initialized with sections A and B!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to initialize batch: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
-  Widget _buildUninitializedBatchView(BuildContext context, WidgetRef ref, String batchYear) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF172548).withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.class_outlined, size: 48, color: Color(0xFF172548)),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Batch $batchYear',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF172548)),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Your assigned batch has not been initialized with sections yet.\nClick below to initialize Batch $batchYear.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await ref.read(batchRepositoryProvider).addBatch(name: batchYear, sections: ['A', 'B']);
-                  ref.invalidate(batchesStreamProvider);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Batch $batchYear initialized with sections A and B!'), backgroundColor: Colors.green),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to initialize batch: $e'), backgroundColor: Colors.red),
-                    );
-                  }
-                }
-              },
-              icon: const Icon(Icons.playlist_add),
-              label: const Text('Initialize Batch Sections', style: TextStyle(fontWeight: FontWeight.bold)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF172548),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showAddSectionDialog(BuildContext context, WidgetRef ref, BatchModel batch) async {
-    final controller = TextEditingController();
-    final newSection = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Add Section to Batch ${batch.name}'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.characters,
-          decoration: const InputDecoration(
-            labelText: 'Section Letter',
-            hintText: 'e.g. C',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim().toUpperCase()),
-            child: const Text('Add Section'),
-          ),
-        ],
-      ),
-    );
+  void _showAddSection(BuildContext context, WidgetRef ref, BatchModel batch) async {
+    final newSection = await AddSectionDialog.show(context, batch.name);
 
     if (newSection != null && newSection.isNotEmpty) {
       final cleanSec = newSection.replaceAll(RegExp(r'^SECTION\s+', caseSensitive: false), '').trim();
@@ -667,4 +406,3 @@ class CoordinatorSingleBatchTable extends ConsumerWidget {
     }
   }
 }
-

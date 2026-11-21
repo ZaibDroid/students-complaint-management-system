@@ -20,7 +20,7 @@ class UserService implements UserServiceInterface
         $this->userRepository = $userRepository;
     }
 
-    protected function resolveBatchAndSection(array &$data): ?int
+    protected function resolveBatchAndSection(array &$data, ?User $user = null): ?int
     {
         $batchName = $data['batch'] ?? null;
         $sectionName = $data['section'] ?? null;
@@ -76,13 +76,15 @@ class UserService implements UserServiceInterface
                 ->first();
 
             if (!$batch) {
-                $batchDeptId = $data['department_id'] ?? \App\Models\Department::first()?->id;
-                $batch = \App\Models\Batch::create([
-                    'name' => $canonicalName,
-                    'start_year' => $startYear ?: $batchYear,
-                    'end_year' => $endYear ?: ($batchYear + 4),
-                    'department_id' => $batchDeptId,
-                ]);
+                $batchDeptId = $data['department_id'] ?? $user?->department_id;
+                if ($batchDeptId) {
+                    $batch = \App\Models\Batch::create([
+                        'name' => $canonicalName,
+                        'start_year' => $startYear ?: $batchYear,
+                        'end_year' => $endYear ?: ($batchYear + 4),
+                        'department_id' => $batchDeptId,
+                    ]);
+                }
             }
         }
 
@@ -143,8 +145,18 @@ class UserService implements UserServiceInterface
             $role = $data['role'] ?? 'Office Staff';
             unset($data['role']);
 
+            $currentUser = auth('sanctum')->user() ?? auth()->user();
+            if ($currentUser && ($currentUser->hasRole('Chairman') || $currentUser->hasRole('Coordinator'))) {
+                $data['department_id'] = $currentUser->department_id;
+            }
+
             if (empty($data['department_id'])) {
-                $data['department_id'] = \App\Models\Department::first()?->id ?? 1;
+                if ($role === 'Chairman') {
+                    throw ValidationException::withMessages([
+                        'department_id' => ['Department selection is mandatory for Chairman accounts.'],
+                    ]);
+                }
+                $data['department_id'] = null;
             }
 
             $assignedSections = $data['assigned_sections'] ?? [];
@@ -226,7 +238,7 @@ class UserService implements UserServiceInterface
             unset($data['assigned_sections']);
 
             $isCoordinator = ($effectiveRole === 'Coordinator');
-            $createdSectionId = $this->resolveBatchAndSection($data);
+            $createdSectionId = $this->resolveBatchAndSection($data, $user);
 
             if ($isCoordinator) {
                 if (array_key_exists('batch_ids', $data) && is_array($data['batch_ids'])) {
@@ -266,6 +278,7 @@ class UserService implements UserServiceInterface
                         }
                         if ($targetBatch) {
                             $targetBatch->update(['coordinator_id' => $user->id]);
+                            $data['batch_id'] = $targetBatch->id;
                         }
                     } else {
                         // Batch released
@@ -310,12 +323,175 @@ class UserService implements UserServiceInterface
 
     public function deleteStaff(User $user): void
     {
+        $currentUserId = auth('sanctum')->id() ?? auth()->id();
+        if ($currentUserId && (int)$currentUserId === (int)$user->id) {
+            throw ValidationException::withMessages([
+                'user' => ['You cannot delete your own account.'],
+            ]);
+        }
+
+        if ($user->hasRole('Admin')) {
+            $activeAdminCount = User::role('Admin')->count();
+            if ($activeAdminCount <= 1) {
+                throw ValidationException::withMessages([
+                    'user' => ['Cannot delete the last active Admin account. There must always be at least one active Admin in the system.'],
+                ]);
+            }
+        }
+
+        if ($user->hasRole('Chairman')) {
+            throw ValidationException::withMessages([
+                'chairman' => ['A Chairman cannot be deleted without selecting a replacement Chairman from the same department. Please use the Chairman replacement endpoint.'],
+            ]);
+        }
+
         \App\Models\Batch::where('coordinator_id', $user->id)->update(['coordinator_id' => null]);
         $user->tokens()->delete();
         if (method_exists($user, 'roles')) {
             $user->roles()->detach();
         }
         $user->forceDelete();
+    }
+
+    public function replaceChairman(User $oldChairman, User $replacementChairman): void
+    {
+        if (!$oldChairman->hasRole('Chairman')) {
+            throw ValidationException::withMessages([
+                'chairman' => ['The specified user is not a Chairman.'],
+            ]);
+        }
+
+        if ((int)$oldChairman->id === (int)$replacementChairman->id) {
+            throw ValidationException::withMessages([
+                'replacement_chairman_id' => ['Replacement Chairman cannot be the outgoing Chairman.'],
+            ]);
+        }
+
+        if (empty($oldChairman->department_id) || empty($replacementChairman->department_id) || (int)$oldChairman->department_id !== (int)$replacementChairman->department_id) {
+            throw ValidationException::withMessages([
+                'replacement_chairman_id' => ['Replacement Chairman must belong to the same department as the outgoing Chairman.'],
+            ]);
+        }
+
+        DB::transaction(function () use ($oldChairman, $replacementChairman) {
+            // 1. Reassign active complaints assigned to old Chairman
+            $activeApplications = \App\Models\Application::where('assigned_to_id', $oldChairman->id)
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($activeApplications as $app) {
+                $app->assigned_to_id = $replacementChairman->id;
+                $app->save();
+
+                \App\Models\ApplicationTimeline::create([
+                    'application_id' => $app->id,
+                    'action' => 'Chairman Succession',
+                    'from_user_id' => $oldChairman->id,
+                    'to_user_id' => $replacementChairman->id,
+                    'notes' => "Department leadership transferred from {$oldChairman->name} to {$replacementChairman->name}",
+                ]);
+            }
+
+            // 2. Transfer Chairman role completely
+            $replacementChairman->assignRole('Chairman');
+
+            // 3. Deactivate/soft-delete outgoing Chairman
+            $oldChairman->tokens()->delete();
+            $oldChairman->roles()->detach();
+            $oldChairman->delete();
+        });
+    }
+
+    public function getChairmanReplacementCandidates(User $chairman): array
+    {
+        if (empty($chairman->department_id)) {
+            return [];
+        }
+
+        return User::where('department_id', $chairman->department_id)
+            ->where('id', '!=', $chairman->id)
+            ->whereDoesntHave('roles', function ($q) {
+                $q->where('name', 'Student');
+            })
+            ->select(['id', 'name', 'email', 'department_id'])
+            ->get()
+            ->toArray();
+    }
+
+    public function updateStudent(User $student, array $data): User
+    {
+        if (!$student->hasRole('Student')) {
+            throw ValidationException::withMessages([
+                'user' => ['Only student accounts can be updated via this endpoint.'],
+            ]);
+        }
+
+        return DB::transaction(function () use ($student, $data) {
+            if (!empty($data['password'])) {
+                if (strlen($data['password']) < 6) {
+                    throw ValidationException::withMessages([
+                        'password' => ['The password must be at least 6 characters.'],
+                    ]);
+                }
+                $data['password'] = Hash::make($data['password']);
+                unset($data['assigned_password']);
+            } else {
+                unset($data['password'], $data['assigned_password']);
+            }
+
+            if (!empty($data['email'])) {
+                if (!preg_match('/^[a-zA-Z0-9._%+-]+@uetmardan\.edu\.pk$/i', $data['email'])) {
+                    throw ValidationException::withMessages([
+                        'email' => ['University email must end with @uetmardan.edu.pk.'],
+                    ]);
+                }
+                $existing = User::where('email', $data['email'])->where('id', '!=', $student->id)->exists();
+                if ($existing) {
+                    throw ValidationException::withMessages([
+                        'email' => ['The email has already been taken.'],
+                    ]);
+                }
+            }
+
+            $deptId = $data['department_id'] ?? $student->department_id;
+            $batchId = $data['batch_id'] ?? $student->batch_id;
+            $sectionId = $data['section_id'] ?? $student->section_id;
+
+            if (!empty($data['department_id']) && !empty($data['batch_id'])) {
+                $batch = \App\Models\Batch::find((int)$batchId);
+                if (!$batch || (int)$batch->department_id !== (int)$deptId) {
+                    throw ValidationException::withMessages([
+                        'batch_id' => ['The selected batch does not belong to the selected department.'],
+                    ]);
+                }
+            }
+
+            if (!empty($data['batch_id']) && !empty($data['section_id'])) {
+                $section = \App\Models\Section::find((int)$sectionId);
+                if (!$section || (int)$section->batch_id !== (int)$batchId) {
+                    throw ValidationException::withMessages([
+                        'section_id' => ['The selected section does not belong to the selected batch.'],
+                    ]);
+                }
+            }
+
+            $student->fill($data);
+            $student->save();
+
+            return $student->fresh(['department', 'batch', 'section', 'roles']);
+        });
+    }
+
+    public function deleteStudent(User $student): void
+    {
+        if (!$student->hasRole('Student')) {
+            throw ValidationException::withMessages([
+                'user' => ['Only student accounts can be deleted via this endpoint.'],
+            ]);
+        }
+
+        $student->tokens()->delete();
+        $student->delete();
     }
 
     public function listUsers(array $filters = [], int $perPage = 15): LengthAwarePaginator

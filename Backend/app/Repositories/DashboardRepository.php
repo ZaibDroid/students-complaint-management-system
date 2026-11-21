@@ -177,7 +177,9 @@ class DashboardRepository implements DashboardRepositoryInterface
         $metrics['batches'] = Batch::count();
         $metrics['sections'] = Section::count();
         $metrics['applications'] = Application::count();
-        $metrics['notices'] = Notice::count();
+        $metrics['notices'] = Notice::whereDoesntHave('sender', function ($sq) {
+            $sq->role('Chairman');
+        })->count();
         $metrics['notifications'] = Notification::count();
 
         $registrationTrend = User::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as total'))

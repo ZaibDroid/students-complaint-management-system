@@ -33,6 +33,7 @@ class BatchModel {
   final String name;
   final List<String> sections;
   final List<BatchSectionItem> sectionItems;
+  final String? departmentId;
   final String? coordinatorId;
   final String? coordinatorName;
   final bool isCoordinatorAssigned;
@@ -42,6 +43,7 @@ class BatchModel {
     required this.name,
     required this.sections,
     this.sectionItems = const [],
+    this.departmentId,
     this.coordinatorId,
     this.coordinatorName,
     this.isCoordinatorAssigned = false,
@@ -62,6 +64,7 @@ class BatchModel {
       name: (json['name'] ?? '').toString(),
       sections: rawSections,
       sectionItems: items,
+      departmentId: (json['department_id'] ?? json['departmentId'])?.toString(),
       coordinatorId: json['coordinator_id']?.toString(),
       coordinatorName: json['coordinator_name']?.toString(),
       isCoordinatorAssigned: json['is_coordinator_assigned'] == true,

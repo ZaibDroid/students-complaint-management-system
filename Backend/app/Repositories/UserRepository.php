@@ -57,6 +57,20 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             });
         }
 
+        if (!empty($filters['search'])) {
+            $search = trim($filters['search']);
+            unset($filters['search']);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($filters['department_id'])) {
+            $query->where('department_id', (int)$filters['department_id']);
+            unset($filters['department_id']);
+        }
+
         unset($filters['per_page'], $filters['page']);
 
         if (!empty($filters) && method_exists($this->model, 'scopeFilter')) {
@@ -96,6 +110,20 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                       $sq->where('sections.id', $sId);
                   });
             });
+        }
+
+        if (!empty($filters['search'])) {
+            $search = trim($filters['search']);
+            unset($filters['search']);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($filters['department_id'])) {
+            $query->where('department_id', (int)$filters['department_id']);
+            unset($filters['department_id']);
         }
 
         unset($filters['per_page'], $filters['page']);

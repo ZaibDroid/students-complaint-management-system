@@ -43,6 +43,8 @@ class ApiAuthRepository {
     required String name,
     required String email,
     required String password,
+    String? departmentId,
+    String? department,
     String? year,
     String? batch,
     String? batchId,
@@ -57,6 +59,8 @@ class ApiAuthRepository {
       'email': email,
       'password': password,
     };
+    if (departmentId != null) body['department_id'] = departmentId;
+    if (department != null) body['department'] = department;
     if (year != null) body['year'] = year;
     if (batch != null) body['batch'] = batch;
     if (batchId != null) body['batch_id'] = batchId;
@@ -233,6 +237,63 @@ class ApiAuthRepository {
       return response['profile_image_url'];
     }
     return '';
+  }
+
+  Future<List<Map<String, dynamic>>> getChairmanCandidates(String chairmanId) async {
+    final response = await _apiClient.get('/users/chairmen/$chairmanId/replacement-candidates');
+    if (response is List) {
+      return response.map((item) => Map<String, dynamic>.from(item as Map)).toList();
+    }
+    return [];
+  }
+
+  Future<void> replaceChairman({
+    required String chairmanId,
+    required String replacementChairmanId,
+  }) async {
+    await _apiClient.post('/users/chairmen/$chairmanId/replace', body: {
+      'replacement_chairman_id': replacementChairmanId,
+    });
+  }
+
+  Future<Map<String, dynamic>> getStudents({
+    String? search,
+    String? departmentId,
+    String? batchId,
+    String? sectionId,
+    int page = 1,
+    int perPage = 15,
+  }) async {
+    final query = <String, String>{
+      'page': page.toString(),
+      'per_page': perPage.toString(),
+    };
+    if (search != null && search.isNotEmpty) query['search'] = search;
+    if (departmentId != null && departmentId.isNotEmpty) query['department_id'] = departmentId;
+    if (batchId != null && batchId.isNotEmpty) query['batch_id'] = batchId;
+    if (sectionId != null && sectionId.isNotEmpty) query['section_id'] = sectionId;
+
+    final response = await _apiClient.get('/users/students', queryParams: query);
+    if (response is List) {
+      return {
+        'items': response.map((i) => Map<String, dynamic>.from(i as Map)).toList(),
+      };
+    } else if (response is Map<String, dynamic>) {
+      final items = response['data'] is List ? (response['data'] as List).map((i) => Map<String, dynamic>.from(i as Map)).toList() : <Map<String, dynamic>>[];
+      return {
+        'items': items,
+        'meta': response['meta'],
+      };
+    }
+    return {'items': <Map<String, dynamic>>[]};
+  }
+
+  Future<void> updateStudent(String studentId, Map<String, dynamic> data) async {
+    await _apiClient.put('/users/students/$studentId', body: data);
+  }
+
+  Future<void> deleteStudent(String studentId) async {
+    await _apiClient.delete('/users/students/$studentId');
   }
 
   Future<void> logout() async {

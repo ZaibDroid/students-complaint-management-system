@@ -40,13 +40,18 @@ class AuthService implements AuthServiceInterface
                 ->first();
 
             if (!$dept) {
-                $code = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $cleanName), 0, 4));
-                $dept = \App\Models\Department::create([
-                    'name' => 'Department of ' . ucwords($cleanName),
-                    'code' => !empty($code) ? $code : 'GEN',
+                throw ValidationException::withMessages([
+                    'department_id' => ['The selected department does not exist in the official departments.'],
                 ]);
             }
             $data['department_id'] = $dept->id;
+        }
+
+        $deptId = $data['department_id'] ?? ($user ? $user->department_id : null);
+        if (!$deptId && !$user) {
+            throw ValidationException::withMessages([
+                'department_id' => ['Department selection is mandatory.'],
+            ]);
         }
 
         $batchId = $data['batch_id'] ?? ($user ? $user->batch_id : null);
@@ -103,6 +108,11 @@ class AuthService implements AuthServiceInterface
             if (!$batch || !$batch->is_active || !$batch->hasActiveCoordinator()) {
                 throw ValidationException::withMessages([
                     'batch_id' => ['The selected batch is invalid, inactive, or has no assigned Coordinator.'],
+                ]);
+            }
+            if ($deptId && (int)$batch->department_id !== (int)$deptId) {
+                throw ValidationException::withMessages([
+                    'batch_id' => ['The selected batch does not belong to the selected department.'],
                 ]);
             }
             $batchId = $batch->id;

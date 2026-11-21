@@ -29,7 +29,7 @@ class UserResource extends JsonResource
             ]];
         }
 
-        $deptName = $this->department?->name ?? ($this->relationLoaded('department') ? $this->department?->name : null) ?? $this->batch?->department?->name ?? 'Department of Computer Science';
+        $deptName = $this->department?->name ?? ($this->relationLoaded('department') ? $this->department?->name : null) ?? $this->batch?->department?->name ?? null;
         $batchName = $this->batch?->name ?? $this->batch_display;
         $sectionName = $this->section?->name ?? $this->section_display;
 
@@ -130,8 +130,8 @@ class UserResource extends JsonResource
             'profileImageUrl' => $this->profile_image_url,
             'assigned_sections' => $assignedSectionsList,
             'assignedSections' => $assignedSectionsList,
-            'assigned_password' => $resolvedAssignedPassword ?: $this->assigned_password,
-            'assignedPassword' => $resolvedAssignedPassword ?: $this->assigned_password,
+            'assigned_password' => ($this->hasRole('Student') || $roleName === 'Student') ? null : ($resolvedAssignedPassword ?: $this->assigned_password),
+            'assignedPassword' => ($this->hasRole('Student') || $roleName === 'Student') ? null : ($resolvedAssignedPassword ?: $this->assigned_password),
             'created_at' => $this->created_at?->toIso8601String(),
             'createdAt' => $this->created_at?->toIso8601String(),
         ];

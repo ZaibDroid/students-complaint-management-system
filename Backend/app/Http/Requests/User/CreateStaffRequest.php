@@ -141,6 +141,12 @@ class CreateStaffRequest extends BaseApiRequest
                 $validator->errors()->add('role', 'You are not authorized to create staff accounts.');
             }
 
+            if ($requestedRole === 'Chairman') {
+                if (empty($this->input('department_id'))) {
+                    $validator->errors()->add('department_id', 'Department selection is mandatory when creating a Chairman account.');
+                }
+            }
+
             if ($requestedRole === 'Coordinator') {
                 $batchId = $this->input('batch_id');
                 $batchStr = $this->input('batch');

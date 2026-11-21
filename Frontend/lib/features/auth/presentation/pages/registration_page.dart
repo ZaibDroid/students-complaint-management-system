@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/departments.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/utils/validators.dart';
@@ -19,9 +20,11 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  String? _selectedDepartmentId;
   String? _selectedBatchId;
   BatchModel? _selectedBatch;
   String? _selectedSectionId;
@@ -32,13 +35,20 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _passwordController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
+      if (_selectedDepartmentId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select your department')),
+        );
+        return;
+      }
       if (_selectedBatch == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select your batch')),
@@ -51,12 +61,22 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         );
         return;
       }
-      
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Passwords do not match')),
+        );
+        return;
+      }
+
+      final deptObj = kOfficialDepartments.where((d) => d.id == _selectedDepartmentId).firstOrNull;
       final formattedEmail = AppValidators.formatEmail(_emailController.text);
+
       await ref.read(authStateProvider.notifier).register(
         name: _nameController.text.trim(),
         email: formattedEmail,
         password: _passwordController.text,
+        departmentId: _selectedDepartmentId,
+        department: deptObj?.name,
         year: null,
         batch: _selectedBatch!.name,
         batchId: _selectedBatch!.id,
@@ -65,7 +85,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         phone: _phoneController.text.trim(),
         isCR: _isCR,
       );
-      
+
       if (mounted) {
         final authState = ref.read(authStateProvider);
         if (authState.hasValue && authState.value != null) {
@@ -78,14 +98,67 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           }
         } else if (authState.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration failed: ${authState.error}')),
+            SnackBar(
+              content: Text(authState.error.toString().replaceAll('Exception: ', '').replaceAll('ApiException: ', '')),
+              backgroundColor: Colors.red.shade700,
+            ),
           );
         }
       }
     }
   }
 
+  Widget _buildDepartmentDropdown() {
+    return DropdownButtonFormField<String>(
+      isExpanded: true,
+      initialValue: _selectedDepartmentId,
+      decoration: const InputDecoration(
+        labelText: 'Department *',
+        hintText: 'Select Department',
+        prefixIcon: Icon(Icons.business_outlined),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      ),
+      items: kOfficialDepartments.map((dept) {
+        return DropdownMenuItem<String>(
+          value: dept.id,
+          child: Text(
+            dept.name,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }).toList(),
+      onChanged: (val) {
+        if (val != _selectedDepartmentId) {
+          setState(() {
+            _selectedDepartmentId = val;
+            // Reset Batch and Section when Department changes
+            _selectedBatchId = null;
+            _selectedBatch = null;
+            _selectedSectionId = null;
+            _selectedSectionName = null;
+          });
+        }
+      },
+      validator: (val) => val == null || val.isEmpty ? 'Department is required' : null,
+    );
+  }
+
   Widget _buildBatchDropdown(AsyncValue<List<BatchModel>> batchesAsync) {
+    if (_selectedDepartmentId == null) {
+      return DropdownButtonFormField<String>(
+        isExpanded: true,
+        items: const [],
+        onChanged: null,
+        decoration: const InputDecoration(
+          labelText: 'Batch *',
+          hintText: 'Select Department first',
+          prefixIcon: Icon(Icons.calendar_today_outlined),
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        ),
+        validator: (val) => _selectedDepartmentId == null ? 'Select Department first' : null,
+      );
+    }
+
     return batchesAsync.when(
       loading: () => Container(
         height: 58,
@@ -124,7 +197,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             const SizedBox(width: 6),
             const Expanded(
               child: Text(
-                'Failed to load',
+                'Failed to load batches',
                 style: TextStyle(color: Colors.red, fontSize: 12),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -138,29 +211,38 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         ),
       ),
       data: (batches) {
-        if (batches.isEmpty) {
+        // Filter batches strictly by the selected department
+        final deptBatches = batches.where((b) {
+          if (b.departmentId == null) return false;
+          return b.departmentId.toString() == _selectedDepartmentId;
+        }).toList();
+
+        if (deptBatches.isEmpty) {
           return DropdownButtonFormField<String>(
             isExpanded: true,
             items: const [],
             onChanged: null,
             decoration: const InputDecoration(
-              labelText: 'Batch',
-              hintText: 'No batches',
+              labelText: 'Batch *',
+              hintText: 'No batches in this department',
+              prefixIcon: Icon(Icons.calendar_today_outlined),
               contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             ),
-            validator: (val) => 'No batches available',
+            validator: (val) => 'No batches available for this department',
           );
         }
 
         return DropdownButtonFormField<String>(
+          key: ValueKey('batch_dropdown_$_selectedDepartmentId'),
           isExpanded: true,
           initialValue: _selectedBatchId,
           decoration: const InputDecoration(
-            labelText: 'Batch',
+            labelText: 'Batch *',
             hintText: 'Select Batch',
+            prefixIcon: Icon(Icons.calendar_today_outlined),
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           ),
-          items: batches.map((batch) {
+          items: deptBatches.map((batch) {
             return DropdownMenuItem<String>(
               value: batch.id,
               child: Text(
@@ -173,14 +255,14 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             if (val != _selectedBatchId) {
               setState(() {
                 _selectedBatchId = val;
-                _selectedBatch = batches.firstWhere((b) => b.id == val);
+                _selectedBatch = deptBatches.firstWhere((b) => b.id == val);
                 // Reset section when batch changes
                 _selectedSectionId = null;
                 _selectedSectionName = null;
               });
             }
           },
-          validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+          validator: (val) => val == null || val.isEmpty ? 'Batch is required' : null,
         );
       },
     );
@@ -193,11 +275,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         items: const [],
         onChanged: null,
         decoration: const InputDecoration(
-          labelText: 'Section',
-          hintText: 'Select batch',
+          labelText: 'Section *',
+          hintText: 'Select Batch first',
+          prefixIcon: Icon(Icons.class_outlined),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
-        validator: (val) => _selectedBatch == null ? 'Select batch first' : null,
+        validator: (val) => _selectedBatch == null ? 'Select Batch first' : null,
       );
     }
 
@@ -210,8 +293,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         items: const [],
         onChanged: null,
         decoration: const InputDecoration(
-          labelText: 'Section',
-          hintText: 'No sections',
+          labelText: 'Section *',
+          hintText: 'No sections available',
+          prefixIcon: Icon(Icons.class_outlined),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
         validator: (val) => 'No sections available',
@@ -227,8 +311,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         isExpanded: true,
         initialValue: _selectedSectionId,
         decoration: const InputDecoration(
-          labelText: 'Section',
+          labelText: 'Section *',
           hintText: 'Select Section',
+          prefixIcon: Icon(Icons.class_outlined),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
         items: sortedItems.map((item) {
@@ -247,7 +332,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             _selectedSectionName = chosen.name;
           });
         },
-        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        validator: (val) => val == null || val.isEmpty ? 'Section is required' : null,
       );
     } else {
       final sortedNames = List<String>.from(sectionNames)..sort();
@@ -256,8 +341,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         isExpanded: true,
         initialValue: _selectedSectionName,
         decoration: const InputDecoration(
-          labelText: 'Section',
+          labelText: 'Section *',
           hintText: 'Select Section',
+          prefixIcon: Icon(Icons.class_outlined),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
         items: sortedNames.map((name) {
@@ -275,7 +361,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             _selectedSectionName = val;
           });
         },
-        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        validator: (val) => val == null || val.isEmpty ? 'Section is required' : null,
       );
     }
   }
@@ -286,7 +372,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     final authState = ref.watch(authStateProvider);
     final isLoading = authState.isLoading;
     final batchesAsync = ref.watch(batchesStreamProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Account'),
@@ -308,7 +394,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   "Join the DCMS portal using your university credentials.",
                   style: theme.textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
+
+                // 1. Full Name
                 AppTextField(
                   controller: _nameController,
                   labelText: "Full Name",
@@ -316,6 +404,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   validator: (value) => AppValidators.requiredField(value, 'Name'),
                 ),
                 const SizedBox(height: 16),
+
+                // 2. University Email
                 AppTextField(
                   controller: _emailController,
                   labelText: "University Email",
@@ -326,6 +416,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   validator: AppValidators.universityEmail,
                 ),
                 const SizedBox(height: 16),
+
+                // 3. Phone Number
                 AppTextField(
                   controller: _phoneController,
                   labelText: "Phone Number",
@@ -334,6 +426,18 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                 ),
                 const SizedBox(height: 16),
+
+                // 4. Department (dropdown)
+                _buildDepartmentDropdown(),
+                const SizedBox(height: 16),
+
+                // 5. Batch & 6. Section (chained dropdowns)
+                _buildBatchDropdown(batchesAsync),
+                const SizedBox(height: 16),
+                _buildSectionDropdown(),
+                const SizedBox(height: 16),
+
+                // 7. Password
                 AppTextField(
                   controller: _passwordController,
                   labelText: "Password",
@@ -341,44 +445,33 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   prefixIcon: const Icon(Icons.lock_outline),
                   validator: AppValidators.password,
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  "Academic Details",
-                  style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                ),
                 const SizedBox(height: 16),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth < 280) {
-                      return Column(
-                        children: [
-                          _buildBatchDropdown(batchesAsync),
-                          const SizedBox(height: 16),
-                          _buildSectionDropdown(),
-                        ],
-                      );
+
+                // 8. Confirm Password
+                AppTextField(
+                  controller: _confirmPasswordController,
+                  labelText: "Confirm Password",
+                  isPassword: true,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Confirm password is required';
                     }
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: _buildBatchDropdown(batchesAsync),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildSectionDropdown(),
-                        ),
-                      ],
-                    );
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
                   },
                 ),
                 const SizedBox(height: 32),
+
                 PrimaryButton(
                   text: "Register",
                   isLoading: isLoading,
                   onPressed: _register,
                 ),
                 const SizedBox(height: 24),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

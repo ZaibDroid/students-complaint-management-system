@@ -42,8 +42,10 @@ class ApplicationPolicy
             if ((int)$application->assigned_to_id === (int)$user->id) {
                 return true;
             }
-            $userDeptId = $user->department_id ?: \App\Models\Department::first()?->id;
-            return !empty($application->department_id) && (int)$application->department_id === (int)$userDeptId;
+            if (empty($user->department_id) || empty($application->department_id)) {
+                return false;
+            }
+            return (int)$application->department_id === (int)$user->department_id;
         }
 
         // Batch Adviser: assigned to them, or submitted by student in assigned section/batch
@@ -138,8 +140,10 @@ class ApplicationPolicy
             if ((int)$application->assigned_to_id === (int)$user->id) {
                 return true;
             }
-            $userDeptId = $user->department_id ?: \App\Models\Department::first()?->id;
-            return !empty($application->department_id) && (int)$application->department_id === (int)$userDeptId;
+            if (empty($user->department_id) || empty($application->department_id)) {
+                return false;
+            }
+            return (int)$application->department_id === (int)$user->department_id;
         }
 
         // Batch Adviser: must be currently assigned to them AND authorized for their assigned sections

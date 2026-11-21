@@ -298,6 +298,7 @@ class UniqueCoordinatorAndRegistrationIntegrationTest extends TestCase
             'name' => 'Mismatched Student',
             'email' => '21mdcs99@uetmardan.edu.pk',
             'password' => 'password123',
+            'department_id' => $this->department->id,
             'batch_id' => $this->batch2022->id,
             'section_id' => $this->section2021A->id, // Mismatch!
         ]);
@@ -316,6 +317,7 @@ class UniqueCoordinatorAndRegistrationIntegrationTest extends TestCase
             'name' => 'Invalid Batch Student',
             'email' => '21mdcs98@uetmardan.edu.pk',
             'password' => 'password123',
+            'department_id' => $this->department->id,
             'batch_id' => 99999,
             'section_id' => $this->section2021A->id,
         ]);
@@ -339,6 +341,7 @@ class UniqueCoordinatorAndRegistrationIntegrationTest extends TestCase
             'name' => 'Inactive Batch Student',
             'email' => '15mdcs01@uetmardan.edu.pk',
             'password' => 'password123',
+            'department_id' => $this->department->id,
             'batch_id' => $inactiveBatch->id,
             'section_id' => $inactiveSection->id,
         ]);
@@ -355,6 +358,7 @@ class UniqueCoordinatorAndRegistrationIntegrationTest extends TestCase
             'name' => 'Valid Student 2021',
             'email' => '21mdcs55@uetmardan.edu.pk',
             'password' => 'password123',
+            'department_id' => $this->department->id,
             'batch_id' => $this->batch2021->id,
             'section_id' => $this->section2021A->id,
         ]);

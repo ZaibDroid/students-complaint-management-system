@@ -223,6 +223,10 @@ Route::prefix('v1')->group(function () {
             Route::get('/{user}', [UserController::class, 'show']);
             Route::put('/staff/{user}', [UserController::class, 'updateStaff']);
             Route::delete('/staff/{user}', [UserController::class, 'deleteStaff']);
+            Route::post('/chairmen/{user}/replace', [UserController::class, 'replaceChairman']);
+            Route::get('/chairmen/{user}/replacement-candidates', [UserController::class, 'getChairmanReplacementCandidates']);
+            Route::put('/students/{user}', [UserController::class, 'updateStudent']);
+            Route::delete('/students/{user}', [UserController::class, 'deleteStudent']);
 
             // Role & Adviser Assignments
             Route::put('/{user}/roles', [UserController::class, 'assignRoles']);

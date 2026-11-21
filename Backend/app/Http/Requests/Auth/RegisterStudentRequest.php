@@ -19,8 +19,8 @@ class RegisterStudentRequest extends BaseApiRequest
                 'regex:/^[a-zA-Z0-9._%+-]+@uetmardan\.edu\.pk$/i',
             ],
             'password' => ['required', 'string', 'min:6'],
-            'department_id' => ['nullable', 'exists:departments,id'],
-            'department' => ['nullable', 'string', 'max:100'],
+            'department_id' => ['required_without:department', 'nullable', 'exists:departments,id'],
+            'department' => ['required_without:department_id', 'nullable', 'string', 'max:100'],
             'batch_id' => ['required_without:batch', 'nullable', 'exists:batches,id'],
             'batch' => ['required_without:batch_id', 'nullable', 'string', 'max:50'],
             'section_id' => ['required_without:section', 'nullable', 'exists:sections,id'],
@@ -41,6 +41,24 @@ class RegisterStudentRequest extends BaseApiRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
+            $deptId = $this->input('department_id');
+            $deptStr = $this->input('department');
+            $dept = null;
+            if ($deptId) {
+                $dept = \App\Models\Department::find($deptId);
+            } elseif (!empty($deptStr)) {
+                $cleanName = trim(preg_replace('/^(department\s*of\s*|dept\s*of\s*)/i', '', trim((string)$deptStr)));
+                $dept = \App\Models\Department::where('name', $deptStr)
+                    ->orWhere('code', $deptStr)
+                    ->orWhere('name', 'LIKE', "%{$cleanName}%")
+                    ->first();
+            }
+
+            if (!$dept) {
+                $validator->errors()->add('department_id', 'The selected department is invalid or required.');
+                return;
+            }
+
             $batchId = $this->input('batch_id');
             $batchStr = $this->input('batch');
             $sectionId = $this->input('section_id');
@@ -58,6 +76,8 @@ class RegisterStudentRequest extends BaseApiRequest
 
             if (!$batch || !$batch->is_active) {
                 $validator->errors()->add('batch_id', 'The selected batch is invalid or unavailable.');
+            } elseif ((int)$batch->department_id !== (int)$dept->id) {
+                $validator->errors()->add('batch_id', 'The selected batch does not belong to the selected department.');
             } elseif (!$batch->hasActiveCoordinator()) {
                 $validator->errors()->add('batch_id', 'The selected batch is invalid, inactive, or has no assigned Coordinator.');
             }
