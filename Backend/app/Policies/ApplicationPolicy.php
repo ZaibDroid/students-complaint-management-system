@@ -209,16 +209,8 @@ class ApplicationPolicy
             return false;
         }
 
-        // Coordinator can only access complaints that are actually assigned or routed to them
-        if ((int)$application->assigned_to_id === (int)$user->id) {
-            return true;
-        }
-
-        return $application->timeline()
-            ->where(function ($q) use ($user) {
-                $q->where('to_user_id', $user->id)
-                  ->orWhere('from_user_id', $user->id);
-            })
-            ->exists();
+        // Coordinator can only access complaints currently assigned to them.
+        // Historical involvement does not grant permanent access once forwarded away.
+        return (int)$application->assigned_to_id === (int)$user->id;
     }
 }

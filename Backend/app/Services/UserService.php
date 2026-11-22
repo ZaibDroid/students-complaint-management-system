@@ -158,7 +158,21 @@ class UserService implements UserServiceInterface
                     ]);
                 }
                 if (empty($data['batch_id'])) {
-                    $data['batch_id'] = $coordBatchIds[0];
+                    if (!empty($data['section_id'])) {
+                        $sec = \App\Models\Section::find((int)$data['section_id']);
+                        if ($sec && in_array((int)$sec->batch_id, $coordBatchIds, true)) {
+                            $data['batch_id'] = $sec->batch_id;
+                        }
+                    }
+                    if (empty($data['batch_id'])) {
+                        if (count($coordBatchIds) === 1) {
+                            $data['batch_id'] = $coordBatchIds[0];
+                        } else {
+                            throw ValidationException::withMessages([
+                                'batch_id' => ['Please specify which of your assigned batches this adviser belongs to.'],
+                            ]);
+                        }
+                    }
                 } elseif (!in_array((int)$data['batch_id'], $coordBatchIds, true)) {
                     throw ValidationException::withMessages([
                         'batch_id' => ['You are not authorized to create or assign advisers to this batch.'],

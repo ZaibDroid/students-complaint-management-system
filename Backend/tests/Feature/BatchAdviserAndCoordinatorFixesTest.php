@@ -484,4 +484,121 @@ class BatchAdviserAndCoordinatorFixesTest extends TestCase
         $coordBList = $repo->getApplicationsForUser($this->coordinatorB);
         $this->assertFalse($coordBList->contains('id', $complaint->id));
     }
+
+    /**
+     * Test 6: Scenario C: Coordinator forwards complaint to Chairman.
+     * Previous Coordinator loses access once forwarded away to Chairman.
+     * Historical involvement in timeline (from_user_id) does not grant permanent access.
+     */
+    public function test_06_coordinator_forwards_complaint_to_chairman_and_loses_access(): void
+    {
+        // 1. Complaint assigned to Coordinator A
+        $student = User::create([
+            'name' => 'Student Batch 2021 Escalation',
+            'email' => 'student.esc@uetmardan.edu.pk',
+            'password' => bcrypt('password'),
+            'department_id' => $this->department->id,
+            'batch_id' => $this->batch2021->id,
+            'section_id' => $this->sectionAI->id,
+            'adviser_id' => $this->adviserAI->id,
+            'status' => 'approved',
+        ]);
+        $student->assignRole('Student');
+
+        $complaint = Application::create([
+            'ticket_number' => 'APP-2021-FWD01',
+            'title' => 'Complex Issue for Chairman',
+            'student_id' => $student->id,
+            'category_id' => $this->category->id,
+            'department_id' => $this->department->id,
+            'batch_id' => $this->batch2021->id,
+            'section_id' => $this->sectionAI->id,
+            'subject' => 'Complex Issue for Chairman',
+            'description' => 'Needs Chairman ruling.',
+            'assigned_to_id' => $this->coordinatorA->id,
+            'current_handler_role' => 'Coordinator',
+            'status' => 'pending',
+            'priority' => 'high',
+        ]);
+
+        // Coordinator A initially CAN view complaint
+        $this->assertTrue(Gate::forUser($this->coordinatorA)->allows('view', $complaint));
+        $coordAInitView = $this->actingAs($this->coordinatorA, 'sanctum')->getJson("/api/v1/applications/{$complaint->id}");
+        $coordAInitView->assertStatus(200);
+
+        // 2. Coordinator A forwards complaint to Chairman
+        $forwardResponse = $this->actingAs($this->coordinatorA, 'sanctum')
+            ->putJson("/api/v1/applications/{$complaint->id}/status", [
+                'status' => 'forwarded',
+                'assigned_to_id' => $this->chairman->id,
+                'notes' => 'Escalating to Chairman for decision.',
+            ]);
+
+        $forwardResponse->assertStatus(200);
+        $complaint->refresh();
+        $this->assertEquals($this->chairman->id, $complaint->assigned_to_id);
+
+        // 3. Chairman CAN view complaint
+        $this->assertTrue(Gate::forUser($this->chairman)->allows('view', $complaint));
+        $chairView = $this->actingAs($this->chairman, 'sanctum')->getJson("/api/v1/applications/{$complaint->id}");
+        $chairView->assertStatus(200);
+
+        // 4. Coordinator A (who forwarded it) LOSES access:
+        // Direct API call is rejected with 403 Forbidden
+        $coordAAfterView = $this->actingAs($this->coordinatorA, 'sanctum')->getJson("/api/v1/applications/{$complaint->id}");
+        $coordAAfterView->assertStatus(403);
+        $this->assertFalse(Gate::forUser($this->coordinatorA)->allows('view', $complaint));
+
+        // Coordinator A complaint list excludes this complaint
+        $repo = app(ApplicationRepository::class);
+        $coordAList = $repo->getApplicationsForUser($this->coordinatorA);
+        $this->assertFalse($coordAList->contains('id', $complaint->id));
+
+        // Coordinator A dashboard does NOT count this complaint in pending_forwarding
+        $dashRepo = app(DashboardRepository::class);
+        $dashA = $dashRepo->getCoordinatorDashboard($this->coordinatorA);
+        $pendingA = $dashA['metrics']['pending_forwarding'] ?? $dashA['pending_forwarding'] ?? 0;
+        $this->assertEquals(0, $pendingA);
+        $this->assertFalse(collect($dashA['recent_activity'])->contains('id', $complaint->id));
+    }
+
+    /**
+     * Test 7: Coordinator with multiple batches assigns the correct batch from section without arbitrary assignment.
+     */
+    public function test_07_coordinator_with_multiple_batches_assigns_correct_batch_from_section(): void
+    {
+        // Assign a second batch (Batch 2023) to Coordinator A
+        $batch2023 = Batch::create([
+            'department_id' => $this->department->id,
+            'coordinator_id' => $this->coordinatorA->id,
+            'name' => '2023-2027',
+            'start_year' => 2023,
+            'end_year' => 2027,
+            'is_active' => true,
+        ]);
+
+        $section2023A = Section::create([
+            'batch_id' => $batch2023->id,
+            'name' => 'SE-A',
+            'is_active' => true,
+        ]);
+
+        // Coordinator A creates adviser for Section 2023A without specifying batch_id
+        $response = $this->actingAs($this->coordinatorA, 'sanctum')
+            ->postJson('/api/v1/users/staff', [
+                'name' => 'Adviser SE-A',
+                'email' => 'adviser.sea@uetmardan.edu.pk',
+                'password' => 'Password123!',
+                'role' => 'Batch Adviser',
+                'section_id' => $section2023A->id,
+            ]);
+
+        $response->assertStatus(201);
+
+        // Adviser must be associated with Batch 2023 (not arbitrary Batch 2021)
+        $createdAdviser = User::where('email', 'adviser.sea@uetmardan.edu.pk')->first();
+        $this->assertNotNull($createdAdviser);
+        $this->assertEquals($batch2023->id, $createdAdviser->batch_id);
+        $this->assertEquals($section2023A->id, $createdAdviser->section_id);
+    }
 }

@@ -30,8 +30,19 @@ class CreateStaffRequest extends BaseApiRequest
             $requestedRole = (string)$this->input('role');
             if (in_array($requestedRole, ['Batch Adviser', 'Batch Advisor'], true)) {
                 $coordinatorBatchIds = $user->getAssignedBatchIds();
-                if (!empty($coordinatorBatchIds) && (!$this->has('batch_id') || empty($this->input('batch_id')))) {
-                    $this->merge(['batch_id' => $coordinatorBatchIds[0]]);
+                if (!empty($coordinatorBatchIds)) {
+                    if (!$this->has('batch_id') || empty($this->input('batch_id'))) {
+                        $sectionId = $this->input('section_id');
+                        if ($sectionId) {
+                            $sec = \App\Models\Section::find((int)$sectionId);
+                            if ($sec && in_array((int)$sec->batch_id, $coordinatorBatchIds, true)) {
+                                $this->merge(['batch_id' => $sec->batch_id]);
+                            }
+                        }
+                    }
+                    if ((!$this->has('batch_id') || empty($this->input('batch_id'))) && count($coordinatorBatchIds) === 1) {
+                        $this->merge(['batch_id' => $coordinatorBatchIds[0]]);
+                    }
                 }
             }
         }

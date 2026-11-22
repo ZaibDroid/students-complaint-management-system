@@ -74,14 +74,9 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
                 if (!empty($user->department_id)) {
                     $query->where('department_id', $user->department_id);
                 }
-                // Coordinator can only see complaints actually assigned or routed to them
-                $query->where(function ($q) use ($user) {
-                    $q->where('assigned_to_id', $user->id)
-                      ->orWhereHas('timeline', function ($tq) use ($user) {
-                          $tq->where('to_user_id', $user->id)
-                            ->orWhere('from_user_id', $user->id);
-                      });
-                });
+                // Coordinator can only see complaints currently assigned to them.
+                // Historical involvement does not grant permanent access once forwarded away.
+                $query->where('assigned_to_id', $user->id);
             }
         } elseif ($user->hasAnyRole(['Chairman', 'Office Staff'])) {
             $deptId = $user->department_id;

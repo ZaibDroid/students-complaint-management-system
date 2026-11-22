@@ -87,17 +87,11 @@ class DashboardRepository implements DashboardRepositoryInterface
             ];
         }
 
-        // Base query scoped to the coordinator's batch and department, and routed to this coordinator
+        // Base query scoped to the coordinator's batch and department, and currently assigned to this coordinator
         $baseQuery = Application::whereHas('student', function ($q) use ($coordinatorBatchIds) {
             $q->whereIn('batch_id', $coordinatorBatchIds)->whereNotNull('batch_id');
         })
-        ->where(function ($q) use ($coordinator) {
-            $q->where('assigned_to_id', $coordinator->id)
-              ->orWhereHas('timeline', function ($tq) use ($coordinator) {
-                  $tq->where('to_user_id', $coordinator->id)
-                    ->orWhere('from_user_id', $coordinator->id);
-              });
-        });
+        ->where('assigned_to_id', $coordinator->id);
 
         if ($departmentId) {
             $baseQuery->where('department_id', $departmentId);
