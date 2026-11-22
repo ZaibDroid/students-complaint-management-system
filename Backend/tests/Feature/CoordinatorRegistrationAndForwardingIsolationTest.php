@@ -181,6 +181,7 @@ class CoordinatorRegistrationAndForwardingIsolationTest extends TestCase
             'name' => 'New Student',
             'email' => 'newstudent@uetmardan.edu.pk',
             'password' => 'Password123!',
+            'department_id' => $this->department->id,
             'batch_id' => $this->batch2023Unassigned->id,
             'section' => 'A',
         ]);
@@ -195,6 +196,7 @@ class CoordinatorRegistrationAndForwardingIsolationTest extends TestCase
             'name' => 'New Student 2',
             'email' => 'newstudent2@uetmardan.edu.pk',
             'password' => 'Password123!',
+            'department_id' => $this->department->id,
             'batch_id' => $this->batch2021->id,
             'section_id' => $this->section2022A->id, // belongs to batch 2022
         ]);
@@ -209,6 +211,7 @@ class CoordinatorRegistrationAndForwardingIsolationTest extends TestCase
             'name' => 'Valid Student',
             'email' => 'validstudent@uetmardan.edu.pk',
             'password' => 'Password123!',
+            'department_id' => $this->department->id,
             'batch_id' => $this->batch2021->id,
             'section_id' => $this->section2021A->id,
         ]);

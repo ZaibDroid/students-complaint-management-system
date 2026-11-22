@@ -246,6 +246,8 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
 
   Widget _buildBatchAndSectionSelectors() {
     final batchesAsync = ref.watch(batchesStreamProvider);
+    final currentUser = ref.watch(authStateProvider).value;
+    final bool isCoordinatorUser = currentUser?.role.toLowerCase().contains('coordinator') == true;
 
     return batchesAsync.when(
       loading: () => Container(
@@ -270,6 +272,132 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
       ),
       error: (err, stack) => _buildManualBatchSectionFallback(),
       data: (batches) {
+        if (isCoordinatorUser && widget.defaultRole == 'Batch Adviser') {
+          BatchModel? myBatch;
+          if (currentUser != null) {
+            myBatch = batches.where((b) {
+              if (currentUser.batchId != null && currentUser.batchId!.isNotEmpty && b.id == currentUser.batchId) {
+                return true;
+              }
+              if (currentUser.batch != null && currentUser.batch!.isNotEmpty) {
+                final userBatchClean = currentUser.batch!.trim().toLowerCase();
+                final batchNameClean = b.name.trim().toLowerCase();
+                if (userBatchClean == batchNameClean) return true;
+                if (batchNameClean.contains(userBatchClean) || userBatchClean.contains(batchNameClean)) return true;
+              }
+              return false;
+            }).firstOrNull;
+          }
+
+          if (myBatch == null) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.amber.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.amber.shade300),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'You do not have any assigned batch. Please contact the Chairman to assign your batch before creating Batch Advisers.',
+                      style: TextStyle(color: Colors.black87, fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final cleanBatchYear = myBatch.name.replaceAll(RegExp(r'^Batch\s+', caseSensitive: false), '').trim();
+          final sections = myBatch.sections
+              .map((s) => s.trim())
+              .where((s) => s.isNotEmpty)
+              .toSet()
+              .toList()
+            ..sort();
+
+          if (_selectedBatchId != myBatch.id) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _selectedBatchId = myBatch!.id;
+                  _batchController.text = myBatch.name;
+                });
+              }
+            });
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF172548).withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF172548).withValues(alpha: 0.15)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.school, color: Color(0xFF172548), size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'ASSIGNED BATCH (AUTOMATIC)',
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                          ),
+                          Text(
+                            'Batch $cleanBatchYear',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF172548)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                key: ValueKey('coord_sec_select_${myBatch.id}_$_selectedSection'),
+                isExpanded: true,
+                initialValue: sections.contains(_selectedSection) ? _selectedSection : null,
+                decoration: InputDecoration(
+                  labelText: 'Select Section',
+                  prefixIcon: const Icon(Icons.view_module),
+                  helperText: sections.isEmpty ? 'No sections defined for this batch' : null,
+                ),
+                hint: const Text('Choose Section'),
+                items: sections.map((sec) {
+                  return DropdownMenuItem<String>(
+                    value: sec,
+                    child: Text(sec, style: const TextStyle(fontWeight: FontWeight.w500)),
+                  );
+                }).toList(),
+                onChanged: sections.isEmpty
+                    ? null
+                    : (val) {
+                        setState(() {
+                          _selectedSection = val;
+                        });
+                      },
+                validator: (val) {
+                  if (sections.isNotEmpty && (val == null || val.isEmpty)) {
+                    return 'Please select a section';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          );
+        }
+
         if (batches.isEmpty) {
           return _buildManualBatchSectionFallback();
         }
@@ -425,6 +553,69 @@ class _AddFacultyDialogState extends ConsumerState<AddFacultyDialog> {
 
       setState(() => _isLoading = true);
       try {
+        final currentUser = ref.read(authStateProvider).value;
+        final isCoordinatorUser = currentUser?.role.toLowerCase().contains('coordinator') == true;
+
+        if (isCoordinatorUser && widget.defaultRole == 'Batch Adviser') {
+          final batches = ref.read(batchesStreamProvider).asData?.value ?? [];
+          BatchModel? myBatch;
+          if (currentUser != null) {
+            myBatch = batches.where((b) {
+              if (currentUser.batchId != null && currentUser.batchId!.isNotEmpty && b.id == currentUser.batchId) {
+                return true;
+              }
+              if (currentUser.batch != null && currentUser.batch!.isNotEmpty) {
+                final userBatchClean = currentUser.batch!.trim().toLowerCase();
+                final batchNameClean = b.name.trim().toLowerCase();
+                if (userBatchClean == batchNameClean) return true;
+                if (batchNameClean.contains(userBatchClean) || userBatchClean.contains(batchNameClean)) return true;
+              }
+              return false;
+            }).firstOrNull;
+          }
+
+          final batchId = myBatch?.id ?? currentUser?.batchId;
+          final batchVal = myBatch?.name ?? currentUser?.batch;
+          final sectionVal = _selectedSection ?? widget.initialSection;
+
+          final secItem = myBatch?.sectionItems.where((si) => si.name == sectionVal).firstOrNull;
+          final resolvedSectionId = secItem?.id ?? (_isSectionContext ? widget.initialSectionId : null);
+
+          await ref.read(apiAuthRepositoryProvider).createStaffAccount(
+            name: _nameController.text.trim(),
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+            role: widget.defaultRole,
+            batch: batchVal,
+            batchId: batchId,
+            section: sectionVal,
+            sectionId: resolvedSectionId,
+            assignedSections: [
+              if (batchVal != null && batchVal.isNotEmpty && sectionVal != null && sectionVal.isNotEmpty)
+                {
+                  'batch': batchVal,
+                  if (batchId != null) ...{'batch_id': batchId},
+                  'section': sectionVal,
+                  if (resolvedSectionId != null) ...{'section_id': resolvedSectionId},
+                }
+            ],
+          );
+
+          ref.invalidate(coordinatorsStreamProvider);
+          ref.invalidate(batchAdvisersStreamProvider);
+          ref.invalidate(batchesStreamProvider);
+          ref.invalidate(staffAccountsProvider);
+
+          navigator.pop(true);
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text('${widget.defaultRole} registered successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          return;
+        }
+
         String? batchVal;
         String? batchId;
         String? sectionVal;

@@ -172,6 +172,7 @@ class CoordinatorAssignmentSecurityTest extends TestCase
             'section_id' => $this->section2021A->id,
             'description' => 'Complaint for Batch 2021',
             'current_handler_role' => 'Coordinator',
+            'assigned_to_id' => $this->coordinatorA->id,
             'status' => 'pending',
             'priority' => 'medium',
         ]);
@@ -186,6 +187,7 @@ class CoordinatorAssignmentSecurityTest extends TestCase
             'section_id' => $this->section2022A->id,
             'description' => 'Complaint for Batch 2022',
             'current_handler_role' => 'Coordinator',
+            'assigned_to_id' => $this->coordinatorB->id,
             'status' => 'pending',
             'priority' => 'medium',
         ]);
@@ -343,6 +345,7 @@ class CoordinatorAssignmentSecurityTest extends TestCase
             'name' => 'New Student 2021',
             'email' => '21mdcs77@uetmardan.edu.pk',
             'password' => 'secret123',
+            'department_id' => $this->department->id,
             'batch_id' => $this->batch2021->id,
             'section_id' => $this->section2021A->id,
         ]);

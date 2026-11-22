@@ -44,7 +44,8 @@ class _ProfileAdviserLinkingBannerState extends ConsumerState<ProfileAdviserLink
   Widget build(BuildContext context) {
     final user = widget.user;
     final bool isStudent = user.role == 'Student';
-    final bool isUnlinked = isStudent && user.status == 'unlinked';
+    final bool isRejected = isStudent && (user.status == 'rejected' || user.status == 'cancelled');
+    final bool isUnlinked = isStudent && (user.status == 'unlinked' || isRejected);
     final bool isPending = isStudent && user.status == 'pending';
 
     if (!isUnlinked && !isPending) {
@@ -66,26 +67,42 @@ class _ProfileAdviserLinkingBannerState extends ConsumerState<ProfileAdviserLink
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.amber.shade50,
+              color: isRejected ? Colors.red.shade50 : Colors.amber.shade50,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.amber.shade200),
+              border: Border.all(color: isRejected ? Colors.red.shade200 : Colors.amber.shade200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 28),
-                    SizedBox(width: 12),
+                    Icon(
+                      isRejected ? Icons.cancel_outlined : Icons.warning_amber_rounded,
+                      color: isRejected ? Colors.red.shade700 : Colors.amber,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Action Required: Link Batch Adviser',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        isRejected ? 'Action Required: Previous Request Rejected' : 'Action Required: Link Batch Adviser',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isRejected ? Colors.red.shade900 : Colors.black87,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
+                if (isRejected)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      'Your previous adviser-linking request was rejected. You can update your profile details if needed and send a new request below.',
+                      style: TextStyle(fontSize: 14, color: Colors.red.shade800, height: 1.4),
+                    ),
+                  ),
                 if (advisers.isEmpty) ...[
                   Text(
                     'No Batch Adviser has been assigned to ${user.batch ?? "your batch"}${user.section != null && user.section!.isNotEmpty ? " (Section ${user.section})" : ""} yet. Please contact your Department Coordinator to assign your adviser.',

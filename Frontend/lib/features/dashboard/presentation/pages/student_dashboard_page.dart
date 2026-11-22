@@ -62,7 +62,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
 
     final isApproved = user.status == 'approved';
     final isPending = user.status == 'pending';
-    final isRejected = user.status == 'rejected';
+    final isRejected = user.status == 'rejected' || user.status == 'cancelled';
 
     if (!isApproved) {
       return Scaffold(

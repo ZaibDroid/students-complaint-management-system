@@ -423,6 +423,7 @@ class UniqueCoordinatorAndRegistrationIntegrationTest extends TestCase
             'subject' => 'Issue in Batch 2021',
             'description' => 'Detailed complaint description',
             'current_handler_role' => 'Coordinator',
+            'assigned_to_id' => $this->coordinatorA->id,
             'status' => 'pending',
             'priority' => 'medium',
         ]);

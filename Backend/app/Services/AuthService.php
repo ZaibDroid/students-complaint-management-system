@@ -206,8 +206,14 @@ class AuthService implements AuthServiceInterface
             throw new ApiException('Invalid login credentials', 401);
         }
 
-        if ($user->status !== 'approved' && $user->status !== 'unlinked' && $user->status !== 'pending') {
-            throw new ApiException('Your account is not approved yet', 403);
+        if ($user->hasRole('Student')) {
+            if (in_array($user->status, ['deactivated', 'inactive', 'suspended', 'blocked'], true)) {
+                throw new ApiException('Your account is deactivated. Please contact administration.', 403);
+            }
+        } else {
+            if ($user->status !== 'approved' && $user->status !== 'unlinked' && $user->status !== 'pending') {
+                throw new ApiException('Your account is not approved yet', 403);
+            }
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;

@@ -143,7 +143,7 @@ class MultiCoordinatorBatchIsolationIntegrationTest extends TestCase
         $this->complaint2021 = Application::create([
             'department_id' => $this->department->id,
             'student_id' => $this->student2021->id,
-            'assigned_to_id' => $this->adviser2021->id,
+            'assigned_to_id' => $this->coordinatorA->id,
             'category_id' => $this->category->id,
             'title' => 'Batch 2021 Complaint',
             'description' => 'Course registration issue in Batch 2021',
@@ -154,7 +154,7 @@ class MultiCoordinatorBatchIsolationIntegrationTest extends TestCase
         $this->complaint2022 = Application::create([
             'department_id' => $this->department->id,
             'student_id' => $this->student2022->id,
-            'assigned_to_id' => null,
+            'assigned_to_id' => $this->coordinatorB->id,
             'category_id' => $this->category->id,
             'title' => 'Batch 2022 Complaint',
             'description' => 'Fee challan discrepancy in Batch 2022',
@@ -389,6 +389,8 @@ class MultiCoordinatorBatchIsolationIntegrationTest extends TestCase
      */
     public function test_scenario_16_batch_adviser_workflows_continue_working(): void
     {
+        $this->complaint2021->update(['assigned_to_id' => $this->adviser2021->id]);
+
         // Batch Adviser can view complaint assigned to them or for their section's student
         $response = $this->actingAs($this->adviser2021, 'sanctum')->getJson("/api/v1/applications/{$this->complaint2021->id}");
         $response->assertStatus(200);

@@ -26,6 +26,16 @@ class CreateStaffRequest extends BaseApiRequest
             }
         }
 
+        if ($user && $user->hasRole('Coordinator')) {
+            $requestedRole = (string)$this->input('role');
+            if (in_array($requestedRole, ['Batch Adviser', 'Batch Advisor'], true)) {
+                $coordinatorBatchIds = $user->getAssignedBatchIds();
+                if (!empty($coordinatorBatchIds) && (!$this->has('batch_id') || empty($this->input('batch_id')))) {
+                    $this->merge(['batch_id' => $coordinatorBatchIds[0]]);
+                }
+            }
+        }
+
         if (!$this->has('department_id') && $this->has('department') && !empty($this->input('department'))) {
             $deptStr = trim((string)$this->input('department'));
             $cleanName = trim(preg_replace('/^(department\s*of\s*|dept\s*of\s*)/i', '', $deptStr));
@@ -77,6 +87,10 @@ class CreateStaffRequest extends BaseApiRequest
                 }
 
                 $coordinatorBatchIds = $user->getAssignedBatchIds();
+
+                if (in_array($requestedRole, ['Batch Adviser', 'Batch Advisor'], true) && empty($coordinatorBatchIds)) {
+                    $validator->errors()->add('batch_id', 'You do not have any assigned batch to create advisers for.');
+                }
 
                 // 1. Validate batch_id if provided
                 if ($this->has('batch_id') && !empty($this->input('batch_id'))) {

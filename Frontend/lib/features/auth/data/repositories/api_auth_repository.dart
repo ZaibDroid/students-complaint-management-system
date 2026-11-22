@@ -199,6 +199,8 @@ class ApiAuthRepository {
     required String section,
     required String phone,
     String? department,
+    String? batchId,
+    String? sectionId,
   }) async {
     final cleanSemNum = year.replaceAll(RegExp(r'[^0-9]'), '');
     final int? semInt = int.tryParse(cleanSemNum);
@@ -211,6 +213,12 @@ class ApiAuthRepository {
       'section': section,
       'phone': phone,
     };
+    if (batchId != null && batchId.isNotEmpty) {
+      body['batch_id'] = batchId;
+    }
+    if (sectionId != null && sectionId.isNotEmpty) {
+      body['section_id'] = sectionId;
+    }
     if (semInt != null) {
       body['current_semester'] = semInt;
     }

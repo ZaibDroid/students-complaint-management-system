@@ -47,10 +47,16 @@ class CoordinatorDashboardRepository
 
     public function getAverageResolutionTime(User $coordinator): float
     {
+        $endCol = \Illuminate\Support\Facades\Schema::hasColumn('applications', 'resolved_at') ? 'resolved_at' : 'updated_at';
+        $isSqlite = DB::connection()->getDriverName() === 'sqlite';
+        $diffSql = $isSqlite
+            ? "(strftime('%s', {$endCol}) - strftime('%s', created_at)) / 3600"
+            : "TIMESTAMPDIFF(HOUR, created_at, {$endCol})";
+
         $resolutionTime = $this->getBaseQuery($coordinator->department_id)
             ->where('status', 'resolved')
-            ->whereNotNull('resolved_at')
-            ->select(DB::raw('COALESCE(AVG(TIMESTAMPDIFF(HOUR, created_at, resolved_at)), 0) as avg_hours'))
+            ->whereNotNull($endCol)
+            ->select(DB::raw("COALESCE(AVG({$diffSql}), 0) as avg_hours"))
             ->first()?->avg_hours ?? 0;
             
         return (float) $resolutionTime;

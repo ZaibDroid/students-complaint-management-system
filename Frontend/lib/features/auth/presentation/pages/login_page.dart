@@ -37,7 +37,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         final authState = ref.read(authStateProvider);
         if (authState.hasValue && authState.value != null) {
           final user = authState.value!;
-          if (user.status == 'unlinked' || user.status == 'pending') {
+          if (user.role == 'Student' && (user.status == 'unlinked' || user.status == 'pending' || user.status == 'rejected' || user.status == 'cancelled')) {
             context.go('/profile');
             return;
           }

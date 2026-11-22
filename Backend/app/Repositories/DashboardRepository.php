@@ -75,28 +75,63 @@ class DashboardRepository implements DashboardRepositoryInterface
     public function getCoordinatorDashboard(User $coordinator): array
     {
         $departmentId = $coordinator->department_id;
+        $coordinatorBatchIds = $coordinator->getAssignedBatchIds();
 
-        // Base query scoped to the coordinator's department
-        $baseQuery = Application::whereHas('student', function ($q) use ($departmentId) {
-            if ($departmentId) {
-                $q->where('department_id', $departmentId);
-            }
+        if (empty($coordinatorBatchIds)) {
+            return [
+                'by_status' => collect(),
+                'by_category' => collect(),
+                'avg_resolution_time_hours' => 0,
+                'pending_forwarding' => 0,
+                'recent_activity' => collect(),
+            ];
+        }
+
+        // Base query scoped to the coordinator's batch and department, and routed to this coordinator
+        $baseQuery = Application::whereHas('student', function ($q) use ($coordinatorBatchIds) {
+            $q->whereIn('batch_id', $coordinatorBatchIds)->whereNotNull('batch_id');
+        })
+        ->where(function ($q) use ($coordinator) {
+            $q->where('assigned_to_id', $coordinator->id)
+              ->orWhereHas('timeline', function ($tq) use ($coordinator) {
+                  $tq->where('to_user_id', $coordinator->id)
+                    ->orWhere('from_user_id', $coordinator->id);
+              });
         });
+
+        if ($departmentId) {
+            $baseQuery->where('department_id', $departmentId);
+        }
 
         $byStatus = (clone $baseQuery)
             ->select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        $byCategory = (clone $baseQuery)
-            ->select('category', DB::raw('count(*) as total'))
-            ->groupBy('category')
-            ->pluck('total', 'category');
+        $hasCategoryCol = \Illuminate\Support\Facades\Schema::hasColumn('applications', 'category');
+        if ($hasCategoryCol) {
+            $byCategory = (clone $baseQuery)
+                ->select('category', DB::raw('count(*) as total'))
+                ->groupBy('category')
+                ->pluck('total', 'category');
+        } else {
+            $byCategory = (clone $baseQuery)
+                ->join('application_categories', 'applications.category_id', '=', 'application_categories.id')
+                ->select('application_categories.name as category_name', DB::raw('count(*) as total'))
+                ->groupBy('application_categories.name')
+                ->pluck('total', 'category_name');
+        }
+
+        $endCol = \Illuminate\Support\Facades\Schema::hasColumn('applications', 'resolved_at') ? 'resolved_at' : 'updated_at';
+        $isSqlite = DB::connection()->getDriverName() === 'sqlite';
+        $diffSql = $isSqlite
+            ? "(strftime('%s', {$endCol}) - strftime('%s', created_at)) / 3600"
+            : "TIMESTAMPDIFF(HOUR, created_at, {$endCol})";
 
         $resolutionTime = (clone $baseQuery)
             ->where('status', 'resolved')
-            ->whereNotNull('resolved_at')
-            ->select(DB::raw('COALESCE(AVG(TIMESTAMPDIFF(HOUR, created_at, resolved_at)), 0) as avg_hours'))
+            ->whereNotNull($endCol)
+            ->select(DB::raw("COALESCE(AVG({$diffSql}), 0) as avg_hours"))
             ->first()->avg_hours ?? 0;
 
         $pendingForwarding = (clone $baseQuery)

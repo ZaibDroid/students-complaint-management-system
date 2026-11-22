@@ -150,6 +150,22 @@ class UserService implements UserServiceInterface
                 $data['department_id'] = $currentUser->department_id;
             }
 
+            if ($currentUser && $currentUser->hasRole('Coordinator') && in_array($role, ['Batch Adviser', 'Batch Advisor'], true)) {
+                $coordBatchIds = $currentUser->getAssignedBatchIds();
+                if (empty($coordBatchIds)) {
+                    throw ValidationException::withMessages([
+                        'batch_id' => ['You do not have any assigned batch to create advisers for.'],
+                    ]);
+                }
+                if (empty($data['batch_id'])) {
+                    $data['batch_id'] = $coordBatchIds[0];
+                } elseif (!in_array((int)$data['batch_id'], $coordBatchIds, true)) {
+                    throw ValidationException::withMessages([
+                        'batch_id' => ['You are not authorized to create or assign advisers to this batch.'],
+                    ]);
+                }
+            }
+
             if (empty($data['department_id'])) {
                 if ($role === 'Chairman') {
                     throw ValidationException::withMessages([

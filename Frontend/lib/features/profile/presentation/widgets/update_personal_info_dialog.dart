@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../batch/domain/entities/batch_model.dart';
+import '../../../batch/presentation/providers/batch_provider.dart';
 
 class UpdatePersonalInfoDialog extends ConsumerStatefulWidget {
   final User user;
@@ -57,9 +59,7 @@ class _UpdatePersonalInfoDialogState extends ConsumerState<UpdatePersonalInfoDia
       }
     }
 
-    _selectedSection = _sections.contains(user.section)
-        ? user.section
-        : (user.section != null && user.section!.isNotEmpty ? _sections.first : null);
+    _selectedSection = user.section;
   }
 
   @override
@@ -126,12 +126,40 @@ class _UpdatePersonalInfoDialogState extends ConsumerState<UpdatePersonalInfoDia
     try {
       final finalBatch = user.role == 'Batch Adviser' ? (user.batch ?? '') : newBatch;
       final finalSection = user.role == 'Batch Adviser' ? (user.section ?? '') : (_selectedSection ?? '');
+
+      final batches = ref.read(batchesStreamProvider).value ?? [];
+      BatchModel? studentBatch;
+      if (user.role == 'Student') {
+        studentBatch = batches.where((b) {
+          if (user.batchId != null && user.batchId!.isNotEmpty && b.id == user.batchId) {
+            return true;
+          }
+          if (finalBatch.isNotEmpty) {
+            final fClean = finalBatch.trim().toLowerCase();
+            final bClean = b.name.trim().toLowerCase();
+            if (fClean == bClean || bClean.contains(fClean) || fClean.contains(bClean)) return true;
+          }
+          return false;
+        }).firstOrNull;
+      }
+
+      String? sectionId;
+      if (studentBatch != null && studentBatch.sectionItems.isNotEmpty) {
+        sectionId = studentBatch.sectionItems
+            .where((si) => si.name.toUpperCase() == finalSection.toUpperCase())
+            .firstOrNull
+            ?.id;
+      }
+      sectionId ??= (finalSection == user.section ? user.sectionId : null);
+
       await ref.read(apiAuthRepositoryProvider).updatePersonalInfo(
             user.id,
             name: newName,
             year: _selectedYear ?? '',
             batch: finalBatch,
+            batchId: studentBatch?.id ?? user.batchId,
             section: finalSection,
+            sectionId: sectionId,
             phone: newPhone,
             department: user.role != 'Student' ? newDepartment : null,
           );
@@ -153,6 +181,33 @@ class _UpdatePersonalInfoDialogState extends ConsumerState<UpdatePersonalInfoDia
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
+    final batchesAsync = ref.watch(batchesStreamProvider);
+    final batches = batchesAsync.value ?? [];
+
+    BatchModel? studentBatch;
+    if (user.role == 'Student') {
+      studentBatch = batches.where((b) {
+        if (user.batchId != null && user.batchId!.isNotEmpty && b.id == user.batchId) {
+          return true;
+        }
+        if (user.batch != null && user.batch!.isNotEmpty) {
+          final uClean = user.batch!.trim().toLowerCase();
+          final bClean = b.name.trim().toLowerCase();
+          if (uClean == bClean || bClean.contains(uClean) || uClean.contains(bClean)) return true;
+        }
+        return false;
+      }).firstOrNull;
+    }
+
+    final batchSections = studentBatch?.sections ?? [];
+    final sectionSet = <String>{...batchSections};
+    if (user.section != null && user.section!.isNotEmpty) {
+      sectionSet.add(user.section!);
+    }
+    if (_selectedSection != null && _selectedSection!.isNotEmpty) {
+      sectionSet.add(_selectedSection!);
+    }
+    final availableSections = sectionSet.isNotEmpty ? sectionSet.toList() : _sections;
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -210,8 +265,12 @@ class _UpdatePersonalInfoDialogState extends ConsumerState<UpdatePersonalInfoDia
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                initialValue: _selectedSection,
-                items: _sections.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                key: ValueKey('section_select_$_selectedSection'),
+                isExpanded: true,
+                initialValue: availableSections.contains(_selectedSection)
+                    ? _selectedSection
+                    : (availableSections.isNotEmpty ? availableSections.first : null),
+                items: availableSections.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                 onChanged: (val) => setState(() => _selectedSection = val),
                 decoration: const InputDecoration(labelText: 'Section'),
               ),

@@ -9,7 +9,7 @@ class AssignAdviserRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'adviser_id' => ['required', 'string'],
+            'adviser_id' => ['required'],
         ];
     }
 }
